@@ -52,13 +52,13 @@ public class RecordController : ControllerBase
         var currentOp = await _currentOperationService.GetCurrentOperationAsync(opUrlName);
         var now = _clock.GetCurrentInstant();
 
-        var output = new Guid[number, 4];
+        var output = new string[number];
 
         if (currentOp == null)
         {
             return NotFound("Operation not found.");
         }
-        var tmp = Guid.Empty;
+
         for (int i = 0; i < number; i++)
         {
             var person = new Person();
@@ -66,14 +66,20 @@ public class RecordController : ControllerBase
             var student = new Student { Person = person };
             var studentDetail = new StudentDetail { Student = student }.SetCreateBySystem(now);
 
-            // ID se vygeneruje při Add
             await _dbContext.AddAsync(person);
             await _dbContext.AddAsync(personDetail);
             await _dbContext.AddAsync(student);
             await _dbContext.AddAsync(studentDetail);
+
+            output[i] = $"{person.Id},{student.Id},{personDetail.Id},{studentDetail.Id}";
+
+            _dbContext.Remove(personDetail);
+            _dbContext.Remove(studentDetail);
         }
 
-        return Ok();
+        await _dbContext.SaveChangesAsync();
+
+        return Ok(output);
     }
 
     private record CreateResult
