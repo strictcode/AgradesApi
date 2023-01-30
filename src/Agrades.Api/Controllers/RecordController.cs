@@ -202,62 +202,6 @@ public class RecordController : ControllerBase
         public IEnumerable<string> Data { get; set; } = null!;
     }
 
-    /// <summary>
-    /// Create Person, Student, and return PersonId, designated PersonDetailId, StudentId, designated StudentDetailId.
-    /// </summary>
-    /// <param name="opUrlName"></param>
-    /// <param name="number"></param>
-    /// <returns></returns>
-    [HttpPost("/api/v1/{opUrlName}/Record/{number}")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<IEnumerable<string>>> Get(
-        [FromRoute] string opUrlName,
-        [FromRoute] int number
-        )
-    {
-        var currentOp = await _currentOperationService.GetCurrentOperationAsync(opUrlName);
-        var now = _clock.GetCurrentInstant();
-
-        var output = new string[number];
-
-        if (currentOp == null)
-        {
-            return NotFound("Operation not found.");
-        }
-
-        for (int i = 0; i < number; i++)
-        {
-            var person = new Person();
-            var personDetail = new PersonDetail { Person = person }.SetCreateBySystem(now);
-            var student = new Student { Person = person };
-            var studentDetail = new StudentDetail { Student = student }.SetCreateBySystem(now);
-
-            await _dbContext.AddAsync(person);
-            await _dbContext.AddAsync(personDetail);
-            await _dbContext.AddAsync(student);
-            await _dbContext.AddAsync(studentDetail);
-
-            output[i] = $"{person.Id},{student.Id},{personDetail.Id},{studentDetail.Id}";
-
-            _dbContext.Remove(personDetail);
-            _dbContext.Remove(studentDetail);
-        }
-
-        await _dbContext.SaveChangesAsync();
-
-        return Ok(output);
-    }
-
-    private record CreateResult
-    {
-        public string PersonId { get; set; } = null!;
-        public string PersonDetailId { get; set; } = null!;
-
-        public string StudentId { get; set; } = null!;
-        public string StudentDetailId { get; set; } = null!;
-    }
-
     [HttpGet("/api/v1/{opUrlName}/Record/{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
