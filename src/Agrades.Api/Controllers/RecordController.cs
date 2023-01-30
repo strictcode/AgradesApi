@@ -1,3 +1,4 @@
+using Agrades.Api.ApiModels.Adresses;
 using Agrades.Api.ApiModels.Persons;
 using Agrades.Api.Mapper;
 using Agrades.Api.Utilities;
@@ -205,7 +206,7 @@ public class RecordController : ControllerBase
     [HttpGet("/api/v1/{opUrlName}/Record/{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<PersonDetailDetail>> Get(
+    public async Task<ActionResult<StudentRecordDetail>> Get(
         [FromRoute] string opUrlName,
         [FromRoute] Guid id
         )
@@ -252,12 +253,81 @@ public class RecordController : ControllerBase
             return NotFound("Operation not found");
         }
 
-        var persons = _dbContext
-            .PersonDetails
-            .Include(x => x.PermanentAddress)
-            .Where(x => x.OperationId == currentOp.Id)
-            .Where(x => (int)x.Person.PersonTypeId == personType);
+        var now = _clock.GetCurrentInstant();
 
-        return Ok(ApiListResult.From(persons.Select(x => _mapper.ToDetail(x))));
+        var personIds = _dbContext
+            .Persons
+            .Include(x => x.Student)
+            .Where(x => x.PersonTypeId == PersonType.Student && x.OperationId == currentOp!.Id)
+            .Select(x => x.Id)
+            .ToList();
+
+        var students = _dbContext
+            .Students
+            .Include(x => x.Groups)
+            .Where(x => personIds.Contains(x.PersonId) && x.OperationId == currentOp!.Id)
+            .ToList()
+            ;
+
+        var studentIds = students.Select(x => x.Id);
+
+        var personDetails = _dbContext
+            .PersonDetails
+            .Where(x => personIds.Contains(x.PersonId) && x.ValidUntil == null)
+            .ToList()
+            ;
+
+        var addresses = _dbContext
+            .Addresses
+            .Where(x => x.OperationId == currentOp.Id && x.ValidUntil == null)
+            .ToList();
+
+        var studentDetails = _dbContext
+            .StudentDetails
+            .Include(x => x.Class)
+            .Where(x => studentIds.Contains(x.StudentId) && x.ValidUntil == null)
+            .ToList();
+
+        var output = new List<StudentRecordDetail>();
+
+        var currentYear = now.ToDateTimeUtc().Year;
+
+        var thisYearsFirstSeptember = Instant.FromDateTimeUtc(new DateTime(currentYear, 9, 1, 0, 0 , 0, DateTimeKind.Utc));
+
+        foreach (var personDetail in personDetails)
+        {
+            var student = students.First(x => x.PersonId == personDetail.PersonId);
+            var studentDetail = studentDetails.First(x => x.StudentId == student.Id);
+
+            output.Add(new StudentRecordDetail
+            {
+                //BackofficeNote = personDetail.BackofficeNote,
+                //BirthAddress = personDetail.BirthAddressId != null ? _mapper.ToDetail(addresses.Single(x => x.Id == personDetail.BirthAddressId)) : null,
+                //DegreesPost = personDetail.DegreesPost,
+                //DegreesPre = personDetail.DegreesPre,
+                //BirthName = personDetail.BirthName,
+                BornOn = personDetail.BornOn.ToString(),
+                //Citizenship = personDetail.Citizenship,
+                //CitizenshipCode = personDetail.CitizenshipCode,
+                //ContactAddress = personDetail.ContactAddressId != null ? _mapper.ToDetail(addresses.Single(x => x.Id == personDetail.ContactAddressId)) : null,
+                //DataBox = personDetail.DataBox,
+                //FamilyStatusId = personDetail.FamilyStatusId,
+                FirstName = personDetail.FirstName,
+                Id = personDetail.Id,
+                IdentificationCode = personDetail.IdentificationCode,
+                //IdentityCardNumber = personDetail.IdentityCardNumber,
+                //InsuranceCompanyCode = personDetail.InsuranceCompanyCode,
+                LastName = personDetail.LastName,
+                PermanentAddress = personDetail.PermanentAddressId != null ? _mapper.ToDetail(addresses.Single(x => x.Id == personDetail.PermanentAddressId)) : null,
+                //PersonTypeId = (int)PersonType.Student,
+                Sex = (int?)personDetail.Sex,
+                //TemporaryAddress = personDetail.TemporaryAddressId != null ? _mapper.ToDetail(addresses.Single(x => x.Id == personDetail.TemporaryAddressId)) : null,
+                YearDotClass = $"{(now > thisYearsFirstSeptember ? currentYear - studentDetail.Class!.StartAt.ToDateTimeUtc().Year + 2 : currentYear - studentDetail.Class!.StartAt.ToDateTimeUtc().Year + 1)}.{studentDetail.Class!.Name}",
+            });
+        }
+
+        var orderedOutput = output.OrderBy(x => x.LastName).ThenBy(x => x.YearDotClass);
+
+        return Ok(ApiListResult.From(orderedOutput));
     }
 }

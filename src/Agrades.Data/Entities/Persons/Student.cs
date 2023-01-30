@@ -12,7 +12,9 @@ public class Student
     [ConcurrencyCheck]
     public int RowCount { get; set; }
 
-    public ICollection<StudentDetail> StudentDetails { get; } = new List<StudentDetail>();
+    public ICollection<StudentDetail> StudentDetails { get; } = new HashSet<StudentDetail>();
+
+    public ICollection<StudentGroup> Groups { get; set; } = new HashSet<StudentGroup>();
 
     public Guid PersonId { get; set; }
     public Person Person { get; set; } = null!;
