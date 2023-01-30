@@ -1,10 +1,10 @@
 namespace Agrades.Data.Entities;
 [Table(nameof(VirtualOperation))]
-public class VirtualOperation : ITrackable
+public class VirtualOperation : ITrackable, IVersionable
 {
     public Guid Id { get; set; }
 
-    public string Name { get; set; } = null!;
+    public string? Name { get; set; }
 
     /// <summary>
     /// Izo
@@ -16,6 +16,9 @@ public class VirtualOperation : ITrackable
 
     public Guid? OperationId { get; set; }
     public Operation? Operation { get; set; }
+
+    public Instant ValidSince { get; set; }
+    public Instant? ValidUntil { get; set; }
 
     public Instant CreatedAt { get; set; }
     public string CreatedBy { get; set; } = null!;

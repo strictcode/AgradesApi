@@ -43,7 +43,14 @@ public enum FamilyStatus
 
 public enum  FieldOfStudyType
 {
-    HighSchoolWithLeavingExam = 1
+    ElementarySchool = 100,
+    HighSchoolWithLeavingExam = 200
+}
+
+public enum Sex
+{
+    Male = 1,
+    Female = 2
 }
 
 public enum PersonStatus

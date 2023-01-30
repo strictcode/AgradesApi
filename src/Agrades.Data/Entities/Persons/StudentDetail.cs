@@ -15,7 +15,7 @@ public class StudentDetail : ITrackable, IVersionable
 
     public Instant StartsAt { get; set; }
 
-    public int? StartReasonTypeId { get; set; }
+    public string? StartReasonCode { get; set; }
 
     public int? ObligatoryAttendenceYears { get; set; }
 
@@ -23,7 +23,7 @@ public class StudentDetail : ITrackable, IVersionable
 
     public Instant? EndsAt { get; set; }
 
-    public int? EndReasonTypeId { get; set; }
+    public string? EndReasonCode { get; set; }
 
     public Guid StudyFieldId { get; set; }
     public StudyField StudyField { get; set; } = null!;
@@ -33,6 +33,8 @@ public class StudentDetail : ITrackable, IVersionable
     public bool? HasSchoolMeals { get; set; }
 
     public FieldOfStudyType HighestAchievedEducation { get; set; }
+
+    public string? PreviousEducationCode { get; set; }
 
     public Guid? PreviousEducationOperationId { get; set; }
     public VirtualOperation? PreviousEducationOperation { get; set; } = null!;

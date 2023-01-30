@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Agrades.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20230127094927_Init")]
+    [Migration("20230130094815_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -84,6 +84,12 @@ namespace Agrades.Data.Migrations
 
                     b.Property<string>("Street")
                         .HasColumnType("text");
+
+                    b.Property<Instant>("ValidSince")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Instant?>("ValidUntil")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("ZipCode")
                         .HasColumnType("text");
@@ -236,6 +242,12 @@ namespace Agrades.Data.Migrations
                     b.Property<Guid>("OperationId")
                         .HasColumnType("uuid");
 
+                    b.Property<Instant>("ValidSince")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Instant?>("ValidUntil")
+                        .HasColumnType("timestamp with time zone");
+
                     b.HasKey("Id");
 
                     b.HasIndex("ClassId");
@@ -363,6 +375,14 @@ namespace Agrades.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<Guid>("OperationId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("PersonTypeId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(101);
+
                     b.Property<int>("RowCount")
                         .IsConcurrencyToken()
                         .HasColumnType("integer");
@@ -371,6 +391,8 @@ namespace Agrades.Data.Migrations
                         .HasColumnType("uuid");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("OperationId");
 
                     b.ToTable("Person");
                 });
@@ -399,7 +421,7 @@ namespace Agrades.Data.Migrations
                     b.Property<string>("CitizenshipCode")
                         .HasColumnType("text");
 
-                    b.Property<Guid>("ContactAddressId")
+                    b.Property<Guid?>("ContactAddressId")
                         .HasColumnType("uuid");
 
                     b.Property<Instant>("CreatedAt")
@@ -466,14 +488,11 @@ namespace Agrades.Data.Migrations
                     b.Property<string>("OrganizationUniqueCode")
                         .HasColumnType("text");
 
-                    b.Property<Guid>("PermanentAddressId")
+                    b.Property<Guid?>("PermanentAddressId")
                         .HasColumnType("uuid");
 
                     b.Property<Guid>("PersonId")
                         .HasColumnType("uuid");
-
-                    b.Property<int>("PersonTypeId")
-                        .HasColumnType("integer");
 
                     b.Property<int?>("Sex")
                         .HasColumnType("integer");
@@ -481,10 +500,7 @@ namespace Agrades.Data.Migrations
                     b.Property<int>("StatusId")
                         .HasColumnType("integer");
 
-                    b.Property<Guid?>("StudentId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("TemporaryAddressId")
+                    b.Property<Guid?>("TemporaryAddressId")
                         .HasColumnType("uuid");
 
                     b.Property<Instant>("ValidSince")
@@ -505,8 +521,6 @@ namespace Agrades.Data.Migrations
 
                     b.HasIndex("PersonId");
 
-                    b.HasIndex("StudentId");
-
                     b.HasIndex("TemporaryAddressId");
 
                     b.ToTable("PersonDetail");
@@ -518,6 +532,9 @@ namespace Agrades.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<Guid>("OperationId")
+                        .HasColumnType("uuid");
+
                     b.Property<Guid>("PersonId")
                         .HasColumnType("uuid");
 
@@ -526,6 +543,8 @@ namespace Agrades.Data.Migrations
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("OperationId");
 
                     b.HasIndex("PersonId")
                         .IsUnique();
@@ -555,8 +574,8 @@ namespace Agrades.Data.Migrations
                     b.Property<string>("DeletedBy")
                         .HasColumnType("text");
 
-                    b.Property<int?>("EndReasonTypeId")
-                        .HasColumnType("integer");
+                    b.Property<string>("EndReasonCode")
+                        .HasColumnType("text");
 
                     b.Property<Instant?>("EndsAt")
                         .HasColumnType("timestamp with time zone");
@@ -586,11 +605,14 @@ namespace Agrades.Data.Migrations
                     b.Property<Guid>("OperationId")
                         .HasColumnType("uuid");
 
+                    b.Property<string>("PreviousEducationCode")
+                        .HasColumnType("text");
+
                     b.Property<Guid?>("PreviousEducationOperationId")
                         .HasColumnType("uuid");
 
-                    b.Property<int?>("StartReasonTypeId")
-                        .HasColumnType("integer");
+                    b.Property<string>("StartReasonCode")
+                        .HasColumnType("text");
 
                     b.Property<Instant>("StartsAt")
                         .HasColumnType("timestamp with time zone");
@@ -620,6 +642,53 @@ namespace Agrades.Data.Migrations
                     b.HasIndex("StudyFieldId");
 
                     b.ToTable("StudentDetail");
+                });
+
+            modelBuilder.Entity("Agrades.Data.Entities.StudentGroup", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Instant>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Instant?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("DeletedBy")
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("GroupId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Instant>("ModifiedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("ModifiedBy")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("StudentId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Instant>("ValidSince")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Instant?>("ValidUntil")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GroupId");
+
+                    b.HasIndex("StudentId");
+
+                    b.ToTable("StudentGroup");
                 });
 
             modelBuilder.Entity("Agrades.Data.Entities.StudyField", b =>
@@ -715,7 +784,6 @@ namespace Agrades.Data.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<Guid?>("OperationId")
@@ -723,6 +791,12 @@ namespace Agrades.Data.Migrations
 
                     b.Property<int>("SchoolType")
                         .HasColumnType("integer");
+
+                    b.Property<Instant>("ValidSince")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Instant?>("ValidUntil")
+                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
 
@@ -767,7 +841,7 @@ namespace Agrades.Data.Migrations
             modelBuilder.Entity("Agrades.Data.Entities.Group", b =>
                 {
                     b.HasOne("Agrades.Data.Entities.Class", "Class")
-                        .WithMany()
+                        .WithMany("Groups")
                         .HasForeignKey("ClassId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
@@ -802,6 +876,17 @@ namespace Agrades.Data.Migrations
                     b.Navigation("Organization");
                 });
 
+            modelBuilder.Entity("Agrades.Data.Entities.Persons.Person", b =>
+                {
+                    b.HasOne("Agrades.Data.Entities.Operation", "Operation")
+                        .WithMany()
+                        .HasForeignKey("OperationId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Operation");
+                });
+
             modelBuilder.Entity("Agrades.Data.Entities.Persons.PersonDetail", b =>
                 {
                     b.HasOne("Agrades.Data.Entities.Address", "BirthAddress")
@@ -812,8 +897,7 @@ namespace Agrades.Data.Migrations
                     b.HasOne("Agrades.Data.Entities.Address", "ContactAddress")
                         .WithMany()
                         .HasForeignKey("ContactAddressId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Agrades.Data.Entities.Operation", "Operation")
                         .WithMany()
@@ -824,8 +908,7 @@ namespace Agrades.Data.Migrations
                     b.HasOne("Agrades.Data.Entities.Address", "PermanentAddress")
                         .WithMany()
                         .HasForeignKey("PermanentAddressId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Agrades.Data.Entities.Persons.Person", "Person")
                         .WithMany("PersonDetails")
@@ -833,16 +916,10 @@ namespace Agrades.Data.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Agrades.Data.Entities.Persons.Student", null)
-                        .WithMany("StudentDetails")
-                        .HasForeignKey("StudentId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.HasOne("Agrades.Data.Entities.Address", "TemporaryAddress")
                         .WithMany()
                         .HasForeignKey("TemporaryAddressId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("BirthAddress");
 
@@ -859,11 +936,19 @@ namespace Agrades.Data.Migrations
 
             modelBuilder.Entity("Agrades.Data.Entities.Persons.Student", b =>
                 {
+                    b.HasOne("Agrades.Data.Entities.Operation", "Operation")
+                        .WithMany()
+                        .HasForeignKey("OperationId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("Agrades.Data.Entities.Persons.Person", "Person")
                         .WithOne("Student")
                         .HasForeignKey("Agrades.Data.Entities.Persons.Student", "PersonId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.Navigation("Operation");
 
                     b.Navigation("Person");
                 });
@@ -887,7 +972,7 @@ namespace Agrades.Data.Migrations
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Agrades.Data.Entities.Persons.Student", "Student")
-                        .WithMany()
+                        .WithMany("StudentDetails")
                         .HasForeignKey("StudentId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
@@ -909,6 +994,25 @@ namespace Agrades.Data.Migrations
                     b.Navigation("StudyField");
                 });
 
+            modelBuilder.Entity("Agrades.Data.Entities.StudentGroup", b =>
+                {
+                    b.HasOne("Agrades.Data.Entities.Group", "Group")
+                        .WithMany("Students")
+                        .HasForeignKey("GroupId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Agrades.Data.Entities.Persons.Student", "Student")
+                        .WithMany()
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Group");
+
+                    b.Navigation("Student");
+                });
+
             modelBuilder.Entity("Agrades.Data.Entities.StudyField", b =>
                 {
                     b.HasOne("Agrades.Data.Entities.Operation", "Operation")
@@ -928,6 +1032,16 @@ namespace Agrades.Data.Migrations
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Operation");
+                });
+
+            modelBuilder.Entity("Agrades.Data.Entities.Class", b =>
+                {
+                    b.Navigation("Groups");
+                });
+
+            modelBuilder.Entity("Agrades.Data.Entities.Group", b =>
+                {
+                    b.Navigation("Students");
                 });
 
             modelBuilder.Entity("Agrades.Data.Entities.Persons.Person", b =>

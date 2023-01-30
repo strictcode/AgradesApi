@@ -93,7 +93,7 @@ public static class PersonDetailModelExtenstions
         {
             Id = source.Id,
             //StatusId = source.StatusCategoryId,
-            Sex = source.Sex,
+            Sex = (int?)source.Sex,
             DegreesPre = source.DegreesPre,
             DegreesPost = source.DegreesPost,
             FirstName = source.FirstName,

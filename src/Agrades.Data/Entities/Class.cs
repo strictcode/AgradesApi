@@ -11,6 +11,8 @@ public class Class : ITrackable
 
     public Instant StartAt { get; set; }
 
+    public ICollection<Group> Groups { get; set; } = new HashSet<Group>();
+
     public Instant CreatedAt { get; set; }
     public string CreatedBy { get; set; } = null!;
     public Instant ModifiedAt { get; set; }

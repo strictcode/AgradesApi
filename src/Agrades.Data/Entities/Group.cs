@@ -1,6 +1,6 @@
 namespace Agrades.Data.Entities;
 [Table(nameof(Group))]
-public class Group : ITrackable
+public class Group : ITrackable, IVersionable
 {
     public Guid Id { get; set; }
 
@@ -16,6 +16,11 @@ public class Group : ITrackable
     public string Name { get; set; } = null!;
 
     public string? BackofficeName { get; set; }
+
+    public ICollection<StudentGroup> Students { get; set; } = new HashSet<StudentGroup>();
+
+    public Instant ValidSince { get; set; }
+    public Instant? ValidUntil { get; set; }
 
     public Instant CreatedAt { get; set; }
     public string CreatedBy { get; set; } = null!;

@@ -35,19 +35,6 @@ namespace Agrades.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Person",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    RowCount = table.Column<int>(type: "integer", nullable: false),
-                    UserId = table.Column<Guid>(type: "uuid", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Person", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Operation",
                 columns: table => new
                 {
@@ -79,25 +66,6 @@ namespace Agrades.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Student",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    RowCount = table.Column<int>(type: "integer", nullable: false),
-                    PersonId = table.Column<Guid>(type: "uuid", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Student", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Student_Person_PersonId",
-                        column: x => x.PersonId,
-                        principalTable: "Person",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Address",
                 columns: table => new
                 {
@@ -114,6 +82,8 @@ namespace Agrades.Data.Migrations
                     ZipCode = table.Column<string>(type: "text", nullable: true),
                     Email = table.Column<string>(type: "text", nullable: true),
                     PhoneNumber = table.Column<string>(type: "text", nullable: true),
+                    ValidSince = table.Column<Instant>(type: "timestamp with time zone", nullable: false),
+                    ValidUntil = table.Column<Instant>(type: "timestamp with time zone", nullable: true),
                     CreatedAt = table.Column<Instant>(type: "timestamp with time zone", nullable: false),
                     CreatedBy = table.Column<string>(type: "text", nullable: false),
                     ModifiedAt = table.Column<Instant>(type: "timestamp with time zone", nullable: false),
@@ -189,6 +159,27 @@ namespace Agrades.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Person",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    OperationId = table.Column<Guid>(type: "uuid", nullable: false),
+                    RowCount = table.Column<int>(type: "integer", nullable: false),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: true),
+                    PersonTypeId = table.Column<int>(type: "integer", nullable: false, defaultValue: 101)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Person", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Person_Operation_OperationId",
+                        column: x => x.OperationId,
+                        principalTable: "Operation",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "StudyField",
                 columns: table => new
                 {
@@ -224,11 +215,13 @@ namespace Agrades.Data.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Name = table.Column<string>(type: "text", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: true),
                     IdentificationCode = table.Column<string>(type: "text", nullable: false),
                     IdentificationCodeTypeId = table.Column<int>(type: "integer", nullable: false),
                     SchoolType = table.Column<int>(type: "integer", nullable: false),
                     OperationId = table.Column<Guid>(type: "uuid", nullable: true),
+                    ValidSince = table.Column<Instant>(type: "timestamp with time zone", nullable: false),
+                    ValidUntil = table.Column<Instant>(type: "timestamp with time zone", nullable: true),
                     CreatedAt = table.Column<Instant>(type: "timestamp with time zone", nullable: false),
                     CreatedBy = table.Column<string>(type: "text", nullable: false),
                     ModifiedAt = table.Column<Instant>(type: "timestamp with time zone", nullable: false),
@@ -254,7 +247,6 @@ namespace Agrades.Data.Migrations
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     OperationId = table.Column<Guid>(type: "uuid", nullable: false),
                     PersonId = table.Column<Guid>(type: "uuid", nullable: false),
-                    PersonTypeId = table.Column<int>(type: "integer", nullable: false),
                     StatusId = table.Column<int>(type: "integer", nullable: false),
                     InactivityReasonId = table.Column<int>(type: "integer", nullable: true),
                     OrganizationUniqueCode = table.Column<string>(type: "text", nullable: true),
@@ -276,9 +268,9 @@ namespace Agrades.Data.Migrations
                     DataBox = table.Column<string>(type: "text", nullable: true),
                     BackofficeNote = table.Column<string>(type: "text", nullable: true),
                     BirthAddressId = table.Column<Guid>(type: "uuid", nullable: true),
-                    PermanentAddressId = table.Column<Guid>(type: "uuid", nullable: false),
-                    TemporaryAddressId = table.Column<Guid>(type: "uuid", nullable: false),
-                    ContactAddressId = table.Column<Guid>(type: "uuid", nullable: false),
+                    PermanentAddressId = table.Column<Guid>(type: "uuid", nullable: true),
+                    TemporaryAddressId = table.Column<Guid>(type: "uuid", nullable: true),
+                    ContactAddressId = table.Column<Guid>(type: "uuid", nullable: true),
                     ValidSince = table.Column<Instant>(type: "timestamp with time zone", nullable: false),
                     ValidUntil = table.Column<Instant>(type: "timestamp with time zone", nullable: true),
                     CreatedAt = table.Column<Instant>(type: "timestamp with time zone", nullable: false),
@@ -286,8 +278,7 @@ namespace Agrades.Data.Migrations
                     ModifiedAt = table.Column<Instant>(type: "timestamp with time zone", nullable: false),
                     ModifiedBy = table.Column<string>(type: "text", nullable: false),
                     DeletedAt = table.Column<Instant>(type: "timestamp with time zone", nullable: true),
-                    DeletedBy = table.Column<string>(type: "text", nullable: true),
-                    StudentId = table.Column<Guid>(type: "uuid", nullable: true)
+                    DeletedBy = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -328,10 +319,30 @@ namespace Agrades.Data.Migrations
                         principalTable: "Person",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Student",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    OperationId = table.Column<Guid>(type: "uuid", nullable: false),
+                    RowCount = table.Column<int>(type: "integer", nullable: false),
+                    PersonId = table.Column<Guid>(type: "uuid", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Student", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_PersonDetail_Student_StudentId",
-                        column: x => x.StudentId,
-                        principalTable: "Student",
+                        name: "FK_Student_Operation_OperationId",
+                        column: x => x.OperationId,
+                        principalTable: "Operation",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Student_Person_PersonId",
+                        column: x => x.PersonId,
+                        principalTable: "Person",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -346,6 +357,8 @@ namespace Agrades.Data.Migrations
                     EducationFieldId = table.Column<Guid>(type: "uuid", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: false),
                     BackofficeName = table.Column<string>(type: "text", nullable: true),
+                    ValidSince = table.Column<Instant>(type: "timestamp with time zone", nullable: false),
+                    ValidUntil = table.Column<Instant>(type: "timestamp with time zone", nullable: true),
                     CreatedAt = table.Column<Instant>(type: "timestamp with time zone", nullable: false),
                     CreatedBy = table.Column<string>(type: "text", nullable: false),
                     ModifiedAt = table.Column<Instant>(type: "timestamp with time zone", nullable: false),
@@ -385,15 +398,16 @@ namespace Agrades.Data.Migrations
                     ClassId = table.Column<Guid>(type: "uuid", nullable: true),
                     OperationId = table.Column<Guid>(type: "uuid", nullable: false),
                     StartsAt = table.Column<Instant>(type: "timestamp with time zone", nullable: false),
-                    StartReasonTypeId = table.Column<int>(type: "integer", nullable: true),
+                    StartReasonCode = table.Column<string>(type: "text", nullable: true),
                     ObligatoryAttendenceYears = table.Column<int>(type: "integer", nullable: true),
                     Financing = table.Column<int>(type: "integer", nullable: true),
                     EndsAt = table.Column<Instant>(type: "timestamp with time zone", nullable: true),
-                    EndReasonTypeId = table.Column<int>(type: "integer", nullable: true),
+                    EndReasonCode = table.Column<string>(type: "text", nullable: true),
                     StudyFieldId = table.Column<Guid>(type: "uuid", nullable: false),
                     IsOnInternat = table.Column<bool>(type: "boolean", nullable: true),
                     HasSchoolMeals = table.Column<bool>(type: "boolean", nullable: true),
                     HighestAchievedEducation = table.Column<int>(type: "integer", nullable: false),
+                    PreviousEducationCode = table.Column<string>(type: "text", nullable: true),
                     PreviousEducationOperationId = table.Column<Guid>(type: "uuid", nullable: true),
                     ValidSince = table.Column<Instant>(type: "timestamp with time zone", nullable: false),
                     ValidUntil = table.Column<Instant>(type: "timestamp with time zone", nullable: true),
@@ -435,6 +449,39 @@ namespace Agrades.Data.Migrations
                         name: "FK_StudentDetail_VirtualOperation_PreviousEducationOperationId",
                         column: x => x.PreviousEducationOperationId,
                         principalTable: "VirtualOperation",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "StudentGroup",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    GroupId = table.Column<Guid>(type: "uuid", nullable: false),
+                    StudentId = table.Column<Guid>(type: "uuid", nullable: false),
+                    ValidSince = table.Column<Instant>(type: "timestamp with time zone", nullable: false),
+                    ValidUntil = table.Column<Instant>(type: "timestamp with time zone", nullable: true),
+                    CreatedAt = table.Column<Instant>(type: "timestamp with time zone", nullable: false),
+                    CreatedBy = table.Column<string>(type: "text", nullable: false),
+                    ModifiedAt = table.Column<Instant>(type: "timestamp with time zone", nullable: false),
+                    ModifiedBy = table.Column<string>(type: "text", nullable: false),
+                    DeletedAt = table.Column<Instant>(type: "timestamp with time zone", nullable: true),
+                    DeletedBy = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_StudentGroup", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_StudentGroup_Group_GroupId",
+                        column: x => x.GroupId,
+                        principalTable: "Group",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_StudentGroup_Student_StudentId",
+                        column: x => x.StudentId,
+                        principalTable: "Student",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -481,6 +528,11 @@ namespace Agrades.Data.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_Person_OperationId",
+                table: "Person",
+                column: "OperationId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_PersonDetail_BirthAddressId",
                 table: "PersonDetail",
                 column: "BirthAddressId");
@@ -506,14 +558,14 @@ namespace Agrades.Data.Migrations
                 column: "PersonId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PersonDetail_StudentId",
-                table: "PersonDetail",
-                column: "StudentId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_PersonDetail_TemporaryAddressId",
                 table: "PersonDetail",
                 column: "TemporaryAddressId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Student_OperationId",
+                table: "Student",
+                column: "OperationId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Student_PersonId",
@@ -547,6 +599,16 @@ namespace Agrades.Data.Migrations
                 column: "StudyFieldId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_StudentGroup_GroupId",
+                table: "StudentGroup",
+                column: "GroupId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_StudentGroup_StudentId",
+                table: "StudentGroup",
+                column: "StudentId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_StudyField_OperationId",
                 table: "StudyField",
                 column: "OperationId");
@@ -564,28 +626,31 @@ namespace Agrades.Data.Migrations
                 name: "Category");
 
             migrationBuilder.DropTable(
-                name: "Group");
-
-            migrationBuilder.DropTable(
                 name: "PersonDetail");
 
             migrationBuilder.DropTable(
                 name: "StudentDetail");
 
             migrationBuilder.DropTable(
+                name: "StudentGroup");
+
+            migrationBuilder.DropTable(
                 name: "Address");
 
             migrationBuilder.DropTable(
-                name: "Class");
+                name: "VirtualOperation");
+
+            migrationBuilder.DropTable(
+                name: "Group");
 
             migrationBuilder.DropTable(
                 name: "Student");
 
             migrationBuilder.DropTable(
-                name: "StudyField");
+                name: "Class");
 
             migrationBuilder.DropTable(
-                name: "VirtualOperation");
+                name: "StudyField");
 
             migrationBuilder.DropTable(
                 name: "Person");
