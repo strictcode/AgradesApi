@@ -301,27 +301,13 @@ public class RecordController : ControllerBase
 
             output.Add(new StudentRecordDetail
             {
-                //BackofficeNote = personDetail.BackofficeNote,
-                //BirthAddress = personDetail.BirthAddressId != null ? _mapper.ToDetail(addresses.Single(x => x.Id == personDetail.BirthAddressId)) : null,
-                //DegreesPost = personDetail.DegreesPost,
-                //DegreesPre = personDetail.DegreesPre,
-                //BirthName = personDetail.BirthName,
                 BornOn = personDetail.BornOn.ToString(),
-                //Citizenship = personDetail.Citizenship,
-                //CitizenshipCode = personDetail.CitizenshipCode,
-                //ContactAddress = personDetail.ContactAddressId != null ? _mapper.ToDetail(addresses.Single(x => x.Id == personDetail.ContactAddressId)) : null,
-                //DataBox = personDetail.DataBox,
-                //FamilyStatusId = personDetail.FamilyStatusId,
                 FirstName = personDetail.FirstName,
                 Id = personDetail.Id,
                 IdentificationCode = personDetail.IdentificationCode,
-                //IdentityCardNumber = personDetail.IdentityCardNumber,
-                //InsuranceCompanyCode = personDetail.InsuranceCompanyCode,
                 LastName = personDetail.LastName,
                 PermanentAddress = personDetail.PermanentAddressId != null ? _mapper.ToDetail(addresses.Single(x => x.Id == personDetail.PermanentAddressId)) : null,
-                //PersonTypeId = (int)PersonType.Student,
                 Sex = (int?)personDetail.Sex,
-                //TemporaryAddress = personDetail.TemporaryAddressId != null ? _mapper.ToDetail(addresses.Single(x => x.Id == personDetail.TemporaryAddressId)) : null,
                 YearDotClass = $"{(now > thisYearsFirstSeptember ? currentYear - studentDetail.Class!.StartAt.ToDateTimeUtc().Year + 2 : currentYear - studentDetail.Class!.StartAt.ToDateTimeUtc().Year + 1)}.{studentDetail.Class!.Name}",
             });
         }
