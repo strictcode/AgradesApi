@@ -308,7 +308,7 @@ public class RecordController : ControllerBase
                 LastName = personDetail.LastName,
                 PermanentAddress = personDetail.PermanentAddressId != null ? _mapper.ToDetail(addresses.Single(x => x.Id == personDetail.PermanentAddressId)) : null,
                 Sex = (int?)personDetail.Sex,
-                YearDotClass = $"{(now > thisYearsFirstSeptember ? currentYear - studentDetail.Class!.StartAt.ToDateTimeUtc().Year + 2 : currentYear - studentDetail.Class!.StartAt.ToDateTimeUtc().Year + 1)}.{studentDetail.Class!.Name}",
+                YearDotClass = $"{(now > thisYearsFirstSeptember ? currentYear - studentDetail.Class!.StartAt.ToDateTimeUtc().Year + 1 : currentYear - studentDetail.Class!.StartAt.ToDateTimeUtc().Year)}.{studentDetail.Class!.Name}",
             });
         }
 
