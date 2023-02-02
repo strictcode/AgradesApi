@@ -50,8 +50,11 @@ public class RecordController : ControllerBase
         var currentOp = await _currentOperationService.GetCurrentOperationAsync(opUrlName);
         var now = _clock.GetCurrentInstant();
         var lines = model.Data.ToList(); //data.Split(Environment.NewLine);
-        var classes = _dbContext.Classes.Include(x => x.Groups);
+        var classes = _dbContext.Classes
+            .Include(x => x.Groups)
+            .Include(x => x.ClassDetails);
 
+        var classDetails = _dbContext.ClassDetails;
         // skip table header
         for (int i = 1; i < lines.Count; i++)
         {
@@ -173,8 +176,11 @@ public class RecordController : ControllerBase
             _dbContext.Add(studentDetail);
 
             var c = values[27].Split('.')[1];
-            var currentClass = classes.Single(x => x.Name.ToLower() == c.ToLower());
 
+            var currentClass = classes
+                .Single(x => x.ClassDetails
+                    .Where(y => y.Name.ToLower() == c.ToLower())
+                    .Single(z => z.ValidUntil == null) != null);//lada se rozzmyslí
             studentDetail.ClassId = currentClass.Id;
             currentClass.Groups.First().Students.Add(new StudentGroup
             {
@@ -285,6 +291,7 @@ public class RecordController : ControllerBase
         var studentDetails = _dbContext
             .StudentDetails
             .Include(x => x.Class)
+            .ThenInclude(x => x.ClassDetails)
             .Where(x => studentIds.Contains(x.StudentId) && x.ValidUntil == null)
             .ToList();
 
@@ -308,7 +315,7 @@ public class RecordController : ControllerBase
                 LastName = personDetail.LastName,
                 PermanentAddress = personDetail.PermanentAddressId != null ? _mapper.ToDetail(addresses.Single(x => x.Id == personDetail.PermanentAddressId)) : null,
                 Sex = (int?)personDetail.Sex,
-                YearDotClass = $"{(now > thisYearsFirstSeptember ? currentYear - studentDetail.Class!.StartAt.ToDateTimeUtc().Year + 1 : currentYear - studentDetail.Class!.StartAt.ToDateTimeUtc().Year)}.{studentDetail.Class!.Name}",
+                YearDotClass = $"{(now > thisYearsFirstSeptember ? currentYear - studentDetail.Class!.ClassDetails.Single(x => x.ValidUntil == null).StartAt.ToDateTimeUtc().Year + 1 : currentYear - studentDetail.Class!.ClassDetails.Single(x => x.ValidUntil == null).StartAt.ToDateTimeUtc().Year)}.{studentDetail.Class!.ClassDetails.Single(x => x.ValidUntil == null).Name}",
             });
         }
 
