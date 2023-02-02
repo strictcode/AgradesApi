@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 using NodaTime;
 
@@ -65,7 +65,7 @@ namespace Agrades.Data.Migrations
                 defaultValue: 0);
 
 
-            migrationBuilder.Sql("INSERT INTO \"ClassDetail\" (\"Id\",\"ClassId\",\"Name\",\"OperationId\",\"StartAt\",\"ValidSince\",\"CreatedAt\",\"CreatedBy\",\"ModifiedAt\",\"ModifiedBy\")\r\nSELECT uuid_generate_v4 (),\"Id\",\"Name\",\"OperationId\",\"StartAt\",\"ValidSince\",\"CreatedAt\",\"CreatedBy\",\"ModifiedAt\",\"ModifiedBy\"\r\nFROM \"Class\"");
+            migrationBuilder.Sql("INSERT INTO \"ClassDetail\" (\"Id\",\"ClassId\",\"Name\",\"OperationId\",\"StartAt\",\"ValidSince\",\"CreatedAt\",\"CreatedBy\",\"ModifiedAt\",\"ModifiedBy\")\r\nSELECT uuid_generate_v4 (),\"Id\",\"Name\",\"OperationId\",\"StartAt\",'2022-09-01T00:00:00Z',\"CreatedAt\",\"CreatedBy\",\"ModifiedAt\",\"ModifiedBy\"\r\nFROM \"Class\"");
             
             
             
