@@ -1,10 +1,11 @@
 namespace Agrades.Data.Seeds;
+
 public static class ITGSeed
 {
     public static async Task SeedAsync(
         IClock clock,
         AppDbContext dbContext
-        )
+    )
     {
         var now = clock.GetCurrentInstant();
 
@@ -41,9 +42,16 @@ public static class ITGSeed
             var icko = new Class
             {
                 Id = DatabaseConstants.ITG.Icko,
+                RowCount = 1,
+            };
+
+            var ickoDetail = new ClassDetail
+            {
+                ClassId = icko.Id,
                 Name = "I",
                 StartAt = Instant.FromUtc(2020, 9, 1, 0, 0),
                 OperationId = operation.Id,
+                ValidSince = now,
             }.SetCreateBySystem(now);
 
             var g1 = new Group
@@ -58,9 +66,16 @@ public static class ITGSeed
             var tecko = new Class
             {
                 Id = DatabaseConstants.ITG.Tecko,
+                RowCount = 1,
+            };
+
+            var teckoDetail = new ClassDetail
+            {
+                ClassId = tecko.Id,
                 Name = "T",
                 StartAt = Instant.FromUtc(2020, 9, 1, 0, 0),
                 OperationId = operation.Id,
+                ValidSince = now,
             }.SetCreateBySystem(now);
 
             var g2 = new Group
@@ -75,9 +90,16 @@ public static class ITGSeed
             var alfa = new Class
             {
                 Id = DatabaseConstants.ITG.Alfa,
+                RowCount = 1,
+            };
+
+            var alfaDetail = new ClassDetail
+            {
+                ClassId = alfa.Id,
                 Name = "α",
                 StartAt = Instant.FromUtc(2021, 9, 1, 0, 0),
                 OperationId = operation.Id,
+                ValidSince = now,
             }.SetCreateBySystem(now);
 
             var g3 = new Group
@@ -92,9 +114,17 @@ public static class ITGSeed
             var omega = new Class
             {
                 Id = DatabaseConstants.ITG.Omega,
+                RowCount = 1,
+
+            };
+
+            var omegaDetail = new ClassDetail
+            {
+                ClassId = omega.Id,
                 Name = "ω",
                 StartAt = Instant.FromUtc(2021, 9, 1, 0, 0),
                 OperationId = operation.Id,
+                ValidSince = now,
             }.SetCreateBySystem(now);
 
             var g4 = new Group
@@ -109,9 +139,17 @@ public static class ITGSeed
             var alt = new Class
             {
                 Id = DatabaseConstants.ITG.Alt,
+                RowCount = 1,
+
+            };
+
+            var altDetail = new ClassDetail
+            {
+                ClassId = alt.Id,
                 Name = "Alt",
                 StartAt = Instant.FromUtc(2022, 9, 1, 0, 0),
                 OperationId = operation.Id,
+                ValidSince = now,
             }.SetCreateBySystem(now);
 
             var g5 = new Group
@@ -126,9 +164,17 @@ public static class ITGSeed
             var f4 = new Class
             {
                 Id = DatabaseConstants.ITG.F4,
+                RowCount = 1,
+
+            };
+
+            var f4Detail = new ClassDetail
+            {
+                ClassId = alt.Id,
                 Name = "F4",
                 StartAt = Instant.FromUtc(2022, 9, 1, 0, 0),
                 OperationId = operation.Id,
+                ValidSince = now,
             }.SetCreateBySystem(now);
 
             var g6 = new Group
@@ -139,7 +185,7 @@ public static class ITGSeed
                 EducationField = fieldOfStudy,
                 OperationId = operation.Id,
             }.SetCreateBySystem(now);
-            
+
             dbContext.Add(organization);
             dbContext.Add(operation);
             dbContext.Add(fieldOfStudy);
@@ -147,15 +193,19 @@ public static class ITGSeed
             dbContext.Add(tecko);
             dbContext.Add(alfa);
             dbContext.Add(omega);
-            dbContext.Add(alt);
-            dbContext.Add(f4);
+            dbContext.Add(ickoDetail);
+            dbContext.Add(teckoDetail);
+            dbContext.Add(alfaDetail);
+            dbContext.Add(omegaDetail);
+            dbContext.Add(altDetail);
+            dbContext.Add(f4Detail);
             dbContext.Add(g1);
             dbContext.Add(g2);
             dbContext.Add(g3);
             dbContext.Add(g4);
             dbContext.Add(g5);
             dbContext.Add(g6);
-            
+
             await dbContext.SaveChangesAsync();
         }
     }
