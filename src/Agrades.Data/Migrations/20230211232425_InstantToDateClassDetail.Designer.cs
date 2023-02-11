@@ -3,6 +3,7 @@ using System;
 using Agrades.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NodaTime;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
@@ -12,9 +13,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Agrades.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230211232425_InstantToDateClassDetail")]
+    partial class InstantToDateClassDetail
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -435,8 +438,8 @@ namespace Agrades.Data.Migrations
                     b.Property<string>("BirthName")
                         .HasColumnType("text");
 
-                    b.Property<LocalDate?>("BornOn")
-                        .HasColumnType("date");
+                    b.Property<Instant?>("BornOn")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Citizenship")
                         .HasColumnType("text");
@@ -600,8 +603,8 @@ namespace Agrades.Data.Migrations
                     b.Property<string>("EndReasonCode")
                         .HasColumnType("text");
 
-                    b.Property<LocalDate?>("EndsAt")
-                        .HasColumnType("date");
+                    b.Property<Instant?>("EndsAt")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<int?>("Financing")
                         .HasColumnType("integer");
@@ -637,8 +640,8 @@ namespace Agrades.Data.Migrations
                     b.Property<string>("StartReasonCode")
                         .HasColumnType("text");
 
-                    b.Property<LocalDate>("StartsAt")
-                        .HasColumnType("date");
+                    b.Property<Instant>("StartsAt")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid>("StudentId")
                         .HasColumnType("uuid");

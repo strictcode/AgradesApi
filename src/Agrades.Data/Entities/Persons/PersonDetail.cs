@@ -31,7 +31,7 @@ public class PersonDetail : ITrackable, IVersionable
 
     public string? BirthName { get; set; }
 
-    public Instant? BornOn { get; set; }
+    public LocalDate? BornOn { get; set; }
 
     public int? FamilyStatusId { get; set; }
 

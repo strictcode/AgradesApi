@@ -13,7 +13,7 @@ public class StudentDetail : ITrackable, IVersionable
     public Guid OperationId { get; set; }
     public Operation Operation { get; set; } = null!;
 
-    public Instant StartsAt { get; set; }
+    public LocalDate StartsAt { get; set; }
 
     public string? StartReasonCode { get; set; }
 
@@ -21,7 +21,7 @@ public class StudentDetail : ITrackable, IVersionable
 
     public int? Financing { get; set; }
 
-    public Instant? EndsAt { get; set; }
+    public LocalDate? EndsAt { get; set; }
 
     public string? EndReasonCode { get; set; }
 

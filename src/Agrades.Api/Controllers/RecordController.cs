@@ -80,7 +80,7 @@ public class RecordController : ControllerBase
                 IdentificationCode = values[8],
                 IdentificationCodeTypeId = UniqueCodeType.BirthNumber,
                 Sex = values[9] == "Muž" ? Sex.Male : Sex.Female,
-                BornOn = Instant.FromDateTimeUtc(birthDate),
+                BornOn = LocalDate.FromDateTime(birthDate),
                 CitizenshipCode = values[11],
                 Citizenship = values[12],
                 ValidSince = startsAt,
@@ -140,7 +140,7 @@ public class RecordController : ControllerBase
             {
                 OperationId = currentOp.Id,
                 //Id = Guid.Parse(values[3].ToLower()),
-                StartsAt = startsAt,
+                StartsAt = LocalDate.FromDateTime(startsAt.ToDateTimeUtc()),
                 ObligatoryAttendenceYears = 9,
                 Financing = 1,
                 PreviousEducationCode = values[15],
@@ -315,7 +315,7 @@ public class RecordController : ControllerBase
                 LastName = personDetail.LastName,
                 PermanentAddress = personDetail.PermanentAddressId != null ? _mapper.ToDetail(addresses.Single(x => x.Id == personDetail.PermanentAddressId)) : null,
                 Sex = (int?)personDetail.Sex,
-                YearDotClass = $"{(now > thisYearsFirstSeptember ? currentYear - studentDetail.Class!.ClassDetails.Single(x => x.ValidUntil == null).StartAt.ToDateTimeUtc().Year + 1 : currentYear - studentDetail.Class!.ClassDetails.Single(x => x.ValidUntil == null).StartAt.ToDateTimeUtc().Year)}.{studentDetail.Class!.ClassDetails.Single(x => x.ValidUntil == null).Name}",
+                YearDotClass = $"{(now > thisYearsFirstSeptember ? currentYear - studentDetail.Class!.ClassDetails.Single(x => x.ValidUntil == null).StartAt.Year + 1 : currentYear - studentDetail.Class!.ClassDetails.Single(x => x.ValidUntil == null).StartAt.Year)}.{studentDetail.Class!.ClassDetails.Single(x => x.ValidUntil == null).Name}",
             });
         }
 

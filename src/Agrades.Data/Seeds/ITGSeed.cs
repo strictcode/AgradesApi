@@ -49,7 +49,7 @@ public static class ITGSeed
             {
                 ClassId = icko.Id,
                 Name = "I",
-                StartAt = Instant.FromUtc(2020, 9, 1, 0, 0),
+                StartAt = LocalDate.FromDateTime(new DateTime(2020, 9, 1)),
                 OperationId = operation.Id,
                 ValidSince = now,
             }.SetCreateBySystem(now);
@@ -73,7 +73,7 @@ public static class ITGSeed
             {
                 ClassId = tecko.Id,
                 Name = "T",
-                StartAt = Instant.FromUtc(2020, 9, 1, 0, 0),
+                StartAt = LocalDate.FromDateTime(new DateTime(2020, 9, 1)),
                 OperationId = operation.Id,
                 ValidSince = now,
             }.SetCreateBySystem(now);
@@ -97,7 +97,7 @@ public static class ITGSeed
             {
                 ClassId = alfa.Id,
                 Name = "α",
-                StartAt = Instant.FromUtc(2021, 9, 1, 0, 0),
+                StartAt = LocalDate.FromDateTime(new DateTime(2021, 9, 1)),
                 OperationId = operation.Id,
                 ValidSince = now,
             }.SetCreateBySystem(now);
@@ -122,7 +122,7 @@ public static class ITGSeed
             {
                 ClassId = omega.Id,
                 Name = "ω",
-                StartAt = Instant.FromUtc(2021, 9, 1, 0, 0),
+                StartAt = LocalDate.FromDateTime(new DateTime(2021, 9, 1)),
                 OperationId = operation.Id,
                 ValidSince = now,
             }.SetCreateBySystem(now);
@@ -147,7 +147,7 @@ public static class ITGSeed
             {
                 ClassId = alt.Id,
                 Name = "Alt",
-                StartAt = Instant.FromUtc(2022, 9, 1, 0, 0),
+                StartAt = LocalDate.FromDateTime(new DateTime(2022, 9, 1)),
                 OperationId = operation.Id,
                 ValidSince = now,
             }.SetCreateBySystem(now);
@@ -172,7 +172,7 @@ public static class ITGSeed
             {
                 ClassId = alt.Id,
                 Name = "F4",
-                StartAt = Instant.FromUtc(2022, 9, 1, 0, 0),
+                StartAt = LocalDate.FromDateTime(new DateTime(2022, 9, 1)),
                 OperationId = operation.Id,
                 ValidSince = now,
             }.SetCreateBySystem(now);
