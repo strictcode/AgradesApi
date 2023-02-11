@@ -145,7 +145,7 @@ public static class ITGSeed
 
             var altDetail = new ClassDetail
             {
-                ClassId = alt.Id,
+                ClassId = DatabaseConstants.ITG.Alt,
                 Name = "Alt",
                 StartAt = LocalDate.FromDateTime(new DateTime(2022, 9, 1)),
                 OperationId = operation.Id,
@@ -170,7 +170,7 @@ public static class ITGSeed
 
             var f4Detail = new ClassDetail
             {
-                ClassId = alt.Id,
+                ClassId = DatabaseConstants.ITG.F4,
                 Name = "F4",
                 StartAt = LocalDate.FromDateTime(new DateTime(2022, 9, 1)),
                 OperationId = operation.Id,
