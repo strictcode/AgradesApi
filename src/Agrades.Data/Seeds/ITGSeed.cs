@@ -47,7 +47,7 @@ public static class ITGSeed
 
             var ickoDetail = new ClassDetail
             {
-                ClassId = icko.Id,
+                ClassId = DatabaseConstants.ITG.Icko,
                 Name = "I",
                 StartAt = LocalDate.FromDateTime(new DateTime(2020, 9, 1)),
                 OperationId = operation.Id,
@@ -71,7 +71,7 @@ public static class ITGSeed
 
             var teckoDetail = new ClassDetail
             {
-                ClassId = tecko.Id,
+                ClassId = DatabaseConstants.ITG.Tecko,
                 Name = "T",
                 StartAt = LocalDate.FromDateTime(new DateTime(2020, 9, 1)),
                 OperationId = operation.Id,
@@ -95,7 +95,7 @@ public static class ITGSeed
 
             var alfaDetail = new ClassDetail
             {
-                ClassId = alfa.Id,
+                ClassId = DatabaseConstants.ITG.Alfa,
                 Name = "α",
                 StartAt = LocalDate.FromDateTime(new DateTime(2021, 9, 1)),
                 OperationId = operation.Id,
@@ -115,12 +115,11 @@ public static class ITGSeed
             {
                 Id = DatabaseConstants.ITG.Omega,
                 RowCount = 1,
-
             };
 
             var omegaDetail = new ClassDetail
             {
-                ClassId = omega.Id,
+                ClassId = DatabaseConstants.ITG.Omega,
                 Name = "ω",
                 StartAt = LocalDate.FromDateTime(new DateTime(2021, 9, 1)),
                 OperationId = operation.Id,
@@ -140,7 +139,6 @@ public static class ITGSeed
             {
                 Id = DatabaseConstants.ITG.Alt,
                 RowCount = 1,
-
             };
 
             var altDetail = new ClassDetail
@@ -165,7 +163,6 @@ public static class ITGSeed
             {
                 Id = DatabaseConstants.ITG.F4,
                 RowCount = 1,
-
             };
 
             var f4Detail = new ClassDetail
