@@ -49,21 +49,17 @@ public class RecordController : ControllerBase
     {
         var currentOp = await _currentOperationService.GetCurrentOperationAsync(opUrlName);
         var now = _clock.GetCurrentInstant();
-        var lines = model.Data.ToList(); //data.Split(Environment.NewLine);
+        var lines = model.Data.ToList();
         var classes = _dbContext.Classes
             .Include(x => x.Groups)
             .Include(x => x.ClassDetails);
 
         var classDetails = _dbContext.ClassDetails;
+
         // skip table header
         for (int i = 1; i < lines.Count; i++)
         {
-            // KOMPLET vytvářet Studenta a Usera tady. Předělat migraci OperationId do horních entit. Resetovat migrace na init
-            // ověřit volání Local
             var values = lines[i].Split(';');
-
-            //var personId = Guid.Parse(values[0].ToLower());
-            //var studId = Guid.Parse(values[1].ToLower());
 
             var birthDate = new DateTime(int.Parse(values[10].Split('.')[2]), int.Parse(values[10].Split('.')[1]), int.Parse(values[10].Split('.')[0]), 0,0,0, DateTimeKind.Utc);
 
@@ -71,7 +67,6 @@ public class RecordController : ControllerBase
 
             var personDetail = new PersonDetail
             {
-                //Id = Guid.Parse(values[2].ToLower()),
                 OperationId = currentOp!.Id,
                 OrganizationUniqueCode = values[0],
                 LastName = values[1],
@@ -80,7 +75,7 @@ public class RecordController : ControllerBase
                 IdentificationCode = values[8],
                 IdentificationCodeTypeId = UniqueCodeType.BirthNumber,
                 Sex = values[9] == "Muž" ? Sex.Male : Sex.Female,
-                BornOn = Instant.FromDateTimeUtc(birthDate),
+                BornOn = LocalDate.FromDateTime(birthDate),
                 CitizenshipCode = values[11],
                 Citizenship = values[12],
                 ValidSince = startsAt,
@@ -121,6 +116,8 @@ public class RecordController : ControllerBase
 
             personDetail.PermanentAddress = permAddress;
 
+            // read from current context memory, without local code would just read from database
+            // and I can have desired virtual operation in memory ready to be saved
             var prevOp = _dbContext.VirtualOperations.Local.SingleOrDefault(x => x.IdentificationCode == values[16]);
 
             if (prevOp == null)
@@ -139,8 +136,7 @@ public class RecordController : ControllerBase
             var studentDetail = new StudentDetail
             {
                 OperationId = currentOp.Id,
-                //Id = Guid.Parse(values[3].ToLower()),
-                StartsAt = startsAt,
+                StartsAt = LocalDate.FromDateTime(startsAt.ToDateTimeUtc()),
                 ObligatoryAttendenceYears = 9,
                 Financing = 1,
                 PreviousEducationCode = values[15],
@@ -177,18 +173,20 @@ public class RecordController : ControllerBase
 
             var c = values[27].Split('.')[1];
 
-            var currentClass = classes
-                .Single(x => x.ClassDetails
-                    .Where(y => y.Name.ToLower() == c.ToLower())
-                    .Single(z => z.ValidUntil == null) != null);//lada se rozzmyslí
+            // consider create and use NormalizedName
+            var currentClassId = classDetails.Single(x => x.Name.ToLower() == c.ToLower()).ClassId;
+            var currentClass = classes.Single(x => x.Id == currentClassId);
+
             studentDetail.ClassId = currentClass.Id;
+
             currentClass.Groups.First().Students.Add(new StudentGroup
             {
                 StudentId = student.Id,
                 ValidSince = now,
             }.SetCreateBySystem(now));
-
+#if DEBUG
             Print(values);
+#endif
         }
 
         await _dbContext.SaveChangesAsync();
@@ -315,7 +313,7 @@ public class RecordController : ControllerBase
                 LastName = personDetail.LastName,
                 PermanentAddress = personDetail.PermanentAddressId != null ? _mapper.ToDetail(addresses.Single(x => x.Id == personDetail.PermanentAddressId)) : null,
                 Sex = (int?)personDetail.Sex,
-                YearDotClass = $"{(now > thisYearsFirstSeptember ? currentYear - studentDetail.Class!.ClassDetails.Single(x => x.ValidUntil == null).StartAt.ToDateTimeUtc().Year + 1 : currentYear - studentDetail.Class!.ClassDetails.Single(x => x.ValidUntil == null).StartAt.ToDateTimeUtc().Year)}.{studentDetail.Class!.ClassDetails.Single(x => x.ValidUntil == null).Name}",
+                YearDotClass = $"{(now > thisYearsFirstSeptember ? currentYear - studentDetail.Class!.ClassDetails.Single(x => x.ValidUntil == null).StartAt.Year + 1 : currentYear - studentDetail.Class!.ClassDetails.Single(x => x.ValidUntil == null).StartAt.Year)}.{studentDetail.Class!.ClassDetails.Single(x => x.ValidUntil == null).Name}",
             });
         }
 

@@ -47,9 +47,9 @@ public static class ITGSeed
 
             var ickoDetail = new ClassDetail
             {
-                ClassId = icko.Id,
+                ClassId = DatabaseConstants.ITG.Icko,
                 Name = "I",
-                StartAt = Instant.FromUtc(2020, 9, 1, 0, 0),
+                StartAt = LocalDate.FromDateTime(new DateTime(2020, 9, 1)),
                 OperationId = operation.Id,
                 ValidSince = now,
             }.SetCreateBySystem(now);
@@ -71,9 +71,9 @@ public static class ITGSeed
 
             var teckoDetail = new ClassDetail
             {
-                ClassId = tecko.Id,
+                ClassId = DatabaseConstants.ITG.Tecko,
                 Name = "T",
-                StartAt = Instant.FromUtc(2020, 9, 1, 0, 0),
+                StartAt = LocalDate.FromDateTime(new DateTime(2020, 9, 1)),
                 OperationId = operation.Id,
                 ValidSince = now,
             }.SetCreateBySystem(now);
@@ -95,9 +95,9 @@ public static class ITGSeed
 
             var alfaDetail = new ClassDetail
             {
-                ClassId = alfa.Id,
+                ClassId = DatabaseConstants.ITG.Alfa,
                 Name = "α",
-                StartAt = Instant.FromUtc(2021, 9, 1, 0, 0),
+                StartAt = LocalDate.FromDateTime(new DateTime(2021, 9, 1)),
                 OperationId = operation.Id,
                 ValidSince = now,
             }.SetCreateBySystem(now);
@@ -115,14 +115,13 @@ public static class ITGSeed
             {
                 Id = DatabaseConstants.ITG.Omega,
                 RowCount = 1,
-
             };
 
             var omegaDetail = new ClassDetail
             {
-                ClassId = omega.Id,
+                ClassId = DatabaseConstants.ITG.Omega,
                 Name = "ω",
-                StartAt = Instant.FromUtc(2021, 9, 1, 0, 0),
+                StartAt = LocalDate.FromDateTime(new DateTime(2021, 9, 1)),
                 OperationId = operation.Id,
                 ValidSince = now,
             }.SetCreateBySystem(now);
@@ -140,14 +139,13 @@ public static class ITGSeed
             {
                 Id = DatabaseConstants.ITG.Alt,
                 RowCount = 1,
-
             };
 
             var altDetail = new ClassDetail
             {
-                ClassId = alt.Id,
+                ClassId = DatabaseConstants.ITG.Alt,
                 Name = "Alt",
-                StartAt = Instant.FromUtc(2022, 9, 1, 0, 0),
+                StartAt = LocalDate.FromDateTime(new DateTime(2022, 9, 1)),
                 OperationId = operation.Id,
                 ValidSince = now,
             }.SetCreateBySystem(now);
@@ -165,14 +163,13 @@ public static class ITGSeed
             {
                 Id = DatabaseConstants.ITG.F4,
                 RowCount = 1,
-
             };
 
             var f4Detail = new ClassDetail
             {
-                ClassId = alt.Id,
+                ClassId = DatabaseConstants.ITG.F4,
                 Name = "F4",
-                StartAt = Instant.FromUtc(2022, 9, 1, 0, 0),
+                StartAt = LocalDate.FromDateTime(new DateTime(2022, 9, 1)),
                 OperationId = operation.Id,
                 ValidSince = now,
             }.SetCreateBySystem(now);

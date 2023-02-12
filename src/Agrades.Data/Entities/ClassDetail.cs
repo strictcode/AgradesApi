@@ -1,4 +1,4 @@
-﻿namespace Agrades.Data.Entities;
+namespace Agrades.Data.Entities;
 
 [Table(nameof(ClassDetail))]
 public class ClassDetail : ITrackable
@@ -15,7 +15,7 @@ public class ClassDetail : ITrackable
 
     public Operation Operation { get; set; } = null!;
 
-    public Instant StartAt { get; set; }
+    public LocalDate StartAt { get; set; }
 
     public Instant ValidSince { get; set; }
 
