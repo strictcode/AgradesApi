@@ -49,7 +49,7 @@ public class RecordController : ControllerBase
     {
         var currentOp = await _currentOperationService.GetCurrentOperationAsync(opUrlName);
         var now = _clock.GetCurrentInstant();
-        var lines = model.Data.ToList(); //data.Split(Environment.NewLine);
+        var lines = model.Data.ToList();
         var classes = _dbContext.Classes
             .Include(x => x.Groups)
             .Include(x => x.ClassDetails);
@@ -59,12 +59,7 @@ public class RecordController : ControllerBase
         // skip table header
         for (int i = 1; i < lines.Count; i++)
         {
-            // KOMPLET vytvářet Studenta a Usera tady. Předělat migraci OperationId do horních entit. Resetovat migrace na init
-            // ověřit volání Local
             var values = lines[i].Split(';');
-
-            //var personId = Guid.Parse(values[0].ToLower());
-            //var studId = Guid.Parse(values[1].ToLower());
 
             var birthDate = new DateTime(int.Parse(values[10].Split('.')[2]), int.Parse(values[10].Split('.')[1]), int.Parse(values[10].Split('.')[0]), 0,0,0, DateTimeKind.Utc);
 
@@ -72,7 +67,6 @@ public class RecordController : ControllerBase
 
             var personDetail = new PersonDetail
             {
-                //Id = Guid.Parse(values[2].ToLower()),
                 OperationId = currentOp!.Id,
                 OrganizationUniqueCode = values[0],
                 LastName = values[1],
@@ -122,6 +116,8 @@ public class RecordController : ControllerBase
 
             personDetail.PermanentAddress = permAddress;
 
+            // read from current context memory, without local code would just read from database
+            // and I can have desired virtual operation in memory ready to be saved
             var prevOp = _dbContext.VirtualOperations.Local.SingleOrDefault(x => x.IdentificationCode == values[16]);
 
             if (prevOp == null)
@@ -140,7 +136,6 @@ public class RecordController : ControllerBase
             var studentDetail = new StudentDetail
             {
                 OperationId = currentOp.Id,
-                //Id = Guid.Parse(values[3].ToLower()),
                 StartsAt = LocalDate.FromDateTime(startsAt.ToDateTimeUtc()),
                 ObligatoryAttendenceYears = 9,
                 Financing = 1,
@@ -189,8 +184,9 @@ public class RecordController : ControllerBase
                 StudentId = student.Id,
                 ValidSince = now,
             }.SetCreateBySystem(now));
-
+#if DEBUG
             Print(values);
+#endif
         }
 
         await _dbContext.SaveChangesAsync();
