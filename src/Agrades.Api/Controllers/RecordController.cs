@@ -55,6 +55,7 @@ public class RecordController : ControllerBase
             .Include(x => x.ClassDetails);
 
         var classDetails = _dbContext.ClassDetails;
+
         // skip table header
         for (int i = 1; i < lines.Count; i++)
         {
@@ -177,11 +178,12 @@ public class RecordController : ControllerBase
 
             var c = values[27].Split('.')[1];
 
-            var currentClass = classes
-                .Single(x => x.ClassDetails
-                    .Where(y => y.Name.ToLower() == c.ToLower())
-                    .Single(z => z.ValidUntil == null) != null);//lada se rozzmyslí
+            // consider create and use NormalizedName
+            var currentClassId = classDetails.Single(x => x.Name.ToLower() == c.ToLower()).ClassId;
+            var currentClass = classes.Single(x => x.Id == currentClassId);
+
             studentDetail.ClassId = currentClass.Id;
+
             currentClass.Groups.First().Students.Add(new StudentGroup
             {
                 StudentId = student.Id,
