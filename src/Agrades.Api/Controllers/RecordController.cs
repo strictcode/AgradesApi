@@ -108,7 +108,7 @@ public class RecordController : ControllerBase
                 StateDistrict = values[14],
                 ZipCode = zipCity[0] + " " + zipCity[1],
                 City = values[13],
-                State = values[12],
+                State = values[12], // this is not current address state
                 ValidSince = startsAt,
             }.SetCreateBySystem(now);
 
@@ -244,6 +244,16 @@ public class RecordController : ControllerBase
         return Ok(_mapper.ToDetail(personDetail));
     }
 
+    /// <summary>
+    /// PersonTypes (currently just Student, workin on Teacher)
+    ///     Student = 101,
+    ///     Teacher = 201,
+    ///     OtherEmployee = 202,
+    ///     LegalGuardian = 301,
+    /// </summary>
+    /// <param name="opUrlName"></param>
+    /// <param name="personType"></param>
+    /// <returns></returns>
     [HttpGet("/api/v1/{opUrlName}/Record")]
     public async Task<ActionResult> GetList(
         [FromRoute] string opUrlName,
