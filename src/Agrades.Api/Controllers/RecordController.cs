@@ -37,7 +37,103 @@ public class RecordController : ControllerBase
         _clock = clock;
     }
 
-    [HttpPost("/api/v1/{opUrlName}/ImportStudents")]
+    [HttpPost("api/v1/{opUrlName}/Record/{personId}/CreateNewVersion")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult> CreateNewVersion(
+        [FromRoute] string opUrlName,
+        [FromRoute] Guid personId,
+        [FromQuery] bool? newPermanentAddress
+        )
+    {
+        var currentOp = await _currentOperationService.GetCurrentOperationAsync(opUrlName);
+        var now = _clock.GetCurrentInstant();
+
+        var person = await _dbContext.Persons.SingleOrDefaultAsync(x => x.Id == personId);
+
+        if (person == null)
+        {
+            return NotFound("PersonId not found");
+        }
+
+        // We want to break as soon as possible if there is more then one "active" details
+        var personDetail = await _dbContext.PersonDetails
+            .SingleAsync(x => x.PersonId == person.Id && x.ValidUntil != null);
+
+        personDetail.ValidUntil = now;
+        personDetail.SetModifyBySystem(now);
+
+        // I don't want to think about overlaping yet
+        now = _clock.GetCurrentInstant();
+
+        // This shouldn't be this hard. Memberwise cloning or something
+        var newPersonDetail = new PersonDetail
+        {
+            BackofficeNote = personDetail.BackofficeNote,
+            BirthAddress = personDetail.BirthAddress,
+            BirthAddressId = personDetail.BirthAddressId,
+            BirthName = personDetail.BirthName,
+            BornOn = personDetail.BornOn,
+            Citizenship = personDetail.Citizenship,
+            CitizenshipCode = personDetail.CitizenshipCode,
+            // addresses has wrong relationship in navicat ERD
+            // or is this wrong? Should I create new address? 
+            ContactAddressId = personDetail.ContactAddressId,
+            DataBox = personDetail.DataBox,
+            DegreesPost = personDetail.DegreesPost,
+            DegreesPre = personDetail.DegreesPre,
+            FamilyStatusId = personDetail.FamilyStatusId,
+            IdentificationCode = personDetail.IdentificationCode,
+            FirstName = personDetail.FirstName,
+            IdentificationCodeTypeId = personDetail.IdentificationCodeTypeId,
+            IdentityCardNumber = personDetail.IdentityCardNumber,
+            IdentityCardNumberTypeId = personDetail.IdentityCardNumberTypeId,
+            InactivityReasonId = personDetail.InactivityReasonId,
+            InsuranceCompanyCode = personDetail.InsuranceCompanyCode,
+            OperationId = personDetail.OperationId,
+            OrganizationUniqueCode = personDetail.OrganizationUniqueCode,
+            PermanentAddressId = personDetail.PermanentAddressId,
+            LastName = personDetail.LastName,
+            PersonId = personId,
+            Sex = personDetail.Sex,
+            StatusId = personDetail.StatusId,
+            TemporaryAddressId = personDetail.TemporaryAddressId,
+            ValidSince = now,
+        }.SetCreateBySystem(now);
+
+        if (newPermanentAddress != null && newPermanentAddress.Value)
+        {
+            var oldAddress = await _dbContext.Addresses.SingleAsync(x => x.Id == personDetail.PermanentAddressId);
+            oldAddress.ValidUntil = now;
+            now = _clock.GetCurrentInstant();
+            personDetail.PermanentAddress = new Address
+            {
+                OperationId = oldAddress.OperationId,
+                City = oldAddress.City,
+                CityDistrict = oldAddress.CityDistrict,
+                DescNumber = oldAddress.DescNumber,
+                OriNumber = oldAddress.OriNumber,
+                Email = oldAddress.Email,
+                Region= oldAddress.Region,
+                PhoneNumber = oldAddress.PhoneNumber,
+                State = oldAddress.State,
+                StateDistrict = oldAddress.StateDistrict,
+                Street = oldAddress.Street,
+                ZipCode = oldAddress.ZipCode,
+                ValidSince = now
+            }.SetCreateBySystem(now);
+        }
+
+        person.PersonDetails.Add(newPersonDetail);
+        person.RowCount++;
+
+        await _dbContext.SaveChangesAsync();
+
+        return Ok();
+    }
+
+    [HttpPost("/api/v1/{opUrlName}/Record/ImportStudents")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -108,7 +204,7 @@ public class RecordController : ControllerBase
                 StateDistrict = values[14],
                 ZipCode = zipCity[0] + " " + zipCity[1],
                 City = values[13],
-                State = values[12], // this is not current address state
+                State = values[12], // this is not state for current address
                 ValidSince = startsAt,
             }.SetCreateBySystem(now);
 
@@ -116,8 +212,8 @@ public class RecordController : ControllerBase
 
             personDetail.PermanentAddress = permAddress;
 
-            // read from current context memory, without local code would just read from database
-            // and I can have desired virtual operation in memory ready to be saved
+            // We need Local property, because we need entities which are could be created but are not in database yet,
+            // they are in memory until SaveChanges
             var prevOp = _dbContext.VirtualOperations.Local.SingleOrDefault(x => x.IdentificationCode == values[16]);
 
             if (prevOp == null)
