@@ -146,9 +146,7 @@ public class RecordController : ControllerBase
         var currentOp = await _currentOperationService.GetCurrentOperationAsync(opUrlName);
         var now = _clock.GetCurrentInstant();
         var lines = model.Data.ToList();
-        var classes = _dbContext.Classes
-            .Include(x => x.Groups)
-            .Include(x => x.ClassDetails);
+        var classes = _dbContext.Classes;
 
         var classDetails = _dbContext.ClassDetails;
 
