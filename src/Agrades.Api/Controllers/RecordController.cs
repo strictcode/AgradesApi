@@ -116,8 +116,8 @@ public class RecordController : ControllerBase
 
             personDetail.PermanentAddress = permAddress;
 
-            // read from current context memory, without local code would just read from database
-            // and I can have desired virtual operation in memory ready to be saved
+            // read from current context memory, without the Local code it would just read from database
+            // and I can have the desired virtual operation already in memory ready to be saved
             var prevOp = _dbContext.VirtualOperations.Local.SingleOrDefault(x => x.IdentificationCode == values[16]);
 
             if (prevOp == null)
