@@ -1,4 +1,5 @@
 using Agrades.Api.Mapper;
+using Agrades.Data.Entities;
 using Agrades.Data.Entities.Persons;
 using System.Xml.Serialization;
 
@@ -9,163 +10,163 @@ public class Sentence
     /// <summary>
     /// 
     /// </summary>
-    [XmlAttribute(AttributeName = "RDAT")]
+    [XmlElement(ElementName = "RDAT")]
     public string DecisiveCollectionDate { get; set; } = null!;
 
-    [XmlAttribute(AttributeName = "IZO")]
+    [XmlElement(ElementName = "IZO")]
     public string Izo { get; set; } = null!;
 
-    [XmlAttribute(AttributeName = "CAST")]
+    [XmlElement(ElementName = "CAST")]
     public string OperationPart { get; set; } = null!;
 
-    [XmlAttribute(AttributeName = "RODC")]
+    [XmlElement(ElementName = "RODC")]
     public string BirthNumber { get; set; } = null!;
 
-    [XmlAttribute(AttributeName = "POHLAVI")]
+    [XmlElement(ElementName = "POHLAVI")]
     public string Sex { get; set; } = null!;
 
-    [XmlAttribute(AttributeName = "DAT_NAROZ")]
+    [XmlElement(ElementName = "DAT_NAROZ")]
     public string BirthDate { get; set; } = null!;
 
-    [XmlAttribute(AttributeName = "KSTPR")]
+    [XmlElement(ElementName = "KSTPR")]
     public string CitizenshtipQualifier { get; set; } = null!;
 
-    [XmlAttribute(AttributeName = "STPR")]
+    [XmlElement(ElementName = "STPR")]
     public string Citizenship { get; set; } = null!;
 
     /// <summary>
     /// Obec
     /// </summary>
-    [XmlAttribute(AttributeName = "OBECB")]
+    [XmlElement(ElementName = "OBECB")]
     public string Municipality { get; set; } = null!;
 
-    [XmlAttribute(AttributeName = "OKRESB")]
+    [XmlElement(ElementName = "OKRESB")]
     public string District { get; set; } = null!;
 
-    [XmlAttribute(AttributeName = "ODHL")]
+    [XmlElement(ElementName = "ODHL")]
     public string PreviousEducation { get; set; } = null!;
 
-    [XmlAttribute(AttributeName = "IZOZ")]
+    [XmlElement(ElementName = "IZOZ")]
     public string PreviousEducationIzo { get; set; } = null!;
 
-    //[XmlAttribute(AttributeName = "IZOS")]
+    //[XmlElement(ElementName = "IZOS")]
     //public string PreviousLeavingExamIzo { get; set; } = null!;
 
     // ///<summary>
     // ///HVS - vyšší odborná škola
     // ///</summary>
-    //[XmlAttribute(AttributeName = "OBORS")]
+    //[XmlElement(ElementName = "OBORS")]
     //public string HvsStudyFieldCode { get; set; } = null!;
 
-    [XmlAttribute(AttributeName = "STUPEN")]
+    [XmlElement(ElementName = "STUPEN")]
     public string HighestAchievedEducation { get; set; } = null!;
 
-    [XmlAttribute(AttributeName = "ZAHDAT")]
+    [XmlElement(ElementName = "ZAHDAT")]
     public string EducationStart { get; set; } = null!;
 
-    [XmlAttribute(AttributeName = "KOD_ZAH")]
+    [XmlElement(ElementName = "KOD_ZAH")]
     public string EducationStartCode { get; set; } = null!;
 
-    [XmlAttribute(AttributeName = "UKONDAT")]
+    [XmlElement(ElementName = "UKONDAT")]
     public string EducationEnd { get; set; } = null!;
 
-    [XmlAttribute(AttributeName = "KOD_UKON")]
+    [XmlElement(ElementName = "KOD_UKON")]
     public string EducationEndCode { get; set; } = null!;
 
-    [XmlAttribute(AttributeName = "ROCNIK")]
+    [XmlElement(ElementName = "ROCNIK")]
     public string Grade { get; set; } = null!;
 
-    [XmlAttribute(AttributeName = "TRIDA")]
+    [XmlElement(ElementName = "TRIDA")]
     public string Class { get; set; } = null!;
 
-    [XmlAttribute(AttributeName = "ST_SKOLY")]
+    [XmlElement(ElementName = "ST_SKOLY")]
     public string SchoolGradeType { get; set; } = null!;
 
-    [XmlAttribute(AttributeName = "ZPUSOB")]
+    [XmlElement(ElementName = "ZPUSOB")]
     public string Form { get; set; } = null!;
 
-    [XmlAttribute(AttributeName = "PRIZN_ST")]
+    [XmlElement(ElementName = "PRIZN_ST")]
     public string EducationQualifier { get; set; } = null!;
 
-    [XmlAttribute(AttributeName = "PRERUS")]
+    [XmlElement(ElementName = "PRERUS")]
     public string Interuption { get; set; } = null!;
 
-    [XmlAttribute(AttributeName = "FIN")]
+    [XmlElement(ElementName = "FIN")]
     public string Financing { get; set; } = null!;
 
-    [XmlAttribute(AttributeName = "OBOR")]
+    [XmlElement(ElementName = "OBOR")]
     public string StudyField { get; set; } = null!;
     /*
-    [XmlAttribute(AttributeName = "OBOR2")]
+    [XmlElement(ElementName = "OBOR2")]
     public string StudyField2 { get; set; } = null!;
     */
-    [XmlAttribute(AttributeName = "DELST")]
+    [XmlElement(ElementName = "DELST")]
     public string EducationLength { get; set; } = null!;
 
-    [XmlAttribute(AttributeName = "FST")]
+    [XmlElement(ElementName = "FST")]
     public string EducationType { get; set; } = null!;
 
-    [XmlAttribute(AttributeName = "LET_PSD")]
+    [XmlElement(ElementName = "LET_PSD")]
     public string MandatoryYears { get; set; } = null!;
 
-    [XmlAttribute(AttributeName = "JAZYK_O")]
+    [XmlElement(ElementName = "JAZYK_O")]
     public string LanguageStudy { get; set; } = null!;
 
-    [XmlAttribute(AttributeName = "JAZ1")]
+    [XmlElement(ElementName = "JAZ1")]
     public string Language1Code { get; set; } = null!;
     /*
-    [XmlAttribute(AttributeName = "P_JAZ1")]
+    [XmlElement(ElementName = "P_JAZ1")]
     public string Language1Qualifier { get; set; } = null!;
     */
-    [XmlAttribute(AttributeName = "JAZ2")]
+    [XmlElement(ElementName = "JAZ2")]
     public string Language2Code { get; set; } = null!;
     /*
-    [XmlAttribute(AttributeName = "P_JAZ2")]
+    [XmlElement(ElementName = "P_JAZ2")]
     public string Language2Qualifier { get; set; } = null!;
     */
-    [XmlAttribute(AttributeName = "JAZ3")]
+    [XmlElement(ElementName = "JAZ3")]
     public string Language3Code { get; set; } = null!;
     /*
-    [XmlAttribute(AttributeName = "P_JAZ3")]
+    [XmlElement(ElementName = "P_JAZ3")]
     public string Language3Qualifier { get; set; } = null!;
     */
-    [XmlAttribute(AttributeName = "JAZ4")]
+    [XmlElement(ElementName = "JAZ4")]
     public string Language4Code { get; set; } = null!;
     /*
-    [XmlAttribute(AttributeName = "P_JAZ4")]
+    [XmlElement(ElementName = "P_JAZ4")]
     public string Language4Qualifier { get; set; } = null!;
     */
-    [XmlAttribute(AttributeName = "JAZYK_PR1")]
+    [XmlElement(ElementName = "JAZYK_PR1")]
     public string InLanguage1Code { get; set; } = null!;
 
-    [XmlAttribute(AttributeName = "POCET_PR1")]
+    [XmlElement(ElementName = "POCET_PR1")]
     public string InLanguage1Count { get; set; } = null!;
 
-    [XmlAttribute(AttributeName = "POCET_H2")]
+    [XmlElement(ElementName = "POCET_H1")]
     public string InLanguage1Hours { get; set; } = null!;
 
-    [XmlAttribute(AttributeName = "JAZYK_PR2")]
+    [XmlElement(ElementName = "JAZYK_PR2")]
     public string InLanguage2Code { get; set; } = null!;
 
-    [XmlAttribute(AttributeName = "POCET_PR2")]
+    [XmlElement(ElementName = "POCET_PR2")]
     public string InLanguage2Count { get; set; } = null!;
 
-    [XmlAttribute(AttributeName = "POCET_H2")]
+    [XmlElement(ElementName = "POCET_H2")]
     public string InLanguage2Hours { get; set; } = null!;
 
-    [XmlAttribute(AttributeName = "ZMENDAT")]
+    [XmlElement(ElementName = "ZMENDAT")]
     public string ChangesAt { get; set; } = null!;
 
-    [XmlAttribute(AttributeName = "KOD_ZMEN")]
+    [XmlElement(ElementName = "KOD_ZMEN")]
     public string ChangesCode { get; set; } = null!;
 
-    [XmlAttribute(AttributeName = "KOD_VETY")]
+    [XmlElement(ElementName = "KOD_VETY")]
     public string SentenceCode { get; set; } = null!;
 
-    [XmlAttribute(AttributeName = "PLAT_ZAC")]
+    [XmlElement(ElementName = "PLAT_ZAC")]
     public string ValidityFrom { get; set; } = null!;
 
-    [XmlAttribute(AttributeName = "PLAT_KON")]
+    [XmlElement(ElementName = "PLAT_KON")]
     public string ValidityTo { get; set; } = null!;
 
     #region ZKOUSKA
@@ -196,31 +197,31 @@ public class Sentence
 
 public static class SentenceExtensions
 {
-    public static Sentence ToSentence(this IAppMapper mapper, PersonDetail source)
+    public static Sentence ToSentence(this IAppMapper mapper, PersonDetail personDetail, Student student, StudentDetail studentDetail, StudyField studyField, Operation operation, Address address, VirtualOperation virtualOperation)
     {
         _ = mapper.Now;
         var dest = new Sentence
         {
-            BirthDate = source.BornOn?.ToString() ?? string.Empty,
-            BirthNumber = source.IdentificationCode ?? string.Empty,
+            BirthDate = personDetail.BornOn != null ? personDetail.BornOn.ToString()! : string.Empty,
+            BirthNumber = personDetail.IdentificationCode != null ? personDetail.IdentificationCode! : string.Empty,
             ChangesAt = string.Empty,
             ChangesCode = string.Empty,
-            Citizenship = source.Citizenship ?? string.Empty,
-            CitizenshtipQualifier = source.CitizenshipCode ?? string.Empty,
+            Citizenship = personDetail.Citizenship != null ? personDetail.Citizenship! : string.Empty,
+            CitizenshtipQualifier = personDetail.CitizenshipCode != null ? personDetail.CitizenshipCode! : string.Empty,
             Class = string.Empty,//source.
             DecisiveCollectionDate = string.Empty, // ??????
-            District = source.PermanentAddress?.CityDistrict ?? string.Empty,
-           /* EducationEnd = source.Student!.EndsAt.ToString() ?? string.Empty,
-            EducationEndCode = source.Student.EndReasonTypeId.ToString() ?? string.Empty,
-            EducationLength = source.Student.StudyField.LengthInYears.ToString(),
-            EducationStart = source.Student!.StartsAt.ToString(),
-            EducationStartCode = source.Student.StartReasonTypeId.ToString() ?? string.Empty,
-            EducationType = ((int)source.Student.StudyField.Type).ToString(),
-            EducationQualifier = source.Student.StudyField.Qualifier,
-            Financing = source.Student.Financing.ToString(),
-            Form = source.Student.StudyField.Form.ToString(),*/
+            District = address.CityDistrict != null ? address.CityDistrict! : string.Empty,
+            EducationEnd = studentDetail.EndsAt != null ? studentDetail.EndsAt.ToString()! : string.Empty,
+            EducationEndCode = studentDetail.EndReasonCode != null ? studentDetail.EndReasonCode!.ToString() : string.Empty,//source.Student.EndReasonTypeId.ToString() ?? string.Empty,
+            EducationLength = studyField.LengthInYears.ToString(),
+            EducationStart = studentDetail.StartsAt.ToString(),
+            EducationStartCode = studentDetail.StartReasonCode != null ? studentDetail.StartReasonCode.ToString()! : string.Empty,
+            EducationType = ((int)studyField.Type).ToString(),
+            EducationQualifier = studyField.Qualifier,
+            Financing = studentDetail.Financing != null ? studentDetail.Financing.ToString()! : string.Empty,
+            Form = studyField.Form.ToString(),
             Grade = string.Empty,
-           // HighestAchievedEducation = ((int)source.Student.HighestAchievedEducation).ToString(),
+            HighestAchievedEducation = ((int)studentDetail.HighestAchievedEducation).ToString(),
             InLanguage1Code = string.Empty,
             InLanguage1Count = string.Empty,
             InLanguage1Hours = string.Empty,
@@ -228,21 +229,22 @@ public static class SentenceExtensions
             InLanguage2Count = string.Empty,
             InLanguage2Hours = string.Empty,
             Interuption = string.Empty,
-            Izo = source.Operation.IdentificationCode ?? string.Empty,
+            Izo = operation.IdentificationCode != null ? operation.IdentificationCode! : string.Empty,
             LanguageStudy = string.Empty,
             Language1Code = string.Empty,
             Language2Code = string.Empty,
             Language3Code = string.Empty,
+
             Language4Code = string.Empty,
-          //  MandatoryYears = source.Student.ObligatoryAttendenceYears.ToString(),
-            Municipality = source.PermanentAddress?.City ?? string.Empty,
-            OperationPart =  source.Operation.PartNumberForRegister ?? string.Empty,
-          //  PreviousEducation = source.Student.PreviousEducationOperation.SchoolType.ToString(),
-           // PreviousEducationIzo = source.Student.PreviousEducationOperation.IdentificationCode,
-            SchoolGradeType = ((int)source.Operation.SchoolType).ToString(),
+            MandatoryYears = studentDetail.ObligatoryAttendenceYears != null ? studentDetail.ObligatoryAttendenceYears.ToString()! : string.Empty,
+            Municipality = address.City != null ? address.City : string.Empty,
+            OperationPart = operation.PartNumberForRegister != null ? operation.PartNumberForRegister! : string.Empty,
+            PreviousEducation = virtualOperation.SchoolType.ToString(),
+            PreviousEducationIzo = virtualOperation.IdentificationCode,
+            SchoolGradeType = ((int)operation.SchoolType).ToString(),
             SentenceCode = string.Empty, // ?????????????
-            Sex = source.Sex?.ToString() ?? string.Empty,
-           // StudyField = ((int)source.Student.StudyField.Type).ToString(),
+            Sex = personDetail.Sex != null ? personDetail.Sex.ToString()! : string.Empty,
+            StudyField = ((int)studyField.Type).ToString(),
             ValidityFrom = string.Empty, // ?????????????
             ValidityTo = string.Empty, // ?????????????
         };

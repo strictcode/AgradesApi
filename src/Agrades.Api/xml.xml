@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<sentences xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Sentence>
+    <RDAT />
+    <IZO>181 105 527</IZO>
+    <CAST />
+    <RODC>508284689</RODC>
+    <POHLAVI>Male</POHLAVI>
+    <DAT_NAROZ>neděle 28. srpna 2005</DAT_NAROZ>
+    <KSTPR>Občan ČR</KSTPR>
+    <STPR>Česká republika</STPR>
+    <OBECB>Praha 9</OBECB>
+    <OKRESB>Praha 9</OKRESB>
+    <ODHL>0</ODHL>
+    <IZOZ>102301689</IZOZ>
+    <STUPEN>100</STUPEN>
+    <ZAHDAT>středa 1. září 2021</ZAHDAT>
+    <KOD_ZAH>Přijetí do 1.ročníku</KOD_ZAH>
+    <UKONDAT />
+    <KOD_UKON />
+    <ROCNIK />
+    <TRIDA />
+    <ST_SKOLY>0</ST_SKOLY>
+    <ZPUSOB>0</ZPUSOB>
+    <PRIZN_ST>79-41-K/81</PRIZN_ST>
+    <PRERUS />
+    <FIN>1</FIN>
+    <OBOR>200</OBOR>
+    <DELST>0</DELST>
+    <FST>200</FST>
+    <LET_PSD>9</LET_PSD>
+    <JAZYK_O />
+    <JAZ1 />
+    <JAZ2 />
+    <JAZ3 />
+    <JAZ4 />
+    <JAZYK_PR1 />
+    <POCET_PR1 />
+    <POCET_H1 />
+    <JAZYK_PR2 />
+    <POCET_PR2 />
+    <POCET_H2 />
+    <ZMENDAT />
+    <KOD_ZMEN />
+    <KOD_VETY />
+    <PLAT_ZAC />
+    <PLAT_KON />
+  </Sentence>
+</sentences>

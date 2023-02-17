@@ -1,5 +1,6 @@
 using Agrades.Api.ApiModels.Adresses;
 using Agrades.Api.ApiModels.Persons;
+using Agrades.Api.ApiModels.XML;
 using Agrades.Api.Mapper;
 using Agrades.Api.Utilities;
 using Agrades.Data;
@@ -8,9 +9,14 @@ using Agrades.Data.Entities.Categories;
 using Agrades.Data.Entities.Persons;
 using Agrades.Data.Interfaces;
 using Agrades.Services;
+using Microsoft.AspNetCore.JsonPatch.Operations;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using NodaTime;
+using System.Xml;
+using System.Xml.Linq;
+using System.Xml.Serialization;
+using static System.Reflection.Metadata.BlobBuilder;
 
 namespace Agrades.Api.Controllers;
 [ApiController]
@@ -36,11 +42,72 @@ public class RecordController : ControllerBase
         _mapper = mapper;
         _clock = clock;
     }
+    [HttpPost("api/v1/{opUrlName}/report")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult> XMLReport([FromRoute] string opUrlName)
+    {
+        var persons = _dbContext.Persons.ToList();
+        var personDetails = _dbContext.PersonDetails.ToList();
+        var students = _dbContext.Students.ToList();
+        var studentDetails = _dbContext.StudentDetails.ToList();
+        var studyFields = _dbContext.StudyFields.ToList();
+        var addresses = _dbContext.Addresses.ToList();
+        var virtualOperations = _dbContext.VirtualOperations.ToList();
+        var operation = _dbContext.Operations.FirstOrDefault(x => x.UrlName == opUrlName);
+        if (operation == null)
+        {
+            return BadRequest();
+        }
+        var sentences = new List<Sentence>();
+        foreach (var studentDetail in studentDetails.Where(x => x.ValidUntil == null))
+        {
+                var student = students.First(x => x.Id == studentDetail.StudentId && x.OperationId == operation.Id);
+                var person = persons.First(x => x.Id == student.PersonId && x.OperationId == operation.Id);
+                var personDetail = personDetails.First(x => x.PersonId == person.Id && x.ValidUntil == null && x.OperationId == operation.Id);
+                var studyField = studyFields.First(x => x.Id == studentDetail.StudyFieldId && x.OperationId == operation.Id);
+                var address = addresses.First(x => x.Id == personDetail.PermanentAddressId && x.OperationId == operation.Id);
+                var virtualOperation = virtualOperations.First(x => x.Id == studentDetail.PreviousEducationOperationId && x.OperationId == operation.Id);
+                sentences.Add(SentenceExtensions.ToSentence(_mapper, personDetail, student, studentDetail, studyField, operation, address, virtualOperation));
+            
+
+
+        }
+        var sww = new StringWriter();
+        XmlWriter writer = XmlWriter.Create(sww);
+        XmlSerializer xmlSerializer = new XmlSerializer(sentences.GetType(), new XmlRootAttribute("sentences"));
+        xmlSerializer.Serialize(writer, sentences);
+        var xml = sww.ToString();
+        /*XmlDocument xmlReport = new XmlDocument();
+        foreach (var item in sentences)
+        {
+            try
+            {
+                   //Represents an XML document, 
+                                                          // Initializes a new instance of the XmlDocument class.          
+                XmlSerializer xmlSerializer = new XmlSerializer(item.GetType(), new XmlRootAttribute("slabs"));
+                // Creates a stream whose backing store is memory. 
+                using (MemoryStream xmlStream = new MemoryStream())
+                {
+                    xmlSerializer.Serialize(xmlStream, item);
+                    //Loads the XML document from the specified string.
+                    xmlReport.Load(xmlStream);
+                }
+
+                Console.WriteLine();
+            }
+            catch (Exception ex) { }
+        }*/
+        return Ok(xml);
+    }
 
     [HttpPost("api/v1/{opUrlName}/Record/{personId}/CreateNewVersion")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+
+
     public async Task<ActionResult> CreateNewVersion(
         [FromRoute] string opUrlName,
         [FromRoute] Guid personId,
@@ -115,7 +182,7 @@ public class RecordController : ControllerBase
                 DescNumber = oldAddress.DescNumber,
                 OriNumber = oldAddress.OriNumber,
                 Email = oldAddress.Email,
-                Region= oldAddress.Region,
+                Region = oldAddress.Region,
                 PhoneNumber = oldAddress.PhoneNumber,
                 State = oldAddress.State,
                 StateDistrict = oldAddress.StateDistrict,
@@ -155,7 +222,7 @@ public class RecordController : ControllerBase
         {
             var values = lines[i].Split(';');
 
-            var birthDate = new DateTime(int.Parse(values[10].Split('.')[2]), int.Parse(values[10].Split('.')[1]), int.Parse(values[10].Split('.')[0]), 0,0,0, DateTimeKind.Utc);
+            var birthDate = new DateTime(int.Parse(values[10].Split('.')[2]), int.Parse(values[10].Split('.')[1]), int.Parse(values[10].Split('.')[0]), 0, 0, 0, DateTimeKind.Utc);
 
             var startsAt = Instant.FromDateTimeUtc(new DateTime(int.Parse(values[50].Split('.')[2]), int.Parse(values[50].Split('.')[1]), int.Parse(values[50].Split('.')[0]), 0, 0, 0, DateTimeKind.Utc));
 
@@ -273,11 +340,11 @@ public class RecordController : ControllerBase
 
             studentDetail.ClassId = currentClass.Id;
 
-            currentClass.Groups.First().Students.Add(new StudentGroup
+            /*currentClass.Groups.First().Students.Add(new StudentGroup
             {
                 StudentId = student.Id,
                 ValidSince = now,
-            }.SetCreateBySystem(now));
+            }.SetCreateBySystem(now));*/
 #if DEBUG
             Print(values);
 #endif
@@ -365,14 +432,12 @@ public class RecordController : ControllerBase
 
         var personIds = _dbContext
             .Persons
-            .Include(x => x.Student)
             .Where(x => x.PersonTypeId == PersonType.Student && x.OperationId == currentOp!.Id)
             .Select(x => x.Id)
             .ToList();
 
         var students = _dbContext
             .Students
-            .Include(x => x.Groups)
             .Where(x => personIds.Contains(x.PersonId) && x.OperationId == currentOp!.Id)
             .ToList()
             ;
@@ -392,8 +457,6 @@ public class RecordController : ControllerBase
 
         var studentDetails = _dbContext
             .StudentDetails
-            .Include(x => x.Class)
-            .ThenInclude(x => x.ClassDetails)
             .Where(x => studentIds.Contains(x.StudentId) && x.ValidUntil == null)
             .ToList();
 
@@ -401,7 +464,7 @@ public class RecordController : ControllerBase
 
         var currentYear = now.ToDateTimeUtc().Year;
 
-        var thisYearsFirstSeptember = Instant.FromDateTimeUtc(new DateTime(currentYear, 9, 1, 0, 0 , 0, DateTimeKind.Utc));
+        var thisYearsFirstSeptember = Instant.FromDateTimeUtc(new DateTime(currentYear, 9, 1, 0, 0, 0, DateTimeKind.Utc));
 
         foreach (var personDetail in personDetails)
         {
