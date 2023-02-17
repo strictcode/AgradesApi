@@ -13,6 +13,8 @@ using Microsoft.AspNetCore.JsonPatch.Operations;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using NodaTime;
+using NodaTime.Text;
+using System.Reflection.Metadata.Ecma335;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Serialization;
@@ -46,12 +48,16 @@ public class RecordController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult> XMLReport([FromRoute] string opUrlName)
+    public async Task<ActionResult> XMLReport([FromRoute] string opUrlName, [FromQuery] string? since, [FromQuery] string? until)
     {
+
+        var sinceDate = since != null ? Instant.FromDateTimeUtc(DateTime.Parse(since).ToUniversalTime()) : Instant.FromUtc(DateTime.Now.Year -1, 3, 1, 0, 0);
+        //Instant? untilDate = untilYear != 0 ? Instant.FromUtc(untilYear, 3, 1, 0, 0) : null;
+        Instant? untilDate = until != null ? Instant.FromDateTimeUtc(DateTime.Parse(until).ToUniversalTime()) : null;
         var persons = _dbContext.Persons.ToList();
         var personDetails = _dbContext.PersonDetails.ToList();
         var students = _dbContext.Students.ToList();
-        var studentDetails = _dbContext.StudentDetails.ToList();
+        var studentDetails = _dbContext.StudentDetails.FilterByInterval(sinceDate, untilDate).ToList();
         var studyFields = _dbContext.StudyFields.ToList();
         var addresses = _dbContext.Addresses.ToList();
         var virtualOperations = _dbContext.VirtualOperations.ToList();
@@ -61,7 +67,7 @@ public class RecordController : ControllerBase
             return BadRequest();
         }
         var sentences = new List<Sentence>();
-        foreach (var studentDetail in studentDetails.Where(x => x.ValidUntil == null))
+        foreach (var studentDetail in studentDetails)
         {
                 var student = students.First(x => x.Id == studentDetail.StudentId && x.OperationId == operation.Id);
                 var person = persons.First(x => x.Id == student.PersonId && x.OperationId == operation.Id);
