@@ -77,7 +77,7 @@ public class Sentence
     public string Grade { get; set; } = null!;
 
     [XmlElement(ElementName = "TRIDA")]
-    public string Class { get; set; } = null!;
+    public string Class { get; set; } = null!; 
 
     [XmlElement(ElementName = "ST_SKOLY")]
     public string SchoolGradeType { get; set; } = null!;
@@ -89,7 +89,7 @@ public class Sentence
     public string EducationQualifier { get; set; } = null!;
 
     [XmlElement(ElementName = "PRERUS")]
-    public string Interuption { get; set; } = null!;
+    public string Interuption { get; set; } = null!; // idk
 
     [XmlElement(ElementName = "FIN")]
     public string Financing { get; set; } = null!;
@@ -107,61 +107,61 @@ public class Sentence
     public string EducationType { get; set; } = null!;
 
     [XmlElement(ElementName = "LET_PSD")]
-    public string MandatoryYears { get; set; } = null!;
+    public string MandatoryYears { get; set; } = null!; //-----------------------
 
     [XmlElement(ElementName = "JAZYK_O")]
-    public string LanguageStudy { get; set; } = null!;
+    public string LanguageStudy { get; set; } = null!; //33
 
     [XmlElement(ElementName = "JAZ1")]
-    public string Language1Code { get; set; } = null!;
+    public string Language1Code { get; set; } = null!;//34
     /*
     [XmlElement(ElementName = "P_JAZ1")]
-    public string Language1Qualifier { get; set; } = null!;
+    public string Language1Qualifier { get; set; } = null!;// jen zakl
     */
     [XmlElement(ElementName = "JAZ2")]
-    public string Language2Code { get; set; } = null!;
+    public string Language2Code { get; set; } = null!;//35
     /*
     [XmlElement(ElementName = "P_JAZ2")]
-    public string Language2Qualifier { get; set; } = null!;
+    public string Language2Qualifier { get; set; } = null!; // jen zakl
     */
     [XmlElement(ElementName = "JAZ3")]
-    public string Language3Code { get; set; } = null!;
+    public string Language3Code { get; set; } = null!;//idk
     /*
     [XmlElement(ElementName = "P_JAZ3")]
-    public string Language3Qualifier { get; set; } = null!;
+    public string Language3Qualifier { get; set; } = null!;// jen zakl
     */
     [XmlElement(ElementName = "JAZ4")]
-    public string Language4Code { get; set; } = null!;
+    public string Language4Code { get; set; } = null!;//idk
     /*
     [XmlElement(ElementName = "P_JAZ4")]
-    public string Language4Qualifier { get; set; } = null!;
+    public string Language4Qualifier { get; set; } = null!;// jen zakl
     */
     [XmlElement(ElementName = "JAZYK_PR1")]
-    public string InLanguage1Code { get; set; } = null!;
+    public string InLanguage1Code { get; set; } = null!;// jen zakl
 
     [XmlElement(ElementName = "POCET_PR1")]
-    public string InLanguage1Count { get; set; } = null!;
+    public string InLanguage1Count { get; set; } = null!;// jen zakl
 
     [XmlElement(ElementName = "POCET_H1")]
-    public string InLanguage1Hours { get; set; } = null!;
+    public string InLanguage1Hours { get; set; } = null!;// jen zakl
 
     [XmlElement(ElementName = "JAZYK_PR2")]
-    public string InLanguage2Code { get; set; } = null!;
+    public string InLanguage2Code { get; set; } = null!;// jen zakl
 
     [XmlElement(ElementName = "POCET_PR2")]
-    public string InLanguage2Count { get; set; } = null!;
+    public string InLanguage2Count { get; set; } = null!;// jen zakl
 
     [XmlElement(ElementName = "POCET_H2")]
-    public string InLanguage2Hours { get; set; } = null!;
+    public string InLanguage2Hours { get; set; } = null!;// jen zakl
 
     [XmlElement(ElementName = "ZMENDAT")]
-    public string ChangesAt { get; set; } = null!;
+    public string ChangesAt { get; set; } = null!; //-------------------
 
     [XmlElement(ElementName = "KOD_ZMEN")]
-    public string ChangesCode { get; set; } = null!;
+    public string ChangesCode { get; set; } = null!; //nemám odkud
 
     [XmlElement(ElementName = "KOD_VETY")]
-    public string SentenceCode { get; set; } = null!;
+    public string SentenceCode { get; set; } = null!;//50
 
     [XmlElement(ElementName = "PLAT_ZAC")]
     public string ValidityFrom { get; set; } = null!;
@@ -197,7 +197,10 @@ public class Sentence
 
 public static class SentenceExtensions
 {
-    public static Sentence ToSentence(this IAppMapper mapper, PersonDetail personDetail, Student student, StudentDetail studentDetail, StudyField studyField, Operation operation, Address address, VirtualOperation virtualOperation)
+    public static Sentence ToSentence(this IAppMapper mapper,
+        PersonDetail personDetail, StudentDetail studentDetail,
+        StudyField studyField, Operation operation, Address address,
+        VirtualOperation virtualOperation, ClassDetail classDetail)
     {
         _ = mapper.Now;
         var dest = new Sentence
@@ -208,7 +211,7 @@ public static class SentenceExtensions
             ChangesCode = string.Empty,
             Citizenship = personDetail.Citizenship != null ? personDetail.Citizenship! : string.Empty,
             CitizenshtipQualifier = personDetail.CitizenshipCode != null ? personDetail.CitizenshipCode! : string.Empty,
-            Class = string.Empty,//source.
+            Class = classDetail.Name,//source.
             DecisiveCollectionDate = string.Empty, // ??????
             District = address.CityDistrict != null ? address.CityDistrict! : string.Empty,
             EducationEnd = studentDetail.EndsAt != null ? studentDetail.EndsAt.ToString()! : string.Empty,
@@ -230,11 +233,10 @@ public static class SentenceExtensions
             InLanguage2Hours = string.Empty,
             Interuption = string.Empty,
             Izo = operation.IdentificationCode != null ? operation.IdentificationCode! : string.Empty,
-            LanguageStudy = string.Empty,
-            Language1Code = string.Empty,
-            Language2Code = string.Empty,
+            LanguageStudy = "10",
+            Language1Code = "02",
+            Language2Code = "25",
             Language3Code = string.Empty,
-
             Language4Code = string.Empty,
             MandatoryYears = studentDetail.ObligatoryAttendenceYears != null ? studentDetail.ObligatoryAttendenceYears.ToString()! : string.Empty,
             Municipality = address.City != null ? address.City : string.Empty,
@@ -245,8 +247,8 @@ public static class SentenceExtensions
             SentenceCode = string.Empty, // ?????????????
             Sex = personDetail.Sex != null ? personDetail.Sex.ToString()! : string.Empty,
             StudyField = ((int)studyField.Type).ToString(),
-            ValidityFrom = string.Empty, // ?????????????
-            ValidityTo = string.Empty, // ?????????????
+            ValidityFrom = studentDetail.ValidSince.ToString(), // ?????????????
+            ValidityTo = studentDetail.ValidUntil != null ? studentDetail.ValidUntil.ToString()! : string.Empty, // ?????????????
         };
 
         return dest;

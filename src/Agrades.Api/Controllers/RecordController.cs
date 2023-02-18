@@ -51,8 +51,7 @@ public class RecordController : ControllerBase
     public async Task<ActionResult> XMLReport([FromRoute] string opUrlName, [FromQuery] string? since, [FromQuery] string? until)
     {
 
-        var sinceDate = since != null ? Instant.FromDateTimeUtc(DateTime.Parse(since).ToUniversalTime()) : Instant.FromUtc(DateTime.Now.Year -1, 3, 1, 0, 0);
-        //Instant? untilDate = untilYear != 0 ? Instant.FromUtc(untilYear, 3, 1, 0, 0) : null;
+        var sinceDate = since != null ? Instant.FromDateTimeUtc(DateTime.Parse(since).ToUniversalTime()) : Instant.FromUtc(DateTime.Now.Year - 1, 9, 1, 0, 0);
         Instant? untilDate = until != null ? Instant.FromDateTimeUtc(DateTime.Parse(until).ToUniversalTime()) : null;
         var persons = _dbContext.Persons.ToList();
         var personDetails = _dbContext.PersonDetails.ToList();
@@ -62,6 +61,10 @@ public class RecordController : ControllerBase
         var addresses = _dbContext.Addresses.ToList();
         var virtualOperations = _dbContext.VirtualOperations.ToList();
         var operation = _dbContext.Operations.FirstOrDefault(x => x.UrlName == opUrlName);
+        var classes = _dbContext.Classes.ToList();
+        var classDetails = _dbContext.ClassDetails.ToList();
+
+
         if (operation == null)
         {
             return BadRequest();
@@ -69,14 +72,17 @@ public class RecordController : ControllerBase
         var sentences = new List<Sentence>();
         foreach (var studentDetail in studentDetails)
         {
-                var student = students.First(x => x.Id == studentDetail.StudentId && x.OperationId == operation.Id);
-                var person = persons.First(x => x.Id == student.PersonId && x.OperationId == operation.Id);
-                var personDetail = personDetails.First(x => x.PersonId == person.Id && x.ValidUntil == null && x.OperationId == operation.Id);
-                var studyField = studyFields.First(x => x.Id == studentDetail.StudyFieldId && x.OperationId == operation.Id);
-                var address = addresses.First(x => x.Id == personDetail.PermanentAddressId && x.OperationId == operation.Id);
-                var virtualOperation = virtualOperations.First(x => x.Id == studentDetail.PreviousEducationOperationId && x.OperationId == operation.Id);
-                sentences.Add(SentenceExtensions.ToSentence(_mapper, personDetail, student, studentDetail, studyField, operation, address, virtualOperation));
-            
+            var student = students.First(x => x.Id == studentDetail.StudentId && x.OperationId == operation.Id);
+            var person = persons.First(x => x.Id == student.PersonId && x.OperationId == operation.Id);
+            var personDetail = personDetails.First(x => x.PersonId == person.Id && (x.ValidUntil <= untilDate || x.ValidUntil == untilDate) && x.OperationId == operation.Id);
+            var studyField = studyFields.First(x => x.Id == studentDetail.StudyFieldId && x.OperationId == operation.Id);
+            var address = addresses.First(x => x.Id == personDetail.PermanentAddressId && x.OperationId == operation.Id);
+            var virtualOperation = virtualOperations.First(x => x.Id == studentDetail.PreviousEducationOperationId && x.OperationId == operation.Id);
+            var studentClass = classes.First(x => x.Id == studentDetail.ClassId);
+            var classDetail = classDetails.First(x => x.ClassId == studentClass.Id && x.OperationId == operation.Id && (x.ValidUntil <= untilDate || x.ValidUntil == untilDate));
+
+            sentences.Add(SentenceExtensions.ToSentence(_mapper, personDetail,studentDetail, studyField, operation, address, virtualOperation, classDetail));
+
 
 
         }
@@ -85,26 +91,7 @@ public class RecordController : ControllerBase
         XmlSerializer xmlSerializer = new XmlSerializer(sentences.GetType(), new XmlRootAttribute("sentences"));
         xmlSerializer.Serialize(writer, sentences);
         var xml = sww.ToString();
-        /*XmlDocument xmlReport = new XmlDocument();
-        foreach (var item in sentences)
-        {
-            try
-            {
-                   //Represents an XML document, 
-                                                          // Initializes a new instance of the XmlDocument class.          
-                XmlSerializer xmlSerializer = new XmlSerializer(item.GetType(), new XmlRootAttribute("slabs"));
-                // Creates a stream whose backing store is memory. 
-                using (MemoryStream xmlStream = new MemoryStream())
-                {
-                    xmlSerializer.Serialize(xmlStream, item);
-                    //Loads the XML document from the specified string.
-                    xmlReport.Load(xmlStream);
-                }
-
-                Console.WriteLine();
-            }
-            catch (Exception ex) { }
-        }*/
+        
         return Ok(xml);
     }
 
@@ -219,9 +206,9 @@ public class RecordController : ControllerBase
         var currentOp = await _currentOperationService.GetCurrentOperationAsync(opUrlName);
         var now = _clock.GetCurrentInstant();
         var lines = model.Data.ToList();
-        var classes = _dbContext.Classes;
+        var classes = _dbContext.Classes.ToList();
 
-        var classDetails = _dbContext.ClassDetails;
+        var classDetails = _dbContext.ClassDetails.ToList();
 
         // skip table header
         for (int i = 1; i < lines.Count; i++)

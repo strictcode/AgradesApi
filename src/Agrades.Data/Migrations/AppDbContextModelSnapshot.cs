@@ -95,7 +95,7 @@ namespace Agrades.Data.Migrations
 
                     b.HasIndex("OperationId");
 
-                    b.ToTable("Address");
+                    b.ToTable("Address", (string)null);
                 });
 
             modelBuilder.Entity("Agrades.Data.Entities.Category", b =>
@@ -151,7 +151,7 @@ namespace Agrades.Data.Migrations
 
                     b.HasIndex("OperationId");
 
-                    b.ToTable("Category");
+                    b.ToTable("Category", (string)null);
                 });
 
             modelBuilder.Entity("Agrades.Data.Entities.Class", b =>
@@ -166,7 +166,7 @@ namespace Agrades.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Class");
+                    b.ToTable("Class", (string)null);
                 });
 
             modelBuilder.Entity("Agrades.Data.Entities.ClassDetail", b =>
@@ -220,7 +220,7 @@ namespace Agrades.Data.Migrations
 
                     b.HasIndex("OperationId");
 
-                    b.ToTable("ClassDetail");
+                    b.ToTable("ClassDetail", (string)null);
                 });
 
             modelBuilder.Entity("Agrades.Data.Entities.Group", b =>
@@ -279,7 +279,7 @@ namespace Agrades.Data.Migrations
 
                     b.HasIndex("OperationId");
 
-                    b.ToTable("Group");
+                    b.ToTable("Group", (string)null);
                 });
 
             modelBuilder.Entity("Agrades.Data.Entities.Operation", b =>
@@ -341,7 +341,7 @@ namespace Agrades.Data.Migrations
                     b.HasIndex("UrlName")
                         .IsUnique();
 
-                    b.ToTable("Operation");
+                    b.ToTable("Operation", (string)null);
                 });
 
             modelBuilder.Entity("Agrades.Data.Entities.Organization", b =>
@@ -389,7 +389,7 @@ namespace Agrades.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Organization");
+                    b.ToTable("Organization", (string)null);
                 });
 
             modelBuilder.Entity("Agrades.Data.Entities.Persons.Person", b =>
@@ -417,7 +417,7 @@ namespace Agrades.Data.Migrations
 
                     b.HasIndex("OperationId");
 
-                    b.ToTable("Person");
+                    b.ToTable("Person", (string)null);
                 });
 
             modelBuilder.Entity("Agrades.Data.Entities.Persons.PersonDetail", b =>
@@ -546,7 +546,7 @@ namespace Agrades.Data.Migrations
 
                     b.HasIndex("TemporaryAddressId");
 
-                    b.ToTable("PersonDetail");
+                    b.ToTable("PersonDetail", (string)null);
                 });
 
             modelBuilder.Entity("Agrades.Data.Entities.Persons.Student", b =>
@@ -572,7 +572,7 @@ namespace Agrades.Data.Migrations
                     b.HasIndex("PersonId")
                         .IsUnique();
 
-                    b.ToTable("Student");
+                    b.ToTable("Student", (string)null);
                 });
 
             modelBuilder.Entity("Agrades.Data.Entities.Persons.StudentDetail", b =>
@@ -664,7 +664,7 @@ namespace Agrades.Data.Migrations
 
                     b.HasIndex("StudyFieldId");
 
-                    b.ToTable("StudentDetail");
+                    b.ToTable("StudentDetail", (string)null);
                 });
 
             modelBuilder.Entity("Agrades.Data.Entities.StudentGroup", b =>
@@ -711,7 +711,7 @@ namespace Agrades.Data.Migrations
 
                     b.HasIndex("StudentId");
 
-                    b.ToTable("StudentGroup");
+                    b.ToTable("StudentGroup", (string)null);
                 });
 
             modelBuilder.Entity("Agrades.Data.Entities.StudyField", b =>
@@ -770,7 +770,7 @@ namespace Agrades.Data.Migrations
 
                     b.HasIndex("OperationId");
 
-                    b.ToTable("StudyField");
+                    b.ToTable("StudyField", (string)null);
                 });
 
             modelBuilder.Entity("Agrades.Data.Entities.VirtualOperation", b =>
@@ -825,7 +825,7 @@ namespace Agrades.Data.Migrations
 
                     b.HasIndex("OperationId");
 
-                    b.ToTable("VirtualOperation");
+                    b.ToTable("VirtualOperation", (string)null);
                 });
 
             modelBuilder.Entity("Agrades.Data.Entities.Address", b =>

@@ -19,6 +19,7 @@ public class AppDbContext : DbContext
 
     public DbSet<Student> Students { get; set; } = null!;
     public DbSet<StudentDetail> StudentDetails { get; set; } = null!;
+    public DbSet<StudentGroup> StudentGroups { get; set; } = null!;
 
     public DbSet<Operation> Operations { get; set; } = null!;
 
