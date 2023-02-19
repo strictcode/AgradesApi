@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Agrades.Data.Entities.Persons;
 [Table(nameof(Student))]
-public class Student
+public class Student : IOperationFilter
 {
     public Guid Id { get; set; }
 

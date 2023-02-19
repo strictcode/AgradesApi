@@ -64,7 +64,6 @@ public class RecordController : ControllerBase
         var classes = _dbContext.Classes.ToList();
         var classDetails = _dbContext.ClassDetails.ToList();
 
-
         if (operation == null)
         {
             return BadRequest();
@@ -82,9 +81,6 @@ public class RecordController : ControllerBase
             var classDetail = classDetails.First(x => x.ClassId == studentClass.Id && x.OperationId == operation.Id && (x.ValidUntil <= untilDate || x.ValidUntil == untilDate));
 
             sentences.Add(SentenceExtensions.ToSentence(_mapper, personDetail,studentDetail, studyField, operation, address, virtualOperation, classDetail));
-
-
-
         }
         var sww = new StringWriter();
         XmlWriter writer = XmlWriter.Create(sww);
@@ -99,8 +95,6 @@ public class RecordController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-
-
     public async Task<ActionResult> CreateNewVersion(
         [FromRoute] string opUrlName,
         [FromRoute] Guid personId,
@@ -108,9 +102,15 @@ public class RecordController : ControllerBase
         )
     {
         var currentOp = await _currentOperationService.GetCurrentOperationAsync(opUrlName);
+
+        if (currentOp == null)
+        {
+            return NotFound("Operation not found.");
+        }
+
         var now = _clock.GetCurrentInstant();
 
-        var person = await _dbContext.Persons.SingleOrDefaultAsync(x => x.Id == personId);
+        var person = await _dbContext.Persons.FilterByOperation(currentOp.Id).SingleOrDefaultAsync(x => x.Id == personId);
 
         if (person == null)
         {

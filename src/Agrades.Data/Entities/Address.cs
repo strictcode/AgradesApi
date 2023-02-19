@@ -1,6 +1,6 @@
 namespace Agrades.Data.Entities;
 [Table(nameof(Address))]
-public class Address : ITrackable, IVersionable
+public class Address : ITrackable, IVersionable, IOperationFilter
 {
     public Guid Id { get; set; }
 

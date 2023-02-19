@@ -1,6 +1,6 @@
 namespace Agrades.Data.Entities.Persons;
 [Table(nameof(PersonDetail))]
-public class PersonDetail : ITrackable, IVersionable
+public class PersonDetail : ITrackable, IVersionable, IOperationFilter
 {
     public Guid Id { get; set; }
 
@@ -73,3 +73,10 @@ public class PersonDetail : ITrackable, IVersionable
     public Instant? DeletedAt { get; set; }
     public string? DeletedBy { get; set; }
 }
+
+public static class StudentDetailExtensions
+{
+    public static IQueryable<PersonDetail> OnlyActive(this IQueryable<PersonDetail> query)
+        => query.Where(x => x.StatusId == PersonStatus.Active);
+}
+

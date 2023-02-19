@@ -1,7 +1,7 @@
 namespace Agrades.Data.Entities;
 
 [Table(nameof(ClassDetail))]
-public class ClassDetail : ITrackable
+public class ClassDetail : ITrackable, IOperationFilter
 {
     public Guid Id { get; set; }
 

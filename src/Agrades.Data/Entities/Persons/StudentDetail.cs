@@ -1,6 +1,6 @@
 namespace Agrades.Data.Entities.Persons;
 [Table(nameof(StudentDetail))]
-public class StudentDetail : ITrackable, IVersionable
+public class StudentDetail : ITrackable, IVersionable, IOperationFilter
 {
     public Guid Id { get; set; }
 

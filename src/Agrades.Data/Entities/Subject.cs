@@ -1,6 +1,6 @@
 namespace Agrades.Data.Entities;
 [Table(nameof(Subject))]
-public class Subject
+public class Subject : IOperationFilter
 {
     public Guid Id { get; set; }
 

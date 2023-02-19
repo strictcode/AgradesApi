@@ -1,6 +1,6 @@
 namespace Agrades.Data.Entities;
 [Table(nameof(StudyField))]
-public class StudyField : ITrackable
+public class StudyField : ITrackable, IOperationFilter
 {
     public Guid Id { get; set; }
 

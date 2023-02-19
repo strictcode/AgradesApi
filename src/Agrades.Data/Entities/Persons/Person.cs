@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Agrades.Data.Entities.Persons;
 [Table(nameof(Person))]
-public class Person
+public class Person : IOperationFilter
 {
     public Guid Id { get; set; }
 

@@ -1,6 +1,6 @@
 namespace Agrades.Data.Entities;
 [Table(nameof(Group))]
-public class Group : ITrackable, IVersionable
+public class Group : ITrackable, IVersionable, IOperationFilter
 {
     public Guid Id { get; set; }
 
