@@ -1,6 +1,7 @@
 using Agrades.Api.Mapper;
 using Agrades.Data.Entities;
 using Agrades.Data.Entities.Persons;
+using NodaTime;
 using System.Xml.Serialization;
 
 namespace Agrades.Api.ApiModels.XML;
@@ -107,13 +108,14 @@ public class Sentence
     public string EducationType { get; set; } = null!;
 
     [XmlElement(ElementName = "LET_PSD")]
-    public string MandatoryYears { get; set; } = null!; //-----------------------
+    public string MandatoryYears { get; set; } = null!;
 
     [XmlElement(ElementName = "JAZYK_O")]
-    public string LanguageStudy { get; set; } = null!; //33
+    
+    public string LanguageStudy { get; set; } = null!;
 
     [XmlElement(ElementName = "JAZ1")]
-    public string Language1Code { get; set; } = null!;//34
+    public string Language1Code { get; set; } = null!;
     /*
     [XmlElement(ElementName = "P_JAZ1")]
     public string Language1Qualifier { get; set; } = null!;// jen zakl
@@ -125,13 +127,13 @@ public class Sentence
     public string Language2Qualifier { get; set; } = null!; // jen zakl
     */
     [XmlElement(ElementName = "JAZ3")]
-    public string Language3Code { get; set; } = null!;//idk
+    public string Language3Code { get; set; } = null!;
     /*
     [XmlElement(ElementName = "P_JAZ3")]
     public string Language3Qualifier { get; set; } = null!;// jen zakl
     */
     [XmlElement(ElementName = "JAZ4")]
-    public string Language4Code { get; set; } = null!;//idk
+    public string Language4Code { get; set; } = null!;
     /*
     [XmlElement(ElementName = "P_JAZ4")]
     public string Language4Qualifier { get; set; } = null!;// jen zakl
@@ -155,13 +157,13 @@ public class Sentence
     public string InLanguage2Hours { get; set; } = null!;// jen zakl
 
     [XmlElement(ElementName = "ZMENDAT")]
-    public string ChangesAt { get; set; } = null!; //-------------------
+    public string ChangesAt { get; set; } = null!;
 
     [XmlElement(ElementName = "KOD_ZMEN")]
     public string ChangesCode { get; set; } = null!; //nemám odkud
 
     [XmlElement(ElementName = "KOD_VETY")]
-    public string SentenceCode { get; set; } = null!;//50
+    public string SentenceCode { get; set; } = null!;
 
     [XmlElement(ElementName = "PLAT_ZAC")]
     public string ValidityFrom { get; set; } = null!;
@@ -200,7 +202,8 @@ public static class SentenceExtensions
     public static Sentence ToSentence(this IAppMapper mapper,
         PersonDetail personDetail, StudentDetail studentDetail,
         StudyField studyField, Operation operation, Address address,
-        VirtualOperation virtualOperation, ClassDetail classDetail)
+        VirtualOperation virtualOperation, ClassDetail classDetail
+        , int grade, Instant? untilDate)
     {
         _ = mapper.Now;
         var dest = new Sentence
@@ -211,8 +214,8 @@ public static class SentenceExtensions
             ChangesCode = string.Empty,
             Citizenship = personDetail.Citizenship != null ? personDetail.Citizenship! : string.Empty,
             CitizenshtipQualifier = personDetail.CitizenshipCode != null ? personDetail.CitizenshipCode! : string.Empty,
-            Class = classDetail.Name,//source.
-            DecisiveCollectionDate = string.Empty, // ??????
+            Class = classDetail.Name,
+            DecisiveCollectionDate = untilDate == null ? string.Empty : untilDate.ToString()!,
             District = address.CityDistrict != null ? address.CityDistrict! : string.Empty,
             EducationEnd = studentDetail.EndsAt != null ? studentDetail.EndsAt.ToString()! : string.Empty,
             EducationEndCode = studentDetail.EndReasonCode != null ? studentDetail.EndReasonCode!.ToString() : string.Empty,//source.Student.EndReasonTypeId.ToString() ?? string.Empty,
@@ -223,14 +226,14 @@ public static class SentenceExtensions
             EducationQualifier = studyField.Qualifier,
             Financing = studentDetail.Financing != null ? studentDetail.Financing.ToString()! : string.Empty,
             Form = studyField.Form.ToString(),
-            Grade = string.Empty,
+            Grade = grade.ToString(),
             HighestAchievedEducation = ((int)studentDetail.HighestAchievedEducation).ToString(),
-            InLanguage1Code = string.Empty,
-            InLanguage1Count = string.Empty,
-            InLanguage1Hours = string.Empty,
-            InLanguage2Code = string.Empty,
-            InLanguage2Count = string.Empty,
-            InLanguage2Hours = string.Empty,
+            //InLanguage1Code = string.Empty,
+            //InLanguage1Count = string.Empty,
+            //InLanguage1Hours = string.Empty,
+            //InLanguage2Code = string.Empty,
+            //InLanguage2Count = string.Empty,
+            //InLanguage2Hours = string.Empty,
             Interuption = string.Empty,
             Izo = operation.IdentificationCode != null ? operation.IdentificationCode! : string.Empty,
             LanguageStudy = "10",

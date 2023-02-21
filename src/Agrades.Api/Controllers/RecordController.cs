@@ -48,46 +48,61 @@ public class RecordController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult> XMLReport([FromRoute] string opUrlName, [FromQuery] string? since, [FromQuery] string? until)
+    public async Task<ActionResult> XMLReport([FromRoute] string opUrlName, [FromQuery] string? since = null, [FromQuery] string? until = null)
     {
+        var now = _clock.GetCurrentInstant();
 
+        var currentYear = now.ToDateTimeUtc().Year ;
+
+        var thisYearsFirstSeptember = Instant.FromDateTimeUtc(new DateTime(currentYear, 9, 1, 0, 0, 0, DateTimeKind.Utc));
+        var operation = _dbContext.Operations.FirstOrDefault(x => x.UrlName == opUrlName);
+        if (operation == null)
+        {
+            return NotFound("Operation not found.");
+        }
         var sinceDate = since != null ? Instant.FromDateTimeUtc(DateTime.Parse(since).ToUniversalTime()) : Instant.FromUtc(DateTime.Now.Year - 1, 9, 1, 0, 0);
         Instant? untilDate = until != null ? Instant.FromDateTimeUtc(DateTime.Parse(until).ToUniversalTime()) : null;
-        var persons = _dbContext.Persons.ToList();
-        var personDetails = _dbContext.PersonDetails.ToList();
-        var students = _dbContext.Students.ToList();
-        var studentDetails = _dbContext.StudentDetails.FilterByInterval(sinceDate, untilDate).ToList();
-        var studyFields = _dbContext.StudyFields.ToList();
-        var addresses = _dbContext.Addresses.ToList();
+        var persons = _dbContext.Persons.FilterByOperation(operation.Id).ToList();
+        var personDetails = _dbContext.PersonDetails.FilterByOperation(operation.Id).ToList();
+        var students = _dbContext.Students.FilterByOperation(operation.Id).ToList();
+        var studentDetails = _dbContext.StudentDetails.FilterByOperation(operation.Id).FilterByInterval(sinceDate, untilDate).ToList();
+        var studyFields = _dbContext.StudyFields.FilterByOperation(operation.Id).ToList();
+        var addresses = _dbContext.Addresses.FilterByOperation(operation.Id).ToList();
         var virtualOperations = _dbContext.VirtualOperations.ToList();
-        var operation = _dbContext.Operations.FirstOrDefault(x => x.UrlName == opUrlName);
         var classes = _dbContext.Classes.ToList();
         var classDetails = _dbContext.ClassDetails.ToList();
 
-        if (operation == null)
-        {
-            return BadRequest();
-        }
-        var sentences = new List<Sentence>();
-        foreach (var studentDetail in studentDetails)
-        {
-            var student = students.First(x => x.Id == studentDetail.StudentId && x.OperationId == operation.Id);
-            var person = persons.First(x => x.Id == student.PersonId && x.OperationId == operation.Id);
-            var personDetail = personDetails.First(x => x.PersonId == person.Id && (x.ValidUntil <= untilDate || x.ValidUntil == untilDate) && x.OperationId == operation.Id);
-            var studyField = studyFields.First(x => x.Id == studentDetail.StudyFieldId && x.OperationId == operation.Id);
-            var address = addresses.First(x => x.Id == personDetail.PermanentAddressId && x.OperationId == operation.Id);
-            var virtualOperation = virtualOperations.First(x => x.Id == studentDetail.PreviousEducationOperationId && x.OperationId == operation.Id);
-            var studentClass = classes.First(x => x.Id == studentDetail.ClassId);
-            var classDetail = classDetails.First(x => x.ClassId == studentClass.Id && x.OperationId == operation.Id && (x.ValidUntil <= untilDate || x.ValidUntil == untilDate));
 
-            sentences.Add(SentenceExtensions.ToSentence(_mapper, personDetail,studentDetail, studyField, operation, address, virtualOperation, classDetail));
+        var sentences = new List<Sentence>();
+        foreach (var student in students)
+        {
+            var thisStudentStudentDetails = studentDetails.Where(x => x.StudentId == student.Id 
+            && (x.ValidUntil <= untilDate 
+                || x.ValidUntil == untilDate 
+                || x.ValidSince == (untilDate + Duration.FromDays(1))) 
+            && (x.ValidSince >= sinceDate)).ToList();
+            foreach (var studentDetail in thisStudentStudentDetails)
+            {
+                var person = persons.First(x => x.Id == student.PersonId);
+                var personDetail = personDetails.First(x => x.PersonId == person.Id && (x.ValidUntil <= untilDate || x.ValidUntil == untilDate));
+                var studyField = studyFields.First(x => x.Id == studentDetail.StudyFieldId);
+                var address = addresses.First(x => x.Id == personDetail.PermanentAddressId);
+                var virtualOperation = virtualOperations.First(x => x.Id == studentDetail.PreviousEducationOperationId && x.OperationId == operation.Id);
+                var studentClass = classes.First(x => x.Id == studentDetail.ClassId);
+                var classDetail = classDetails.First(x => x.ClassId == studentClass.Id && (x.ValidUntil <= untilDate || x.ValidUntil == untilDate));
+                var grade = now > thisYearsFirstSeptember
+                    ? currentYear - studentDetail.Class!.ClassDetails.Single(x => x.ValidUntil == null).StartAt.Year + 1
+                    : currentYear - studentDetail.Class!.ClassDetails.Single(x => x.ValidUntil == null).StartAt.Year;
+
+                sentences.Add(SentenceExtensions.ToSentence(_mapper, personDetail, studentDetail, studyField, operation, address, virtualOperation, classDetail, grade, untilDate));
+            }
         }
         var sww = new StringWriter();
         XmlWriter writer = XmlWriter.Create(sww);
         XmlSerializer xmlSerializer = new XmlSerializer(sentences.GetType(), new XmlRootAttribute("sentences"));
         xmlSerializer.Serialize(writer, sentences);
         var xml = sww.ToString();
-        
+
         return Ok(xml);
     }
 
