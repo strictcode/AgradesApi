@@ -107,6 +107,7 @@ public class RecordController : ControllerBase
             }
         }
         var path = "sentence.xml";
+        
         var sww = new StreamWriter(path);
 
         XmlWriter writer = XmlWriter.Create(sww);
@@ -121,6 +122,7 @@ public class RecordController : ControllerBase
         }
 
         var bytes = System.IO.File.ReadAllBytes(path);
+        System.IO.File.Delete(path);
         return File(bytes, contentType, path);
     }
 
