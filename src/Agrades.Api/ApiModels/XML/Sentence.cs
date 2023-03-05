@@ -163,7 +163,7 @@ public class Sentence
     public string ChangesCode { get; set; } = null!; //nemám odkud
 
     [XmlElement(ElementName = "KOD_VETY")]
-    public string SentenceCode { get; set; } = null!;
+    public string SentenceCode { get; set; } = null!; //student kód 1/4, student/absolvent
 
     [XmlElement(ElementName = "PLAT_ZAC")]
     public string ValidityFrom { get; set; } = null!;
@@ -199,6 +199,7 @@ public class Sentence
 
 public static class SentenceExtensions
 {
+
     public static Sentence ToSentence(this IAppMapper mapper,
         PersonDetail personDetail, StudentDetail studentDetail,
         StudyField studyField, Operation operation, Address address,
@@ -207,7 +208,7 @@ public static class SentenceExtensions
     {
         _ = mapper.Now;
         var dest = new Sentence
-        {
+        { 
             BirthDate = personDetail.BornOn != null ? personDetail.BornOn.ToString()! : string.Empty,
             BirthNumber = personDetail.IdentificationCode != null ? personDetail.IdentificationCode! : string.Empty,
             ChangesAt = string.Empty,
@@ -223,7 +224,7 @@ public static class SentenceExtensions
             EducationStart = studentDetail.StartsAt.ToString(),
             EducationStartCode = studentDetail.StartReasonCode != null ? studentDetail.StartReasonCode.ToString()! : string.Empty,
             EducationType = ((int)studyField.Type).ToString(),
-            EducationQualifier = studyField.Qualifier,
+            EducationQualifier = string.Empty,
             Financing = studentDetail.Financing != null ? studentDetail.Financing.ToString()! : string.Empty,
             Form = studyField.Form.ToString(),
             Grade = grade.ToString(),

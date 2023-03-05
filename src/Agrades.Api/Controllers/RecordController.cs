@@ -11,9 +11,16 @@ using Agrades.Data.Interfaces;
 using Agrades.Services;
 using Microsoft.AspNetCore.JsonPatch.Operations;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
+using Microsoft.Extensions.Configuration;
 using NodaTime;
 using NodaTime.Text;
+using System.IO;
+using System.Net;
+using System.Net.Http.Headers;
 using System.Reflection.Metadata.Ecma335;
 using System.Xml;
 using System.Xml.Linq;
@@ -44,6 +51,8 @@ public class RecordController : ControllerBase
         _mapper = mapper;
         _clock = clock;
     }
+    
+
     [HttpPost("api/v1/{opUrlName}/report")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -52,7 +61,7 @@ public class RecordController : ControllerBase
     {
         var now = _clock.GetCurrentInstant();
 
-        var currentYear = now.ToDateTimeUtc().Year ;
+        var currentYear = now.ToDateTimeUtc().Year;
 
         var thisYearsFirstSeptember = Instant.FromDateTimeUtc(new DateTime(currentYear, 9, 1, 0, 0, 0, DateTimeKind.Utc));
         var operation = _dbContext.Operations.FirstOrDefault(x => x.UrlName == opUrlName);
@@ -76,10 +85,10 @@ public class RecordController : ControllerBase
         var sentences = new List<Sentence>();
         foreach (var student in students)
         {
-            var thisStudentStudentDetails = studentDetails.Where(x => x.StudentId == student.Id 
-            && (x.ValidUntil <= untilDate 
-                || x.ValidUntil == untilDate 
-                || x.ValidSince == (untilDate + Duration.FromDays(1))) 
+            var thisStudentStudentDetails = studentDetails.Where(x => x.StudentId == student.Id
+            && (x.ValidUntil <= untilDate
+                || x.ValidUntil == untilDate
+                || x.ValidSince == (untilDate + Duration.FromDays(1)))
             && (x.ValidSince >= sinceDate)).ToList();
             foreach (var studentDetail in thisStudentStudentDetails)
             {
@@ -97,13 +106,22 @@ public class RecordController : ControllerBase
                 sentences.Add(SentenceExtensions.ToSentence(_mapper, personDetail, studentDetail, studyField, operation, address, virtualOperation, classDetail, grade, untilDate));
             }
         }
-        var sww = new StringWriter();
+        var path = "sentence.xml";
+        var sww = new StreamWriter(path);
+
         XmlWriter writer = XmlWriter.Create(sww);
         XmlSerializer xmlSerializer = new XmlSerializer(sentences.GetType(), new XmlRootAttribute("sentences"));
         xmlSerializer.Serialize(writer, sentences);
-        var xml = sww.ToString();
+        sww.Close();
 
-        return Ok(xml);
+        var provider = new FileExtensionContentTypeProvider();
+        if (!provider.TryGetContentType(path, out var contentType))
+        {
+            contentType = "text/xml";
+        }
+
+        var bytes = System.IO.File.ReadAllBytes(path);
+        return File(bytes, contentType, path);
     }
 
     [HttpPost("api/v1/{opUrlName}/Record/{personId}/CreateNewVersion")]

@@ -15,6 +15,8 @@ public class StudentDetail : ITrackable, IVersionable, IOperationFilter
 
     public LocalDate StartsAt { get; set; }
 
+
+
     public string? StartReasonCode { get; set; }
 
     public int? ObligatoryAttendenceYears { get; set; }
