@@ -62,6 +62,7 @@ public class Program
         /*
         
           nlog config
+          teï je serilog configurace v appsettings
           
          
           
