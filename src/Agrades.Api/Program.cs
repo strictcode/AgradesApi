@@ -2,9 +2,7 @@ using Agrades.Data;
 using Agrades.Data.Seeds;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration.Json;
-using NLog;
-using NLog.Config;
-using NLog.Web;
+using Serilog;
 using NodaTime;
 using System.Diagnostics;
 
@@ -16,6 +14,14 @@ public class Program
     public static async Task Main(string[] args)
     {
         var builder = CreateHostBuilder(args);
+        var configuration = new ConfigurationBuilder().
+            SetBasePath(Directory.GetCurrentDirectory()).
+            AddJsonFile("appsettings.json").
+            Build();
+
+        Log.Logger = new LoggerConfiguration().
+            ReadFrom.Configuration(configuration).
+            CreateLogger().ForContext<Program>();
 
         try
         {
@@ -23,19 +29,20 @@ public class Program
 
             await MigrateDb(host);
             await host.RunAsync();
+
+            Log.Logger.Information("started without problems");
         }
         catch (Exception exception)
         {
-            var logger = LogManager.Setup().LoadConfigurationFromAppSettings().GetCurrentClassLogger();
-            // NLog: catch setup errors
-            logger.Error(exception, "Stopped program because of exception");
+            // serilog: catch setup errors
+            Log.Logger.Error(exception, "Stopped program because of exception");
             throw;
 
         }
         finally
         {
             // Ensure to flush and stop internal timers/threads before application-exit (Avoid segmentation fault on Linux)
-            LogManager.Shutdown();
+            Log.CloseAndFlush();
         }
     }
 
@@ -52,6 +59,12 @@ public class Program
 
     public static IHostBuilder CreateHostBuilder(string[] args)
     {
+        /*
+        
+          nlog config
+          
+         
+          
         // CreateHostBuilder is run by EF tooling, while Main() is not. Putting layoutrenderer initialization
         // here avoids error in internal-nlog.txt when running add-migration or related tools.
         NLog.LayoutRenderers.LayoutRenderer.Register("basedir", x => ContentRootPath);
@@ -66,6 +79,12 @@ public class Program
             // exceptional situations.
             NLog.LogManager.Configuration = new XmlLoggingConfiguration("nlog.config");
         }
+
+
+
+        */
+
+
 
         return Host.CreateDefaultBuilder(args)
             .ConfigureAppConfiguration((hostBuilderContext, configurationBuilder) =>
@@ -89,11 +108,6 @@ public class Program
             .ConfigureWebHostDefaults(webBuilder =>
             {
                 webBuilder.UseStartup<Startup>();
-            })
-            .UseNLog(new NLogAspNetCoreOptions
-            {
-                // respect minimal levels for categoreis specified in appsettings
-                RemoveLoggerFactoryFilter = false,
             });
     }
 }

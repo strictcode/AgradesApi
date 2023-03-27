@@ -1,0 +1,47 @@
+[2023/03/24 10:20:48.993 INF] started without problems 
+[2023/03/24 10:35:24.554 +01:00 informatio] started without problems <source:> 
+[2023/03/24 10:36:59.990 INFORMATION] started without problems <source:> 
+[2023/03/24 10:37:35.630 INFORMATION] started without problems <source:  > 
+[2023/03/24 10:38:01.921 ERROR] Stopped program because of exception <source:  > System.ArgumentException: Host can't be null
+   at Npgsql.NpgsqlConnectionStringBuilder.PostProcessAndValidate()
+   at Npgsql.NpgsqlConnection.SetupDataSource()
+   at Npgsql.NpgsqlConnection.set_ConnectionString(String value)
+   at Npgsql.NpgsqlConnection..ctor(String connectionString)
+   at Npgsql.NpgsqlConnection.CloneWith(String connectionString)
+   at Npgsql.EntityFrameworkCore.PostgreSQL.Storage.Internal.NpgsqlRelationalConnection.CloneWith(String connectionString)
+   at Npgsql.EntityFrameworkCore.PostgreSQL.Storage.Internal.NpgsqlDatabaseCreator.Exists(Boolean async, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Migrations.HistoryRepository.ExistsAsync(CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Migrations.Internal.Migrator.MigrateAsync(String targetMigration, CancellationToken cancellationToken)
+   at Agrades.Api.Program.MigrateDb(IHost host) in C:\Users\1059\source\repos\my\AgradesApi\src\Agrades.Api\Program.cs:line 55
+   at Agrades.Api.Program.Main(String[] args) in C:\Users\1059\source\repos\my\AgradesApi\src\Agrades.Api\Program.cs:line 30
+
+[2023/03/24 10:45:54.328 INFORMATION] started without problems <source:  > 
+[2023/03/24 10:46:59.213 INFORMATION] started without problems <source:  > 
+[2023/03/24 10:50:23.364 INFORMATION] started without problems <source:Agrades.Api.Program> 
+[2023/03/24 10:52:32.652 ERROR] Stopped program because of exception <source:Agrades.Api.Program> System.ArgumentException: Host can't be null
+   at Npgsql.NpgsqlConnectionStringBuilder.PostProcessAndValidate()
+   at Npgsql.NpgsqlConnection.SetupDataSource()
+   at Npgsql.NpgsqlConnection.set_ConnectionString(String value)
+   at Npgsql.NpgsqlConnection..ctor(String connectionString)
+   at Npgsql.NpgsqlConnection.CloneWith(String connectionString)
+   at Npgsql.EntityFrameworkCore.PostgreSQL.Storage.Internal.NpgsqlRelationalConnection.CloneWith(String connectionString)
+   at Npgsql.EntityFrameworkCore.PostgreSQL.Storage.Internal.NpgsqlDatabaseCreator.Exists(Boolean async, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Migrations.HistoryRepository.ExistsAsync(CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Migrations.Internal.Migrator.MigrateAsync(String targetMigration, CancellationToken cancellationToken)
+   at Agrades.Api.Program.MigrateDb(IHost host) in C:\Users\1059\source\repos\my\AgradesApi\src\Agrades.Api\Program.cs:line 55
+   at Agrades.Api.Program.Main(String[] args) in C:\Users\1059\source\repos\my\AgradesApi\src\Agrades.Api\Program.cs:line 30
+
+[2023/03/24 10:54:57.347 ERROR <source:Agrades.Api.Program>] Stopped program because of exceptionSystem.ArgumentException: Host can't be null
+   at Npgsql.NpgsqlConnectionStringBuilder.PostProcessAndValidate()
+   at Npgsql.NpgsqlConnection.SetupDataSource()
+   at Npgsql.NpgsqlConnection.set_ConnectionString(String value)
+   at Npgsql.NpgsqlConnection..ctor(String connectionString)
+   at Npgsql.NpgsqlConnection.CloneWith(String connectionString)
+   at Npgsql.EntityFrameworkCore.PostgreSQL.Storage.Internal.NpgsqlRelationalConnection.CloneWith(String connectionString)
+   at Npgsql.EntityFrameworkCore.PostgreSQL.Storage.Internal.NpgsqlDatabaseCreator.Exists(Boolean async, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Migrations.HistoryRepository.ExistsAsync(CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Migrations.Internal.Migrator.MigrateAsync(String targetMigration, CancellationToken cancellationToken)
+   at Agrades.Api.Program.MigrateDb(IHost host) in C:\Users\1059\source\repos\my\AgradesApi\src\Agrades.Api\Program.cs:line 55
+   at Agrades.Api.Program.Main(String[] args) in C:\Users\1059\source\repos\my\AgradesApi\src\Agrades.Api\Program.cs:line 30
+
+[2023/03/24 10:55:22.395 INFORMATION <source:Agrades.Api.Program>] started without problems
