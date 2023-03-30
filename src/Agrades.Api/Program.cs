@@ -3,8 +3,11 @@ using Agrades.Data.Seeds;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration.Json;
 using Serilog;
+using Serilog.AspNetCore;
 using NodaTime;
 using System.Diagnostics;
+using System;
+using Microsoft.EntityFrameworkCore.Storage.Internal;
 
 namespace Agrades.Api;
 public class Program
@@ -25,6 +28,7 @@ public class Program
 
         try
         {
+            builder.UseSerilog(Log.Logger);
             var host = builder.Build();
 
             await MigrateDb(host);
@@ -59,34 +63,6 @@ public class Program
 
     public static IHostBuilder CreateHostBuilder(string[] args)
     {
-        /*
-        
-          nlog config
-          teï je serilog configurace v appsettings
-          
-         
-          
-        // CreateHostBuilder is run by EF tooling, while Main() is not. Putting layoutrenderer initialization
-        // here avoids error in internal-nlog.txt when running add-migration or related tools.
-        NLog.LayoutRenderers.LayoutRenderer.Register("basedir", x => ContentRootPath);
-        NLog.LayoutRenderers.LayoutRenderer.Register("filteredStackTrace", x =>
-            "\r\n" + String.Join(String.Empty, new StackTrace(true).GetFrames().Where(frame => frame.HasSource()).Skip(1))
-        );
-        if (File.Exists("./nlog.config"))
-        {
-            // nlog scanning doesn't try to use current directory (see
-            // https://github.com/NLog/NLog/wiki/Configuration-file#configuration-file-locations). Default should be
-            // to use published nlog.config without any changes, but it makes sense to allow local config in
-            // exceptional situations.
-            NLog.LogManager.Configuration = new XmlLoggingConfiguration("nlog.config");
-        }
-
-
-
-        */
-
-
-
         return Host.CreateDefaultBuilder(args)
             .ConfigureAppConfiguration((hostBuilderContext, configurationBuilder) =>
             {
