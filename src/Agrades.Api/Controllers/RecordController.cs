@@ -38,14 +38,12 @@ public class RecordController : ControllerBase
     private readonly IClock _clock;
 
     public RecordController(
-        Serilog.ILogger logger,
         AppDbContext dbContext,
         ICurrentOperationService currentOperationService,
         IAppMapper mapper,
         IClock clock
         )
     {
-        Log.Logger = logger;
         _dbContext = dbContext;
         _currentOperationService = currentOperationService;
         _mapper = mapper;

@@ -26,6 +26,11 @@ public class Program
             ReadFrom.Configuration(configuration).
             CreateLogger().ForContext<Program>();
 
+        AppDomain.CurrentDomain.FirstChanceException += (sender, eventArgs) =>
+        {
+            Log.Logger.Error(eventArgs.Exception.ToString());
+        };
+
         try
         {
             builder.UseSerilog(Log.Logger);
