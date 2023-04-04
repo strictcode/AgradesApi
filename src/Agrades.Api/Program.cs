@@ -33,7 +33,7 @@ public class Program
 
         try
         {
-            builder.UseSerilog(Log.Logger);
+            builder.UseSerilog(new LoggerConfiguration().ReadFrom.ConfigurationSection(configuration.GetSection("HostSerilog")).CreateLogger());
             var host = builder.Build();
 
             await MigrateDb(host);

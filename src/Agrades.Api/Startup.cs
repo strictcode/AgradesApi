@@ -4,6 +4,7 @@ using Agrades.Data;
 using Agrades.Services;
 using Microsoft.EntityFrameworkCore;
 using NodaTime;
+using Serilog;
 using System.Reflection;
 
 namespace Agrades.Api;
@@ -70,6 +71,8 @@ public class Startup
             app.UseSwagger();
             app.UseSwaggerUI();
         }
+
+        app.UseSerilogRequestLogging();
 
         app.UseForwardedHeaders();
 
