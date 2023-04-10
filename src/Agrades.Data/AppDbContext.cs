@@ -1,9 +1,10 @@
+using Agrades.Data.Entities.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.Extensions.Hosting;
-using System.Security.Principal;
 
 namespace Agrades.Data;
-public class AppDbContext : DbContext
+public class AppDbContext : IdentityUserContext<User, Guid>
 {
     private readonly IHostEnvironment _hostEnvironment;
 
