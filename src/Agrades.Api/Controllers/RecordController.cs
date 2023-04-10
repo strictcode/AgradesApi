@@ -18,6 +18,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 using Microsoft.Extensions.Configuration;
 using NodaTime;
 using NodaTime.Text;
+using Serilog;
 using System.IO;
 using System.Net;
 using System.Net.Http.Headers;
@@ -31,27 +32,24 @@ namespace Agrades.Api.Controllers;
 [ApiController]
 public class RecordController : ControllerBase
 {
-    private readonly ILogger<RecordController> _logger;
     private readonly AppDbContext _dbContext;
     private readonly ICurrentOperationService _currentOperationService;
     private readonly IAppMapper _mapper;
     private readonly IClock _clock;
 
     public RecordController(
-        ILogger<RecordController> logger,
         AppDbContext dbContext,
         ICurrentOperationService currentOperationService,
         IAppMapper mapper,
         IClock clock
         )
     {
-        _logger = logger;
         _dbContext = dbContext;
         _currentOperationService = currentOperationService;
         _mapper = mapper;
         _clock = clock;
     }
-    
+
 
     [HttpPost("api/v1/{opUrlName}/report")]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -107,7 +105,7 @@ public class RecordController : ControllerBase
             }
         }
         var path = "sentence.xml";
-        
+
         var sww = new StreamWriter(path);
 
         XmlWriter writer = XmlWriter.Create(sww);
@@ -123,6 +121,8 @@ public class RecordController : ControllerBase
 
         var bytes = System.IO.File.ReadAllBytes(path);
         System.IO.File.Delete(path);
+
+        Log.Logger.Information("file returned without errors");
         return File(bytes, contentType, path);
     }
 

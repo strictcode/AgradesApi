@@ -63,7 +63,7 @@ namespace Agrades.Data.Migrations
                 type: "integer",
                 nullable: false,
                 defaultValue: 0);
-
+            migrationBuilder.Sql("CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\"");
             migrationBuilder.Sql("INSERT INTO \"ClassDetail\" (\"Id\",\"ClassId\",\"Name\",\"OperationId\",\"StartAt\",\"ValidSince\",\"CreatedAt\",\"CreatedBy\",\"ModifiedAt\",\"ModifiedBy\")\r\nSELECT uuid_generate_v4(),\"Id\",\"Name\",\"OperationId\",\"StartAt\",'2022-09-01T00:00:00Z',\"CreatedAt\",\"CreatedBy\",\"ModifiedAt\",\"ModifiedBy\"\r\nFROM \"Class\"");
             migrationBuilder.Sql("UPDATE \"Class\" SET \"RowCount\" = 1");
             migrationBuilder.DropForeignKey(
