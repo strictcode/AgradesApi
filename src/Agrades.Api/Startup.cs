@@ -35,6 +35,11 @@ public class Startup
 
     public void ConfigureServices(IServiceCollection services)
     {
+        //temporary solution
+        services.AddSpaStaticFiles(op =>
+        {
+            op.RootPath = "wwwroot";
+        });
         services.AddDbContext<AppDbContext>(options =>
         {
             var connectionString = _configuration.GetConnectionString("DefaultConnection");
