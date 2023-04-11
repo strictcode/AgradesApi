@@ -51,19 +51,6 @@ public class RecordController : ControllerBase
         _mapper = mapper;
         _clock = clock;
     }
-<<<<<<< HEAD
-    //<?xml version = "1.0" encoding="Windows-1250" ?>
-    //<Vykaz verze = "VOS.010" > -verze použité struktury přenosové věty
-    //<Vygen>Vlastní_evidence</Vygen> - název evidenčního systému, ze kterého byla data vygenerována
-    //<autor> Jan Novák</autor> - jméno kontaktní osoby, která má ve škole na starost zpracování
-    //<telefon>123456789</telefon> - telefon na kontaktní osobu
-    //<e-mail>jnovak @skola.cz</e-mail> - e-mailová adresa na kontaktní osobu
-    //<soubor> V123456789_01</soubor> - název předávaného souboru
-    //<vytvoreno>1.4.2018 11:43:15</vytvoreno> - datum a čas vygenerování xml souboru
-=======
-
->>>>>>> 21b7c699f2b9b04ed944dff7b8ad5f9044c5e8ea
-
     [HttpPost("api/v1/{opUrlName}/report")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -84,116 +71,87 @@ public class RecordController : ControllerBase
         {
             return NotFound("Operation not found.");
         }
-        try
+        var sinceDate = since != null ? Instant.FromDateTimeUtc(DateTime.Parse(since).ToUniversalTime()) : Instant.FromUtc(DateTime.Now.Year - 1, 9, 1, 0, 0);
+        Instant? untilDate = until != null ? Instant.FromDateTimeUtc(DateTime.Parse(until).ToUniversalTime()) : null;
+        var persons = _dbContext.Persons.FilterByOperation(operation.Id).ToList();
+        var personDetails = _dbContext.PersonDetails.FilterByOperation(operation.Id).ToList();
+        var students = _dbContext.Students.FilterByOperation(operation.Id).ToList();
+        var studentDetails = _dbContext.StudentDetails.FilterByOperation(operation.Id).FilterByInterval(sinceDate, untilDate).ToList();
+        var studyFields = _dbContext.StudyFields.FilterByOperation(operation.Id).ToList();
+        var addresses = _dbContext.Addresses.FilterByOperation(operation.Id).ToList();
+        var virtualOperations = _dbContext.VirtualOperations.ToList();
+        var classes = _dbContext.Classes.ToList();
+        var classDetails = _dbContext.ClassDetails.ToList();
+
+
+        var sentences = new List<Sentence>();
+
+        foreach (var student in students)
         {
-            var sinceDate = since != null ? Instant.FromDateTimeUtc(DateTime.Parse(since).ToUniversalTime()) : Instant.FromUtc(DateTime.Now.Year - 1, 9, 1, 0, 0);
-            Instant? untilDate = until != null ? Instant.FromDateTimeUtc(DateTime.Parse(until).ToUniversalTime()) : null;
-            var persons = _dbContext.Persons.FilterByOperation(operation.Id).ToList();
-            var personDetails = _dbContext.PersonDetails.FilterByOperation(operation.Id).ToList();
-            var students = _dbContext.Students.FilterByOperation(operation.Id).ToList();
-            var studentDetails = _dbContext.StudentDetails.FilterByOperation(operation.Id).FilterByInterval(sinceDate, untilDate).ToList();
-            var studyFields = _dbContext.StudyFields.FilterByOperation(operation.Id).ToList();
-            var addresses = _dbContext.Addresses.FilterByOperation(operation.Id).ToList();
-            var virtualOperations = _dbContext.VirtualOperations.ToList();
-            var classes = _dbContext.Classes.ToList();
-            var classDetails = _dbContext.ClassDetails.ToList();
-
-
-            var sentences = new List<Sentence>();
-
-            foreach (var student in students)
+            var thisStudentStudentDetails = studentDetails.Where(x => x.StudentId == student.Id
+            && (x.ValidUntil <= untilDate
+                || x.ValidUntil == untilDate
+                || x.ValidUntil == null
+                || x.ValidSince == (untilDate + Duration.FromDays(1)))
+            && (x.ValidSince >= sinceDate)).ToList();
+            foreach (var studentDetail in thisStudentStudentDetails)
             {
-                var thisStudentStudentDetails = studentDetails.Where(x => x.StudentId == student.Id
-                && (x.ValidUntil <= untilDate
-                    || x.ValidUntil == untilDate
-                    || x.ValidUntil == null
-                    || x.ValidSince == (untilDate + Duration.FromDays(1)))
-                && (x.ValidSince >= sinceDate)).ToList();
-                foreach (var studentDetail in thisStudentStudentDetails)
-                {
-                    var person = persons.First(x => x.Id == student.PersonId);
-                    var personDetail = personDetails.First(x => x.PersonId == person.Id && (x.ValidUntil <= untilDate || x.ValidUntil == untilDate || x.ValidUntil == null));
-                    var studyField = studyFields.First(x => x.Id == studentDetail.StudyFieldId);
-                    var address = addresses.First(x => x.Id == personDetail.PermanentAddressId);
-                    var virtualOperation = virtualOperations.First(x => x.Id == studentDetail.PreviousEducationOperationId && x.OperationId == operation.Id);
-                    var studentClass = classes.First(x => x.Id == studentDetail.ClassId);
-                    var classDetail = classDetails.First(x => x.ClassId == studentClass.Id && (x.ValidUntil <= untilDate || x.ValidUntil == untilDate || x.ValidUntil == null));
-                    var grade = now > thisYearsFirstSeptember
-                        ? currentYear - studentDetail.Class!.ClassDetails.Single(x => x.ValidUntil == null).StartAt.Year + 1
-                        : currentYear - studentDetail.Class!.ClassDetails.Single(x => x.ValidUntil == null).StartAt.Year;
+                var person = persons.First(x => x.Id == student.PersonId);
+                var personDetail = personDetails.First(x => x.PersonId == person.Id && (x.ValidUntil <= untilDate || x.ValidUntil == untilDate || x.ValidUntil == null));
+                var studyField = studyFields.First(x => x.Id == studentDetail.StudyFieldId);
+                var address = addresses.First(x => x.Id == personDetail.PermanentAddressId);
+                var virtualOperation = virtualOperations.First(x => x.Id == studentDetail.PreviousEducationOperationId && x.OperationId == operation.Id);
+                var studentClass = classes.First(x => x.Id == studentDetail.ClassId);
+                var classDetail = classDetails.First(x => x.ClassId == studentClass.Id && (x.ValidUntil <= untilDate || x.ValidUntil == untilDate || x.ValidUntil == null));
+                var grade = now > thisYearsFirstSeptember
+                    ? currentYear - studentDetail.Class!.ClassDetails.Single(x => x.ValidUntil == null).StartAt.Year + 1
+                    : currentYear - studentDetail.Class!.ClassDetails.Single(x => x.ValidUntil == null).StartAt.Year;
 
-                    sentences.Add(SentenceExtensions.ToSentence(_mapper, personDetail, studentDetail, studyField, operation, address, virtualOperation, classDetail, grade, untilDate));
-                }
+                sentences.Add(SentenceExtensions.ToSentence(_mapper, personDetail, studentDetail, studyField, operation, address, virtualOperation, classDetail, grade, untilDate));
             }
-            var path = "s181105527_01.xml";
-
-            var document = new BaseAnonymizedDoc
-            {
-                GeneratedBy = "1. IT Gymnázium vlastní systém",
-                Author = "Daniel Kopecký",
-                PhoneNumber = "608 943 443",
-                Email = "daniel.kopecky@itgymnazium.cz",
-                DocumentName = "s181105527_01",
-                CreatedAt = DateTime.UtcNow.ToString(),
-                Sentences = sentences.ToArray()
-            };
-
-
-            var sww = new StreamWriter(path);
-            XmlWriter writer = XmlWriter.Create(sww);
-            XmlSerializer xmlSerializer = new XmlSerializer(document.GetType(), new XmlRootAttribute("Vykaz"));
-            xmlSerializer.Serialize(sww, document);
-            sww.Close();
-            var xDoc = XDocument.Load(path);
-            System.IO.File.Delete(path);
-            var paymentRecord = xDoc.Root!.Element("Sentences");
-            var reportEl = xDoc.Root!;
-            reportEl!.RemoveAttributes();
-            reportEl!.SetAttributeValue("verze", "SS.007");
-            var nodes = xDoc.Root.Element("Sentences")!.Elements();
-            paymentRecord!.Remove();
-            xDoc.Root.Add(nodes);
-            var sw = new StreamWriter(path);
-            xDoc.Save(sw);
-            sw.Close();
-
-            var provider = new FileExtensionContentTypeProvider();
-            if (!provider.TryGetContentType(path, out var contentType))
-            {
-                contentType = "text/xml";
-            }
-            var bytes = System.IO.File.ReadAllBytes(path);
-            System.IO.File.Delete(path);
-            return File(bytes, contentType, path);
         }
-<<<<<<< HEAD
-        catch (Exception ex)
-=======
-        var path = "sentence.xml";
+        var path = "s181105527_01.xml";
+
+        var document = new BaseAnonymizedDoc
+        {
+            GeneratedBy = "1. IT Gymnázium vlastní systém",
+            Author = "Daniel Kopecký",
+            PhoneNumber = "608 943 443",
+            Email = "daniel.kopecky@itgymnazium.cz",
+            DocumentName = "s181105527_01",
+            CreatedAt = DateTime.UtcNow.ToString(),
+            Sentences = sentences.ToArray()
+        };
+
 
         var sww = new StreamWriter(path);
-
         XmlWriter writer = XmlWriter.Create(sww);
-        XmlSerializer xmlSerializer = new XmlSerializer(sentences.GetType(), new XmlRootAttribute("sentences"));
-        xmlSerializer.Serialize(writer, sentences);
+        XmlSerializer xmlSerializer = new XmlSerializer(document.GetType(), new XmlRootAttribute("Vykaz"));
+        xmlSerializer.Serialize(sww, document);
         sww.Close();
+        var xDoc = XDocument.Load(path);
+        System.IO.File.Delete(path);
+        var paymentRecord = xDoc.Root!.Element("Sentences");
+        var reportEl = xDoc.Root!;
+        reportEl!.RemoveAttributes();
+        reportEl!.SetAttributeValue("verze", "SS.007");
+        var nodes = xDoc.Root.Element("Sentences")!.Elements();
+        paymentRecord!.Remove();
+        xDoc.Root.Add(nodes);
+        var sw = new StreamWriter(path);
+        xDoc.Save(sw);
+        sw.Close();
 
         var provider = new FileExtensionContentTypeProvider();
         if (!provider.TryGetContentType(path, out var contentType))
->>>>>>> 21b7c699f2b9b04ed944dff7b8ad5f9044c5e8ea
         {
-            Console.WriteLine();
+            contentType = "text/xml";
         }
-<<<<<<< HEAD
-        return Ok();
-=======
-
         var bytes = System.IO.File.ReadAllBytes(path);
         System.IO.File.Delete(path);
-
         Log.Logger.Information("file returned without errors");
         return File(bytes, contentType, path);
->>>>>>> 21b7c699f2b9b04ed944dff7b8ad5f9044c5e8ea
+
     }
 
     [HttpPost("api/v1/{opUrlName}/Record/{personId}/CreateNewVersion")]
@@ -358,9 +316,9 @@ public class RecordController : ControllerBase
                 var addrParts = addr[0].Split(' ');
                 var street = string.Join(' ', addrParts.Take(addrParts.Length - 1));
                 var zipCity = addr[1].Trim().Split(' ');
-                if(zipCity.Length <= 1)
+                if (zipCity.Length <= 1)
                 {
-                    await Console.Out.WriteLineAsync(   );
+                    await Console.Out.WriteLineAsync();
                 }
                 var permAddress = new Address
                 {
@@ -458,11 +416,11 @@ public class RecordController : ControllerBase
 
             await _dbContext.SaveChangesAsync();
 
-            
+
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
-            await Console.Out.WriteLineAsync(   ); ;
+            await Console.Out.WriteLineAsync(); ;
         }
         return NoContent();
     }
