@@ -18,6 +18,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 using Microsoft.Extensions.Configuration;
 using NodaTime;
 using NodaTime.Text;
+using Serilog;
 using System.IO;
 using System.Net;
 using System.Net.Http.Headers;
@@ -32,7 +33,6 @@ namespace Agrades.Api.Controllers;
 [ApiController]
 public class RecordController : ControllerBase
 {
-    private readonly ILogger<RecordController> _logger;
     private readonly AppDbContext _dbContext;
     private readonly ICurrentOperationService _currentOperationService;
     private readonly IAppMapper _mapper;
@@ -40,19 +40,18 @@ public class RecordController : ControllerBase
     private readonly EnumTranslator _translator;
 
     public RecordController(
-        ILogger<RecordController> logger,
         AppDbContext dbContext,
         ICurrentOperationService currentOperationService,
         IAppMapper mapper,
         IClock clock
         )
     {
-        _logger = logger;
         _dbContext = dbContext;
         _currentOperationService = currentOperationService;
         _mapper = mapper;
         _clock = clock;
     }
+<<<<<<< HEAD
     //<?xml version = "1.0" encoding="Windows-1250" ?>
     //<Vykaz verze = "VOS.010" > -verze použité struktury přenosové věty
     //<Vygen>Vlastní_evidence</Vygen> - název evidenčního systému, ze kterého byla data vygenerována
@@ -61,6 +60,9 @@ public class RecordController : ControllerBase
     //<e-mail>jnovak @skola.cz</e-mail> - e-mailová adresa na kontaktní osobu
     //<soubor> V123456789_01</soubor> - název předávaného souboru
     //<vytvoreno>1.4.2018 11:43:15</vytvoreno> - datum a čas vygenerování xml souboru
+=======
+
+>>>>>>> 21b7c699f2b9b04ed944dff7b8ad5f9044c5e8ea
 
     [HttpPost("api/v1/{opUrlName}/report")]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -164,11 +166,34 @@ public class RecordController : ControllerBase
             System.IO.File.Delete(path);
             return File(bytes, contentType, path);
         }
+<<<<<<< HEAD
         catch (Exception ex)
+=======
+        var path = "sentence.xml";
+
+        var sww = new StreamWriter(path);
+
+        XmlWriter writer = XmlWriter.Create(sww);
+        XmlSerializer xmlSerializer = new XmlSerializer(sentences.GetType(), new XmlRootAttribute("sentences"));
+        xmlSerializer.Serialize(writer, sentences);
+        sww.Close();
+
+        var provider = new FileExtensionContentTypeProvider();
+        if (!provider.TryGetContentType(path, out var contentType))
+>>>>>>> 21b7c699f2b9b04ed944dff7b8ad5f9044c5e8ea
         {
             Console.WriteLine();
         }
+<<<<<<< HEAD
         return Ok();
+=======
+
+        var bytes = System.IO.File.ReadAllBytes(path);
+        System.IO.File.Delete(path);
+
+        Log.Logger.Information("file returned without errors");
+        return File(bytes, contentType, path);
+>>>>>>> 21b7c699f2b9b04ed944dff7b8ad5f9044c5e8ea
     }
 
     [HttpPost("api/v1/{opUrlName}/Record/{personId}/CreateNewVersion")]

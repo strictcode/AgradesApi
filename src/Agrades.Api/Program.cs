@@ -2,11 +2,12 @@ using Agrades.Data;
 using Agrades.Data.Seeds;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration.Json;
-using NLog;
-using NLog.Config;
-using NLog.Web;
+using Serilog;
+using Serilog.AspNetCore;
 using NodaTime;
 using System.Diagnostics;
+using System;
+using Microsoft.EntityFrameworkCore.Storage.Internal;
 
 namespace Agrades.Api;
 public class Program
@@ -16,26 +17,41 @@ public class Program
     public static async Task Main(string[] args)
     {
         var builder = CreateHostBuilder(args);
+        var configuration = new ConfigurationBuilder().
+            SetBasePath(Directory.GetCurrentDirectory()).
+            AddJsonFile("appsettings.json").
+            Build();
+
+        Log.Logger = new LoggerConfiguration().
+            ReadFrom.Configuration(configuration).
+            CreateLogger().ForContext<Program>();
+
+        AppDomain.CurrentDomain.FirstChanceException += (sender, eventArgs) =>
+        {
+            Log.Logger.Error(eventArgs.Exception.ToString());
+        };
 
         try
         {
+            builder.UseSerilog(new LoggerConfiguration().ReadFrom.ConfigurationSection(configuration.GetSection("HostSerilog")).CreateLogger());
             var host = builder.Build();
 
             await MigrateDb(host);
             await host.RunAsync();
+
+            Log.Logger.Information("started without problems");
         }
         catch (Exception exception)
         {
-            var logger = LogManager.Setup().LoadConfigurationFromAppSettings().GetCurrentClassLogger();
-            // NLog: catch setup errors
-            logger.Error(exception, "Stopped program because of exception");
+            // serilog: catch setup errors
+            Log.Logger.Error(exception, "Stopped program because of exception");
             throw;
 
         }
         finally
         {
             // Ensure to flush and stop internal timers/threads before application-exit (Avoid segmentation fault on Linux)
-            LogManager.Shutdown();
+            Log.CloseAndFlush();
         }
     }
 
@@ -52,21 +68,6 @@ public class Program
 
     public static IHostBuilder CreateHostBuilder(string[] args)
     {
-        // CreateHostBuilder is run by EF tooling, while Main() is not. Putting layoutrenderer initialization
-        // here avoids error in internal-nlog.txt when running add-migration or related tools.
-        NLog.LayoutRenderers.LayoutRenderer.Register("basedir", x => ContentRootPath);
-        NLog.LayoutRenderers.LayoutRenderer.Register("filteredStackTrace", x =>
-            "\r\n" + String.Join(String.Empty, new StackTrace(true).GetFrames().Where(frame => frame.HasSource()).Skip(1))
-        );
-        if (File.Exists("./nlog.config"))
-        {
-            // nlog scanning doesn't try to use current directory (see
-            // https://github.com/NLog/NLog/wiki/Configuration-file#configuration-file-locations). Default should be
-            // to use published nlog.config without any changes, but it makes sense to allow local config in
-            // exceptional situations.
-            NLog.LogManager.Configuration = new XmlLoggingConfiguration("nlog.config");
-        }
-
         return Host.CreateDefaultBuilder(args)
             .ConfigureAppConfiguration((hostBuilderContext, configurationBuilder) =>
             {
@@ -89,11 +90,6 @@ public class Program
             .ConfigureWebHostDefaults(webBuilder =>
             {
                 webBuilder.UseStartup<Startup>();
-            })
-            .UseNLog(new NLogAspNetCoreOptions
-            {
-                // respect minimal levels for categoreis specified in appsettings
-                RemoveLoggerFactoryFilter = false,
             });
     }
 }
