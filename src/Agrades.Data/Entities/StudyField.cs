@@ -12,11 +12,11 @@ public class StudyField : ITrackable, IOperationFilter
 
     public Language Language { get; set; }
 
-    public FieldOfStudyType Type { get; set; }
+    public Rafs Type { get; set; }
 
-    public int LengthInYears { get; set; }
+    public Rads LengthInYears { get; set; }
 
-    public int Form { get; set; }
+    public Rasd Form { get; set; }
 
     public Guid OperationId { get; set; }
     public Operation Operation { get; set; } = null!;

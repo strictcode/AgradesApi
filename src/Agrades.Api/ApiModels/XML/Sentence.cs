@@ -1,11 +1,14 @@
 using Agrades.Api.Mapper;
 using Agrades.Data.Entities;
+using Agrades.Data.Entities.Categories;
 using Agrades.Data.Entities.Persons;
 using NodaTime;
+using System.Globalization;
 using System.Xml.Serialization;
 
 namespace Agrades.Api.ApiModels.XML;
 
+[XmlType(TypeName = "veta")]
 public class Sentence
 {
     /// <summary>
@@ -78,7 +81,7 @@ public class Sentence
     public string Grade { get; set; } = null!;
 
     [XmlElement(ElementName = "TRIDA")]
-    public string Class { get; set; } = null!; 
+    public string Class { get; set; } = null!;
 
     [XmlElement(ElementName = "ST_SKOLY")]
     public string SchoolGradeType { get; set; } = null!;
@@ -111,7 +114,7 @@ public class Sentence
     public string MandatoryYears { get; set; } = null!;
 
     [XmlElement(ElementName = "JAZYK_O")]
-    
+
     public string LanguageStudy { get; set; } = null!;
 
     [XmlElement(ElementName = "JAZ1")]
@@ -208,27 +211,37 @@ public static class SentenceExtensions
     {
         _ = mapper.Now;
         var dest = new Sentence
-        { 
-            BirthDate = personDetail.BornOn != null ? personDetail.BornOn.ToString()! : string.Empty,
+        {
+            BirthDate = personDetail.BornOn != null
+          ? personDetail.BornOn.Value.Month > LocalDate.FromYearMonthWeekAndDay(2022, 9, 5, IsoDayOfWeek.Friday).Month
+          ? $"{personDetail.BornOn.Value.Year}bb"
+          : $"{personDetail.BornOn.Value.Year}aa"
+          : string.Empty,
+
             BirthNumber = personDetail.IdentificationCode != null ? personDetail.IdentificationCode! : string.Empty,
             ChangesAt = string.Empty,
-            ChangesCode = string.Empty,
-            Citizenship = personDetail.Citizenship != null ? personDetail.Citizenship! : string.Empty,
-            CitizenshtipQualifier = personDetail.CitizenshipCode != null ? personDetail.CitizenshipCode! : string.Empty,
+            //get from student, nowhere to get it from right now
+            ChangesCode = ((int)Rakz.WithoutChange).ToString(),
+            Citizenship = personDetail.Citizenship != null ? ((int)personDetail.Citizenship).ToString() : string.Empty,
+            CitizenshtipQualifier = personDetail.CitizenshipCode != null ? ((int)personDetail.CitizenshipCode).ToString() : string.Empty,
             Class = classDetail.Name,
-            DecisiveCollectionDate = untilDate == null ? string.Empty : untilDate.ToString()!,
-            District = address.CityDistrict != null ? address.CityDistrict! : string.Empty,
+            DecisiveCollectionDate = untilDate == null ? string.Empty : DateTime.Parse(untilDate.ToString()!).ToString(),
+            /*We will get this from state district in adress*/
+            District = "500054",
             EducationEnd = studentDetail.EndsAt != null ? studentDetail.EndsAt.ToString()! : string.Empty,
             EducationEndCode = studentDetail.EndReasonCode != null ? studentDetail.EndReasonCode!.ToString() : string.Empty,//source.Student.EndReasonTypeId.ToString() ?? string.Empty,
-            EducationLength = studyField.LengthInYears.ToString(),
-            EducationStart = studentDetail.StartsAt.ToString(),
-            EducationStartCode = studentDetail.StartReasonCode != null ? studentDetail.StartReasonCode.ToString()! : string.Empty,
-            EducationType = ((int)studyField.Type).ToString(),
+            EducationLength = mapper.RadsFromEnumToCode(Rads.FourYear), //studyField.LengthInYears.ToString(),
+            EducationStart = studentDetail.StartsAt.ToString("d", new DateTimeFormatInfo()),
+            EducationStartCode = mapper.RazvFromEnumToCode(studentDetail.StartReasonCode),
+            EducationType = mapper.RafsFromEnumToCode(studyField.Type),
+            //opravit PRIZN_ST
             EducationQualifier = string.Empty,
             Financing = studentDetail.Financing != null ? studentDetail.Financing.ToString()! : string.Empty,
-            Form = studyField.Form.ToString(),
+            //opravit ZPUSOB
+            Form = ((int)studyField.Form).ToString(),
             Grade = grade.ToString(),
-            HighestAchievedEducation = ((int)studentDetail.HighestAchievedEducation).ToString(),
+            HighestAchievedEducation = mapper.RakkFromEnumToCode(studentDetail.HighestAchievedEducation),
+
             //InLanguage1Code = string.Empty,
             //InLanguage1Count = string.Empty,
             //InLanguage1Hours = string.Empty,
@@ -236,20 +249,23 @@ public static class SentenceExtensions
             //InLanguage2Count = string.Empty,
             //InLanguage2Hours = string.Empty,
             Interuption = string.Empty,
-            Izo = operation.IdentificationCode != null ? operation.IdentificationCode! : string.Empty,
+            Izo = operation.IdentificationCode != null ? operation.IdentificationCode!.Replace(" ", "") : string.Empty,
             LanguageStudy = "10",
             Language1Code = "02",
             Language2Code = "25",
             Language3Code = string.Empty,
             Language4Code = string.Empty,
             MandatoryYears = studentDetail.ObligatoryAttendenceYears != null ? studentDetail.ObligatoryAttendenceYears.ToString()! : string.Empty,
-            Municipality = address.City != null ? address.City : string.Empty,
+            /*fix, just temporary solution to test other things */
+            Municipality = "CZ0100",//address.City != null ? address.City : string.Empty,
             OperationPart = operation.PartNumberForRegister != null ? operation.PartNumberForRegister! : string.Empty,
-            PreviousEducation = virtualOperation.SchoolType.ToString(),
+            PreviousEducation = mapper.RapzFromEnumToCode(virtualOperation.SchoolType),
             PreviousEducationIzo = virtualOperation.IdentificationCode,
-            SchoolGradeType = ((int)operation.SchoolType).ToString(),
+            SchoolGradeType =string.Empty,// ((int)operation.SchoolType).ToString(),
+            //opravit KOD_VETY
             SentenceCode = string.Empty, // ?????????????
-            Sex = personDetail.Sex != null ? personDetail.Sex.ToString()! : string.Empty,
+            Sex = personDetail.Sex != null ? ((int)personDetail.Sex).ToString() : string.Empty,
+            //chyba, OBOR
             StudyField = ((int)studyField.Type).ToString(),
             ValidityFrom = studentDetail.ValidSince.ToString(), // ?????????????
             ValidityTo = studentDetail.ValidUntil != null ? studentDetail.ValidUntil.ToString()! : string.Empty, // ?????????????

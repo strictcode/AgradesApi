@@ -7,11 +7,23 @@ using NodaTime;
 namespace Agrades.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class Init : Migration
+    public partial class init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "Class",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    RowCount = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Class", x => x.Id);
+                });
+
             migrationBuilder.CreateTable(
                 name: "Organization",
                 columns: table => new
@@ -133,13 +145,16 @@ namespace Agrades.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Class",
+                name: "ClassDetail",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    ClassId = table.Column<Guid>(type: "uuid", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: false),
                     OperationId = table.Column<Guid>(type: "uuid", nullable: false),
-                    StartAt = table.Column<Instant>(type: "timestamp with time zone", nullable: false),
+                    StartAt = table.Column<LocalDate>(type: "date", nullable: false),
+                    ValidSince = table.Column<Instant>(type: "timestamp with time zone", nullable: false),
+                    ValidUntil = table.Column<Instant>(type: "timestamp with time zone", nullable: true),
                     CreatedAt = table.Column<Instant>(type: "timestamp with time zone", nullable: false),
                     CreatedBy = table.Column<string>(type: "text", nullable: false),
                     ModifiedAt = table.Column<Instant>(type: "timestamp with time zone", nullable: false),
@@ -149,9 +164,15 @@ namespace Agrades.Data.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Class", x => x.Id);
+                    table.PrimaryKey("PK_ClassDetail", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Class_Operation_OperationId",
+                        name: "FK_ClassDetail_Class_ClassId",
+                        column: x => x.ClassId,
+                        principalTable: "Class",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_ClassDetail_Operation_OperationId",
                         column: x => x.OperationId,
                         principalTable: "Operation",
                         principalColumn: "Id",
@@ -256,14 +277,14 @@ namespace Agrades.Data.Migrations
                     LastName = table.Column<string>(type: "text", nullable: false),
                     DegreesPost = table.Column<string>(type: "text", nullable: true),
                     BirthName = table.Column<string>(type: "text", nullable: true),
-                    BornOn = table.Column<Instant>(type: "timestamp with time zone", nullable: true),
+                    BornOn = table.Column<LocalDate>(type: "date", nullable: true),
                     FamilyStatusId = table.Column<int>(type: "integer", nullable: true),
                     IdentityCardNumberTypeId = table.Column<int>(type: "integer", nullable: true),
                     IdentityCardNumber = table.Column<string>(type: "text", nullable: true),
                     IdentificationCodeTypeId = table.Column<int>(type: "integer", nullable: true),
                     IdentificationCode = table.Column<string>(type: "text", nullable: true),
-                    Citizenship = table.Column<string>(type: "text", nullable: true),
-                    CitizenshipCode = table.Column<string>(type: "text", nullable: true),
+                    Citizenship = table.Column<int>(type: "integer", nullable: true),
+                    CitizenshipCode = table.Column<int>(type: "integer", nullable: true),
                     InsuranceCompanyCode = table.Column<string>(type: "text", nullable: true),
                     DataBox = table.Column<string>(type: "text", nullable: true),
                     BackofficeNote = table.Column<string>(type: "text", nullable: true),
@@ -397,11 +418,11 @@ namespace Agrades.Data.Migrations
                     StudentId = table.Column<Guid>(type: "uuid", nullable: false),
                     ClassId = table.Column<Guid>(type: "uuid", nullable: true),
                     OperationId = table.Column<Guid>(type: "uuid", nullable: false),
-                    StartsAt = table.Column<Instant>(type: "timestamp with time zone", nullable: false),
-                    StartReasonCode = table.Column<string>(type: "text", nullable: true),
+                    StartsAt = table.Column<LocalDate>(type: "date", nullable: false),
+                    StartReasonCode = table.Column<int>(type: "integer", nullable: false),
                     ObligatoryAttendenceYears = table.Column<int>(type: "integer", nullable: true),
                     Financing = table.Column<int>(type: "integer", nullable: true),
-                    EndsAt = table.Column<Instant>(type: "timestamp with time zone", nullable: true),
+                    EndsAt = table.Column<LocalDate>(type: "date", nullable: true),
                     EndReasonCode = table.Column<string>(type: "text", nullable: true),
                     StudyFieldId = table.Column<Guid>(type: "uuid", nullable: false),
                     IsOnInternat = table.Column<bool>(type: "boolean", nullable: true),
@@ -497,8 +518,13 @@ namespace Agrades.Data.Migrations
                 column: "OperationId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Class_OperationId",
-                table: "Class",
+                name: "IX_ClassDetail_ClassId",
+                table: "ClassDetail",
+                column: "ClassId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ClassDetail_OperationId",
+                table: "ClassDetail",
                 column: "OperationId");
 
             migrationBuilder.CreateIndex(
@@ -624,6 +650,9 @@ namespace Agrades.Data.Migrations
         {
             migrationBuilder.DropTable(
                 name: "Category");
+
+            migrationBuilder.DropTable(
+                name: "ClassDetail");
 
             migrationBuilder.DropTable(
                 name: "PersonDetail");

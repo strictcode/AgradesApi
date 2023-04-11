@@ -17,7 +17,7 @@ public class StudentDetail : ITrackable, IVersionable, IOperationFilter
 
 
 
-    public string? StartReasonCode { get; set; }
+    public Razv StartReasonCode { get; set; }
 
     public int? ObligatoryAttendenceYears { get; set; }
 
@@ -34,7 +34,7 @@ public class StudentDetail : ITrackable, IVersionable, IOperationFilter
 
     public bool? HasSchoolMeals { get; set; }
 
-    public FieldOfStudyType HighestAchievedEducation { get; set; }
+    public Rakk HighestAchievedEducation { get; set; }
 
     public string? PreviousEducationCode { get; set; }
 

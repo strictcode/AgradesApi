@@ -27,6 +27,7 @@ public static class ITGSeed
                 UrlNameNormalized = "ITG".ToLower(),
                 IdentificationCode = "181 105 527",
                 Organization = organization,
+                PartNumberForRegister = "01",
             }.SetCreateBySystem(now);
 
             var fieldOfStudy = new StudyField
@@ -34,9 +35,11 @@ public static class ITGSeed
                 Id = DatabaseConstants.ITG.FieldOfStudyId,
                 Name = "Gymnázium",
                 Qualifier = "79-41-K/81",
-                Type = FieldOfStudyType.HighSchoolWithLeavingExam,
+                Type = Rafs.Daily,
                 BackofficeName = "Gymnázium od 2020",
+                Form = Rasd.SchoolAttendanceInRegisteredSchool,
                 OperationId = operation.Id,
+                LengthInYears = Rads.FourYear,
             }.SetCreateBySystem(now);
 
             var icko = new Class

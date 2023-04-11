@@ -12,7 +12,7 @@ public class VirtualOperation : ITrackable, IVersionable
     public string IdentificationCode { get; set; } = null!;
     public UniqueCodeType IdentificationCodeTypeId { get; set; }
 
-    public SchoolGradeType SchoolType { get; set; }
+    public Rapz SchoolType { get; set; }
 
     public Guid? OperationId { get; set; }
     public Operation? Operation { get; set; }

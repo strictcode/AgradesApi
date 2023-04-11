@@ -13,8 +13,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Agrades.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20230211233351_InstantToDateOtherEntities")]
-    partial class InstantToDateOtherEntities
+    [Migration("20230331103621_init")]
+    partial class init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -441,11 +441,11 @@ namespace Agrades.Data.Migrations
                     b.Property<LocalDate?>("BornOn")
                         .HasColumnType("date");
 
-                    b.Property<string>("Citizenship")
-                        .HasColumnType("text");
+                    b.Property<int?>("Citizenship")
+                        .HasColumnType("integer");
 
-                    b.Property<string>("CitizenshipCode")
-                        .HasColumnType("text");
+                    b.Property<int?>("CitizenshipCode")
+                        .HasColumnType("integer");
 
                     b.Property<Guid?>("ContactAddressId")
                         .HasColumnType("uuid");
@@ -637,8 +637,8 @@ namespace Agrades.Data.Migrations
                     b.Property<Guid?>("PreviousEducationOperationId")
                         .HasColumnType("uuid");
 
-                    b.Property<string>("StartReasonCode")
-                        .HasColumnType("text");
+                    b.Property<int>("StartReasonCode")
+                        .HasColumnType("integer");
 
                     b.Property<LocalDate>("StartsAt")
                         .HasColumnType("date");

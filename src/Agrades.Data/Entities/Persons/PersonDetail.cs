@@ -41,9 +41,9 @@ public class PersonDetail : ITrackable, IVersionable, IOperationFilter
     public UniqueCodeType? IdentificationCodeTypeId { get; set; }
     public string? IdentificationCode { get; set; }
 
-    public string? Citizenship { get; set; }
+    public Rast? Citizenship { get; set; }
 
-    public string? CitizenshipCode { get; set; }
+    public Rako? CitizenshipCode { get; set; }
 
     public string? InsuranceCompanyCode { get; set; }
 

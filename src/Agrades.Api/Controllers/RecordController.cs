@@ -26,6 +26,7 @@ using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Serialization;
 using static System.Reflection.Metadata.BlobBuilder;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Agrades.Api.Controllers;
 [ApiController]
@@ -36,6 +37,7 @@ public class RecordController : ControllerBase
     private readonly ICurrentOperationService _currentOperationService;
     private readonly IAppMapper _mapper;
     private readonly IClock _clock;
+    private readonly EnumTranslator _translator;
 
     public RecordController(
         ILogger<RecordController> logger,
@@ -51,7 +53,14 @@ public class RecordController : ControllerBase
         _mapper = mapper;
         _clock = clock;
     }
-    
+    //<?xml version = "1.0" encoding="Windows-1250" ?>
+    //<Vykaz verze = "VOS.010" > -verze použité struktury přenosové věty
+    //<Vygen>Vlastní_evidence</Vygen> - název evidenčního systému, ze kterého byla data vygenerována
+    //<autor> Jan Novák</autor> - jméno kontaktní osoby, která má ve škole na starost zpracování
+    //<telefon>123456789</telefon> - telefon na kontaktní osobu
+    //<e-mail>jnovak @skola.cz</e-mail> - e-mailová adresa na kontaktní osobu
+    //<soubor> V123456789_01</soubor> - název předávaného souboru
+    //<vytvoreno>1.4.2018 11:43:15</vytvoreno> - datum a čas vygenerování xml souboru
 
     [HttpPost("api/v1/{opUrlName}/report")]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -59,6 +68,10 @@ public class RecordController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult> XMLReport([FromRoute] string opUrlName, [FromQuery] string? since = null, [FromQuery] string? until = null)
     {
+
+
+
+
         var now = _clock.GetCurrentInstant();
 
         var currentYear = now.ToDateTimeUtc().Year;
@@ -69,61 +82,93 @@ public class RecordController : ControllerBase
         {
             return NotFound("Operation not found.");
         }
-        var sinceDate = since != null ? Instant.FromDateTimeUtc(DateTime.Parse(since).ToUniversalTime()) : Instant.FromUtc(DateTime.Now.Year - 1, 9, 1, 0, 0);
-        Instant? untilDate = until != null ? Instant.FromDateTimeUtc(DateTime.Parse(until).ToUniversalTime()) : null;
-        var persons = _dbContext.Persons.FilterByOperation(operation.Id).ToList();
-        var personDetails = _dbContext.PersonDetails.FilterByOperation(operation.Id).ToList();
-        var students = _dbContext.Students.FilterByOperation(operation.Id).ToList();
-        var studentDetails = _dbContext.StudentDetails.FilterByOperation(operation.Id).FilterByInterval(sinceDate, untilDate).ToList();
-        var studyFields = _dbContext.StudyFields.FilterByOperation(operation.Id).ToList();
-        var addresses = _dbContext.Addresses.FilterByOperation(operation.Id).ToList();
-        var virtualOperations = _dbContext.VirtualOperations.ToList();
-        var classes = _dbContext.Classes.ToList();
-        var classDetails = _dbContext.ClassDetails.ToList();
-
-
-        var sentences = new List<Sentence>();
-        foreach (var student in students)
+        try
         {
-            var thisStudentStudentDetails = studentDetails.Where(x => x.StudentId == student.Id
-            && (x.ValidUntil <= untilDate
-                || x.ValidUntil == untilDate
-                || x.ValidSince == (untilDate + Duration.FromDays(1)))
-            && (x.ValidSince >= sinceDate)).ToList();
-            foreach (var studentDetail in thisStudentStudentDetails)
+            var sinceDate = since != null ? Instant.FromDateTimeUtc(DateTime.Parse(since).ToUniversalTime()) : Instant.FromUtc(DateTime.Now.Year - 1, 9, 1, 0, 0);
+            Instant? untilDate = until != null ? Instant.FromDateTimeUtc(DateTime.Parse(until).ToUniversalTime()) : null;
+            var persons = _dbContext.Persons.FilterByOperation(operation.Id).ToList();
+            var personDetails = _dbContext.PersonDetails.FilterByOperation(operation.Id).ToList();
+            var students = _dbContext.Students.FilterByOperation(operation.Id).ToList();
+            var studentDetails = _dbContext.StudentDetails.FilterByOperation(operation.Id).FilterByInterval(sinceDate, untilDate).ToList();
+            var studyFields = _dbContext.StudyFields.FilterByOperation(operation.Id).ToList();
+            var addresses = _dbContext.Addresses.FilterByOperation(operation.Id).ToList();
+            var virtualOperations = _dbContext.VirtualOperations.ToList();
+            var classes = _dbContext.Classes.ToList();
+            var classDetails = _dbContext.ClassDetails.ToList();
+
+
+            var sentences = new List<Sentence>();
+
+            foreach (var student in students)
             {
-                var person = persons.First(x => x.Id == student.PersonId);
-                var personDetail = personDetails.First(x => x.PersonId == person.Id && (x.ValidUntil <= untilDate || x.ValidUntil == untilDate));
-                var studyField = studyFields.First(x => x.Id == studentDetail.StudyFieldId);
-                var address = addresses.First(x => x.Id == personDetail.PermanentAddressId);
-                var virtualOperation = virtualOperations.First(x => x.Id == studentDetail.PreviousEducationOperationId && x.OperationId == operation.Id);
-                var studentClass = classes.First(x => x.Id == studentDetail.ClassId);
-                var classDetail = classDetails.First(x => x.ClassId == studentClass.Id && (x.ValidUntil <= untilDate || x.ValidUntil == untilDate));
-                var grade = now > thisYearsFirstSeptember
-                    ? currentYear - studentDetail.Class!.ClassDetails.Single(x => x.ValidUntil == null).StartAt.Year + 1
-                    : currentYear - studentDetail.Class!.ClassDetails.Single(x => x.ValidUntil == null).StartAt.Year;
+                var thisStudentStudentDetails = studentDetails.Where(x => x.StudentId == student.Id
+                && (x.ValidUntil <= untilDate
+                    || x.ValidUntil == untilDate
+                    || x.ValidUntil == null
+                    || x.ValidSince == (untilDate + Duration.FromDays(1)))
+                && (x.ValidSince >= sinceDate)).ToList();
+                foreach (var studentDetail in thisStudentStudentDetails)
+                {
+                    var person = persons.First(x => x.Id == student.PersonId);
+                    var personDetail = personDetails.First(x => x.PersonId == person.Id && (x.ValidUntil <= untilDate || x.ValidUntil == untilDate || x.ValidUntil == null));
+                    var studyField = studyFields.First(x => x.Id == studentDetail.StudyFieldId);
+                    var address = addresses.First(x => x.Id == personDetail.PermanentAddressId);
+                    var virtualOperation = virtualOperations.First(x => x.Id == studentDetail.PreviousEducationOperationId && x.OperationId == operation.Id);
+                    var studentClass = classes.First(x => x.Id == studentDetail.ClassId);
+                    var classDetail = classDetails.First(x => x.ClassId == studentClass.Id && (x.ValidUntil <= untilDate || x.ValidUntil == untilDate || x.ValidUntil == null));
+                    var grade = now > thisYearsFirstSeptember
+                        ? currentYear - studentDetail.Class!.ClassDetails.Single(x => x.ValidUntil == null).StartAt.Year + 1
+                        : currentYear - studentDetail.Class!.ClassDetails.Single(x => x.ValidUntil == null).StartAt.Year;
 
-                sentences.Add(SentenceExtensions.ToSentence(_mapper, personDetail, studentDetail, studyField, operation, address, virtualOperation, classDetail, grade, untilDate));
+                    sentences.Add(SentenceExtensions.ToSentence(_mapper, personDetail, studentDetail, studyField, operation, address, virtualOperation, classDetail, grade, untilDate));
+                }
             }
+            var path = "s181105527_01.xml";
+
+            var document = new BaseAnonymizedDoc
+            {
+                GeneratedBy = "1. IT Gymnázium vlastní systém",
+                Author = "Daniel Kopecký",
+                PhoneNumber = "608 943 443",
+                Email = "daniel.kopecky@itgymnazium.cz",
+                DocumentName = "s181105527_01",
+                CreatedAt = DateTime.UtcNow.ToString(),
+                Sentences = sentences.ToArray()
+            };
+
+
+            var sww = new StreamWriter(path);
+            XmlWriter writer = XmlWriter.Create(sww);
+            XmlSerializer xmlSerializer = new XmlSerializer(document.GetType(), new XmlRootAttribute("Vykaz"));
+            xmlSerializer.Serialize(sww, document);
+            sww.Close();
+            var xDoc = XDocument.Load(path);
+            System.IO.File.Delete(path);
+            var paymentRecord = xDoc.Root!.Element("Sentences");
+            var reportEl = xDoc.Root!;
+            reportEl!.RemoveAttributes();
+            reportEl!.SetAttributeValue("verze", "SS.007");
+            var nodes = xDoc.Root.Element("Sentences")!.Elements();
+            paymentRecord!.Remove();
+            xDoc.Root.Add(nodes);
+            var sw = new StreamWriter(path);
+            xDoc.Save(sw);
+            sw.Close();
+
+            var provider = new FileExtensionContentTypeProvider();
+            if (!provider.TryGetContentType(path, out var contentType))
+            {
+                contentType = "text/xml";
+            }
+            var bytes = System.IO.File.ReadAllBytes(path);
+            System.IO.File.Delete(path);
+            return File(bytes, contentType, path);
         }
-        var path = "sentence.xml";
-        
-        var sww = new StreamWriter(path);
-
-        XmlWriter writer = XmlWriter.Create(sww);
-        XmlSerializer xmlSerializer = new XmlSerializer(sentences.GetType(), new XmlRootAttribute("sentences"));
-        xmlSerializer.Serialize(writer, sentences);
-        sww.Close();
-
-        var provider = new FileExtensionContentTypeProvider();
-        if (!provider.TryGetContentType(path, out var contentType))
+        catch (Exception ex)
         {
-            contentType = "text/xml";
+            Console.WriteLine();
         }
-
-        var bytes = System.IO.File.ReadAllBytes(path);
-        System.IO.File.Delete(path);
-        return File(bytes, contentType, path);
+        return Ok();
     }
 
     [HttpPost("api/v1/{opUrlName}/Record/{personId}/CreateNewVersion")]
@@ -238,148 +283,162 @@ public class RecordController : ControllerBase
         [FromBody] ImportModel model
         )
     {
-        var currentOp = await _currentOperationService.GetCurrentOperationAsync(opUrlName);
-        var now = _clock.GetCurrentInstant();
-        var lines = model.Data.ToList();
-        var classes = _dbContext.Classes.ToList();
-
-        var classDetails = _dbContext.ClassDetails.ToList();
-
-        // skip table header
-        for (int i = 1; i < lines.Count; i++)
+        try
         {
-            var values = lines[i].Split(';');
 
-            var birthDate = new DateTime(int.Parse(values[10].Split('.')[2]), int.Parse(values[10].Split('.')[1]), int.Parse(values[10].Split('.')[0]), 0, 0, 0, DateTimeKind.Utc);
+            var currentOp = await _currentOperationService.GetCurrentOperationAsync(opUrlName);
+            var now = _clock.GetCurrentInstant();
+            var lines = model.Data.ToList();
+            var classes = _dbContext.Classes.ToList();
 
-            var startsAt = Instant.FromDateTimeUtc(new DateTime(int.Parse(values[50].Split('.')[2]), int.Parse(values[50].Split('.')[1]), int.Parse(values[50].Split('.')[0]), 0, 0, 0, DateTimeKind.Utc));
+            var classDetails = _dbContext.ClassDetails.ToList();
 
-            var personDetail = new PersonDetail
+            // skip table header
+            for (int i = 1; i < lines.Count; i++)
             {
-                OperationId = currentOp!.Id,
-                OrganizationUniqueCode = values[0],
-                LastName = values[1],
-                FirstName = values[2],
-                InsuranceCompanyCode = values[7],
-                IdentificationCode = values[8],
-                IdentificationCodeTypeId = UniqueCodeType.BirthNumber,
-                Sex = values[9] == "Muž" ? Sex.Male : Sex.Female,
-                BornOn = LocalDate.FromDateTime(birthDate),
-                CitizenshipCode = values[11],
-                Citizenship = values[12],
-                ValidSince = startsAt,
-            }.SetCreateBySystem(now);
+                var values = lines[i].Split(';');
 
-            var birthAddress = new Address
-            {
-                OperationId = currentOp.Id,
-                City = values[6],
-                ValidSince = startsAt,
-            }.SetCreateBySystem(now);
+                var birthDate = new DateTime(int.Parse(values[10].Split('.')[2]), int.Parse(values[10].Split('.')[1]), int.Parse(values[10].Split('.')[0]), 0, 0, 0, DateTimeKind.Utc);
 
-            _dbContext.Add(birthAddress);
+                var startsAt = Instant.FromDateTimeUtc(new DateTime(int.Parse(values[50].Split('.')[2]), int.Parse(values[50].Split('.')[1]), int.Parse(values[50].Split('.')[0]), 0, 0, 0, DateTimeKind.Utc));
 
-            personDetail.BirthAddress = birthAddress;
-
-            var addr = values[5].Split(',');
-            var addrParts = addr[0].Split(' ');
-            var street = string.Join(' ', addrParts.Take(addrParts.Length - 1));
-            var zipCity = addr[1].Trim().Split(' ');
-
-            var permAddress = new Address
-            {
-                OperationId = currentOp.Id,
-                Street = street,
-                DescNumber = addrParts[^1],
-                Email = values[3],
-                PhoneNumber = values[4],
-                CityDistrict = string.Join(' ', zipCity.Take(new Range(2, zipCity.Length))),
-                StateDistrict = values[14],
-                ZipCode = zipCity[0] + " " + zipCity[1],
-                City = values[13],
-                State = values[12], // this is not state for current address
-                ValidSince = startsAt,
-            }.SetCreateBySystem(now);
-
-            _dbContext.Add(permAddress);
-
-            personDetail.PermanentAddress = permAddress;
-
-            // We need Local property, because we need entities which are could be created but are not in database yet,
-            // they are in memory until SaveChanges
-            var prevOp = _dbContext.VirtualOperations.Local.SingleOrDefault(x => x.IdentificationCode == values[16]);
-
-            if (prevOp == null)
-            {
-                prevOp = new VirtualOperation
+                var personDetail = new PersonDetail
                 {
-                    OperationId = currentOp.Id,
-                    IdentificationCode = values[16],
-                    IdentificationCodeTypeId = UniqueCodeType.Izo,
+                    OperationId = currentOp!.Id,
+                    OrganizationUniqueCode = values[0],
+                    LastName = values[1],
+                    FirstName = values[2],
+                    InsuranceCompanyCode = values[7],
+                    IdentificationCode = values[8],
+                    IdentificationCodeTypeId = UniqueCodeType.BirthNumber,
+                    Sex = values[9] == "Muž" ? Sex.Male : Sex.Female,
+                    BornOn = LocalDate.FromDateTime(birthDate),
+                    CitizenshipCode = _mapper.GetRako(values[11]),
+                    Citizenship = _mapper.GetRast(values[12]),
                     ValidSince = startsAt,
                 }.SetCreateBySystem(now);
 
-                _dbContext.Add(prevOp);
+                var birthAddress = new Address
+                {
+                    OperationId = currentOp.Id,
+                    City = values[6],
+                    ValidSince = startsAt,
+                }.SetCreateBySystem(now);
+
+                _dbContext.Add(birthAddress);
+
+                personDetail.BirthAddress = birthAddress;
+
+                var addr = values[5].Split(',');
+                var addrParts = addr[0].Split(' ');
+                var street = string.Join(' ', addrParts.Take(addrParts.Length - 1));
+                var zipCity = addr[1].Trim().Split(' ');
+                if(zipCity.Length <= 1)
+                {
+                    await Console.Out.WriteLineAsync(   );
+                }
+                var permAddress = new Address
+                {
+                    OperationId = currentOp.Id,
+                    Street = street,
+                    DescNumber = addrParts[^1],
+                    Email = values[3],
+                    PhoneNumber = values[4],
+                    CityDistrict = string.Join(' ', zipCity.Take(new Range(2, zipCity.Length))),
+                    StateDistrict = values[14],
+                    ZipCode = zipCity[0] + " " + zipCity[1],
+                    City = values[13],
+                    State = values[12], // this is not state for current address
+                    ValidSince = startsAt,
+                }.SetCreateBySystem(now);
+
+                _dbContext.Add(permAddress);
+
+                personDetail.PermanentAddress = permAddress;
+
+                // We need Local property, because we need entities which are could be created but are not in database yet,
+                // they are in memory until SaveChanges
+                var prevOp = _dbContext.VirtualOperations.Local.SingleOrDefault(x => x.IdentificationCode == values[16]);
+
+                if (prevOp == null)
+                {
+                    prevOp = new VirtualOperation
+                    {
+                        OperationId = currentOp.Id,
+                        IdentificationCode = values[16],
+                        IdentificationCodeTypeId = UniqueCodeType.Izo,
+                        ValidSince = startsAt,
+                        //do not hardcode it
+                        SchoolType = Rapz.ElementarySchoolNinethGrade
+                    }.SetCreateBySystem(now);
+
+                    _dbContext.Add(prevOp);
+                }
+
+                var studentDetail = new StudentDetail
+                {
+                    OperationId = currentOp.Id,
+                    StartsAt = LocalDate.FromDateTime(startsAt.ToDateTimeUtc()),
+                    ObligatoryAttendenceYears = 9,
+                    Financing = 1,
+                    PreviousEducationCode = values[15],
+                    PreviousEducationOperationId = prevOp.Id,
+                    StartReasonCode = _mapper.RazvFromTextToEnum(values[19]),
+                    HighestAchievedEducation = _mapper.RakkFromTextToEnum(values[17]),
+                    StudyFieldId = DatabaseConstants.ITG.FieldOfStudyId,
+                    ValidSince = startsAt,
+                }.SetCreateBySystem(now);
+
+                var person = new Person
+                {
+                    PersonTypeId = PersonType.Student,
+                    RowCount = 1,
+                    OperationId = currentOp.Id,
+                };
+
+                _dbContext.Add(person);
+
+                var student = new Student
+                {
+                    RowCount = 1,
+                    OperationId = currentOp.Id,
+                };
+
+                _dbContext.Add(student);
+
+                person.Student = student;
+
+                person.PersonDetails.Add(personDetail);
+                _dbContext.Add(personDetail);
+                student.StudentDetails.Add(studentDetail);
+                _dbContext.Add(studentDetail);
+
+                var c = values[27].Split('.')[1];
+
+                // consider create and use NormalizedName
+                var currentClassId = classDetails.Single(x => x.Name.ToLower() == c.ToLower()).ClassId;
+                var currentClass = classes.Single(x => x.Id == currentClassId);
+
+                studentDetail.ClassId = currentClass.Id;
+
+                /*currentClass.Groups.First().Students.Add(new StudentGroup
+                {
+                    StudentId = student.Id,
+                    ValidSince = now,
+                }.SetCreateBySystem(now));*/
+#if DEBUG
+                Print(values);
+#endif
             }
 
-            var studentDetail = new StudentDetail
-            {
-                OperationId = currentOp.Id,
-                StartsAt = LocalDate.FromDateTime(startsAt.ToDateTimeUtc()),
-                ObligatoryAttendenceYears = 9,
-                Financing = 1,
-                PreviousEducationCode = values[15],
-                PreviousEducationOperationId = prevOp.Id,
-                StartReasonCode = values[19],
-                HighestAchievedEducation = FieldOfStudyType.ElementarySchool,
-                StudyFieldId = DatabaseConstants.ITG.FieldOfStudyId,
-                ValidSince = startsAt,
-            }.SetCreateBySystem(now);
+            await _dbContext.SaveChangesAsync();
 
-            var person = new Person
-            {
-                PersonTypeId = PersonType.Student,
-                RowCount = 1,
-                OperationId = currentOp.Id,
-            };
-
-            _dbContext.Add(person);
-
-            var student = new Student
-            {
-                RowCount = 1,
-                OperationId = currentOp.Id,
-            };
-
-            _dbContext.Add(student);
-
-            person.Student = student;
-
-            person.PersonDetails.Add(personDetail);
-            _dbContext.Add(personDetail);
-            student.StudentDetails.Add(studentDetail);
-            _dbContext.Add(studentDetail);
-
-            var c = values[27].Split('.')[1];
-
-            // consider create and use NormalizedName
-            var currentClassId = classDetails.Single(x => x.Name.ToLower() == c.ToLower()).ClassId;
-            var currentClass = classes.Single(x => x.Id == currentClassId);
-
-            studentDetail.ClassId = currentClass.Id;
-
-            /*currentClass.Groups.First().Students.Add(new StudentGroup
-            {
-                StudentId = student.Id,
-                ValidSince = now,
-            }.SetCreateBySystem(now));*/
-#if DEBUG
-            Print(values);
-#endif
+            
         }
-
-        await _dbContext.SaveChangesAsync();
-
+        catch(Exception ex)
+        {
+            await Console.Out.WriteLineAsync(   ); ;
+        }
         return NoContent();
     }
 
