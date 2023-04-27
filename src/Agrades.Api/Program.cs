@@ -45,7 +45,6 @@ public class Program
         catch (Exception exception)
         {
             // serilog: catch setup errors
-            Log.Logger.Error(exception, "Stopped program because of exception");
             throw;
 
         }
