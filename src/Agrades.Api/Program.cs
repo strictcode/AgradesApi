@@ -8,6 +8,8 @@ using NodaTime;
 using System.Diagnostics;
 using System;
 using Microsoft.EntityFrameworkCore.Storage.Internal;
+using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.Extensions.Options;
 
 namespace Agrades.Api;
 public class Program
@@ -28,7 +30,7 @@ public class Program
 
         AppDomain.CurrentDomain.FirstChanceException += (sender, eventArgs) =>
         {
-            Log.Logger.Error(eventArgs.Exception.ToString());
+            Log.Logger.Fatal(eventArgs.Exception.ToString());
         };
 
         try
@@ -39,14 +41,11 @@ public class Program
 
             await MigrateDb(host);
             await host.RunAsync();
-
-            Log.Logger.Information("started without problems");
         }
         catch (Exception exception)
         {
             // serilog: catch setup errors
             throw;
-
         }
         finally
         {
