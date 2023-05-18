@@ -13,15 +13,15 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Agrades.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20230331103621_init")]
-    partial class init
+    [Migration("20230518072520_Init")]
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.0")
+                .HasAnnotation("ProductVersion", "7.0.4")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -76,11 +76,11 @@ namespace Agrades.Data.Migrations
                     b.Property<string>("Region")
                         .HasColumnType("text");
 
-                    b.Property<string>("State")
-                        .HasColumnType("text");
-
                     b.Property<string>("StateDistrict")
                         .HasColumnType("text");
+
+                    b.Property<Guid>("StateId")
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Street")
                         .HasColumnType("text");
@@ -98,7 +98,85 @@ namespace Agrades.Data.Migrations
 
                     b.HasIndex("OperationId");
 
+                    b.HasIndex("StateId");
+
                     b.ToTable("Address");
+                });
+
+            modelBuilder.Entity("Agrades.Data.Entities.Categories.Raor", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Raor");
+                });
+
+            modelBuilder.Entity("Agrades.Data.Entities.Categories.Raso", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Raso");
+                });
+
+            modelBuilder.Entity("Agrades.Data.Entities.Categories.Rast", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Rast");
+                });
+
+            modelBuilder.Entity("Agrades.Data.Entities.Categories.Rauj", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Rauj");
                 });
 
             modelBuilder.Entity("Agrades.Data.Entities.Category", b =>
@@ -238,6 +316,12 @@ namespace Agrades.Data.Migrations
                     b.Property<Guid>("ClassId")
                         .HasColumnType("uuid");
 
+                    b.Property<string>("ClassType")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ClassTypeDesignation")
+                        .HasColumnType("text");
+
                     b.Property<Instant>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
@@ -283,6 +367,71 @@ namespace Agrades.Data.Migrations
                     b.HasIndex("OperationId");
 
                     b.ToTable("Group");
+                });
+
+            modelBuilder.Entity("Agrades.Data.Entities.Identity.User", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("AccessFailedCount")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Email")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.Property<bool>("EmailConfirmed")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("LockoutEnabled")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTimeOffset?>("LockoutEnd")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("NormalizedEmail")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.Property<string>("NormalizedUserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.Property<string>("PasswordHash")
+                        .HasColumnType("text");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("PhoneNumberConfirmed")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("SecurityStamp")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("TwoFactorEnabled")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("UserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NormalizedEmail")
+                        .HasDatabaseName("EmailIndex");
+
+                    b.HasIndex("NormalizedUserName")
+                        .IsUnique()
+                        .HasDatabaseName("UserNameIndex");
+
+                    b.ToTable("AspNetUsers", (string)null);
                 });
 
             modelBuilder.Entity("Agrades.Data.Entities.Operation", b =>
@@ -441,11 +590,11 @@ namespace Agrades.Data.Migrations
                     b.Property<LocalDate?>("BornOn")
                         .HasColumnType("date");
 
-                    b.Property<int?>("Citizenship")
-                        .HasColumnType("integer");
-
                     b.Property<int?>("CitizenshipCode")
                         .HasColumnType("integer");
+
+                    b.Property<Guid?>("CitizenshipId")
+                        .HasColumnType("uuid");
 
                     b.Property<Guid?>("ContactAddressId")
                         .HasColumnType("uuid");
@@ -539,6 +688,8 @@ namespace Agrades.Data.Migrations
 
                     b.HasIndex("BirthAddressId");
 
+                    b.HasIndex("CitizenshipId");
+
                     b.HasIndex("ContactAddressId");
 
                     b.HasIndex("OperationId");
@@ -617,6 +768,9 @@ namespace Agrades.Data.Migrations
 
                     b.Property<bool?>("IsOnInternat")
                         .HasColumnType("boolean");
+
+                    b.Property<string>("MinistryUniqueCode")
+                        .HasColumnType("text");
 
                     b.Property<Instant>("ModifiedAt")
                         .HasColumnType("timestamp with time zone");
@@ -831,6 +985,70 @@ namespace Agrades.Data.Migrations
                     b.ToTable("VirtualOperation");
                 });
 
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<System.Guid>", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ClaimType")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ClaimValue")
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("AspNetUserClaims", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<System.Guid>", b =>
+                {
+                    b.Property<string>("LoginProvider")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ProviderKey")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ProviderDisplayName")
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("LoginProvider", "ProviderKey");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("AspNetUserLogins", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<System.Guid>", b =>
+                {
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("LoginProvider")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Value")
+                        .HasColumnType("text");
+
+                    b.HasKey("UserId", "LoginProvider", "Name");
+
+                    b.ToTable("AspNetUserTokens", (string)null);
+                });
+
             modelBuilder.Entity("Agrades.Data.Entities.Address", b =>
                 {
                     b.HasOne("Agrades.Data.Entities.Operation", "Operation")
@@ -839,7 +1057,15 @@ namespace Agrades.Data.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("Agrades.Data.Entities.Categories.Rast", "State")
+                        .WithMany("Addresses")
+                        .HasForeignKey("StateId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.Navigation("Operation");
+
+                    b.Navigation("State");
                 });
 
             modelBuilder.Entity("Agrades.Data.Entities.Category", b =>
@@ -928,6 +1154,11 @@ namespace Agrades.Data.Migrations
                         .HasForeignKey("BirthAddressId")
                         .OnDelete(DeleteBehavior.Restrict);
 
+                    b.HasOne("Agrades.Data.Entities.Categories.Rast", "Citizenship")
+                        .WithMany()
+                        .HasForeignKey("CitizenshipId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("Agrades.Data.Entities.Address", "ContactAddress")
                         .WithMany()
                         .HasForeignKey("ContactAddressId")
@@ -956,6 +1187,8 @@ namespace Agrades.Data.Migrations
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("BirthAddress");
+
+                    b.Navigation("Citizenship");
 
                     b.Navigation("ContactAddress");
 
@@ -1066,6 +1299,38 @@ namespace Agrades.Data.Migrations
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Operation");
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<System.Guid>", b =>
+                {
+                    b.HasOne("Agrades.Data.Entities.Identity.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<System.Guid>", b =>
+                {
+                    b.HasOne("Agrades.Data.Entities.Identity.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<System.Guid>", b =>
+                {
+                    b.HasOne("Agrades.Data.Entities.Identity.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Agrades.Data.Entities.Categories.Rast", b =>
+                {
+                    b.Navigation("Addresses");
                 });
 
             modelBuilder.Entity("Agrades.Data.Entities.Class", b =>

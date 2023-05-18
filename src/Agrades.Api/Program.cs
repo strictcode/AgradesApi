@@ -64,6 +64,7 @@ public class Program
         await dbContext.Database.MigrateAsync();
 
         await ITGSeed.SeedAsync(clock, dbContext);
+        await CategorySeed.SeedAync(clock, dbContext);
     }
 
     public static IHostBuilder CreateHostBuilder(string[] args)

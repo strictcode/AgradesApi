@@ -13,9 +13,9 @@ public class StudentDetail : ITrackable, IVersionable, IOperationFilter
     public Guid OperationId { get; set; }
     public Operation Operation { get; set; } = null!;
 
+    public string? MinistryUniqueCode { get; set; }
+
     public LocalDate StartsAt { get; set; }
-
-
 
     public Razv StartReasonCode { get; set; }
 
