@@ -10,6 +10,9 @@ using System;
 using Microsoft.EntityFrameworkCore.Storage.Internal;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.Extensions.Options;
+using System.Diagnostics.Tracing;
+using Microsoft.AspNetCore.Hosting.Server;
+using System.Web.Http.ExceptionHandling;
 
 namespace Agrades.Api;
 public class Program
@@ -27,14 +30,17 @@ public class Program
         Log.Logger = new LoggerConfiguration().
             ReadFrom.Configuration(configuration).
             CreateLogger().ForContext<Program>();
-
+        
+        /*
         AppDomain.CurrentDomain.FirstChanceException += (sender, eventArgs) =>
         {
-            Log.Logger.Fatal(eventArgs.Exception.ToString());
+            Log.Logger.Error(eventArgs.Exception.ToString());
+            
         };
+        */
 
         try
-        {
+        { 
             builder.UseSerilog(Log.Logger);
 
             var host = builder.Build();
