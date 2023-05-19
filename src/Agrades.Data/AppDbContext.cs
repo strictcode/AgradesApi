@@ -1,3 +1,4 @@
+using Agrades.Data.Entities.Classes;
 using Agrades.Data.Entities.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;

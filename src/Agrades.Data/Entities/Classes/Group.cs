@@ -1,4 +1,4 @@
-﻿namespace Agrades.Data.Entities;
+﻿namespace Agrades.Data.Entities.Classes;
 [Table(nameof(Group))]
 public class Group : ITrackable, IVersionable, IOperationFilter
 {
@@ -17,11 +17,11 @@ public class Group : ITrackable, IVersionable, IOperationFilter
     public string? BackofficeName { get; set; }
 
     //TT    B-běžná , Z - podle vyhlášky
-    public string? ClassTypeDesignation { get; set; }
+    public Tt? ClassTypeDesignation { get; set; }
 
     //TYP_TR
-
-    public string? ClassType { get; set; }
+    public Guid GroupClassTypeId { get; set; }
+    public GroupClassType? GroupClassType { get; set; }
 
     public ICollection<StudentGroup> Students { get; set; } = new HashSet<StudentGroup>();
 

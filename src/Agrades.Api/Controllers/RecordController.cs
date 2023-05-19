@@ -57,10 +57,6 @@ public class RecordController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult> XMLReport([FromRoute] string opUrlName, [FromQuery] string? since = null, [FromQuery] string? until = null)
     {
-
-
-
-
         var now = _clock.GetCurrentInstant();
 
         var currentYear = now.ToDateTimeUtc().Year;

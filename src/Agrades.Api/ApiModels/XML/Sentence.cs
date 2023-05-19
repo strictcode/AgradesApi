@@ -1,6 +1,7 @@
 using Agrades.Api.Mapper;
 using Agrades.Data.Entities;
 using Agrades.Data.Entities.Categories;
+using Agrades.Data.Entities.Classes;
 using Agrades.Data.Entities.Persons;
 using NodaTime;
 using System.Globalization;

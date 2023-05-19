@@ -1,3 +1,5 @@
+using Agrades.Data.Entities.Classes;
+
 namespace Agrades.Data.Entities.Persons;
 [Table(nameof(StudentDetail))]
 public class StudentDetail : ITrackable, IVersionable, IOperationFilter

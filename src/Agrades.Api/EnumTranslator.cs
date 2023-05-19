@@ -11,6 +11,304 @@ public class EnumTranslator
 
 public static class Tr
 {
+    public static DisaD DisaDFromCodeToEnum(this IAppMapper mapper, string value) =>
+        (value) switch
+        {
+            "0" => DisaD.NoSvp,
+            "K" => DisaD.SvpBecauseOfCulturalBackground,
+            "Z" => DisaD.SvpBecauseOfOtherCurcumstances,
+            "V" => DisaD.SvpBecauseOfBoth,
+        };
+
+    public static string DisaDFromCodeToEnum(this IAppMapper mapper, DisaD value) =>
+        (value) switch
+        {
+            DisaD.NoSvp => "0",
+            DisaD.SvpBecauseOfCulturalBackground => "K",
+            DisaD.SvpBecauseOfOtherCurcumstances => "Z",
+            DisaD.SvpBecauseOfBoth => "V",
+        };
+
+    public static string DisaDFromEnumToText(this IAppMapper mapper, DisaD value) =>
+        (value) switch
+        {
+            DisaD.NoSvp => "nemá SVP vyplývající z odlišného kulturního prostředí nebo jiných životních podmínek",
+            DisaD.SvpBecauseOfCulturalBackground => "SVP vyplývají převážně z odlišného kulturního prostředí žáka",
+            DisaD.SvpBecauseOfOtherCurcumstances => " SVP vyplývají převážně z dopadu jiných životních podmínek žáka do vzdělávání",
+            DisaD.SvpBecauseOfBoth => "SVP vyplývají z kombinace obou faktorů uvedených pod body K a Z",
+        };
+
+    public static TypTr TypTrFromTextToEnum(this IAppMapper mapper, string value) =>
+        (value) switch
+        {
+            "třída bez asistenta pedagoga" => TypTr.WithoutAssistent,
+            "třída s jedním asistentem pedagoga nebo s jedním vychovatelem" => TypTr.WithOneAssistent,
+            "třída s více asistenty nebo s asistentem a vychovatelem" => TypTr.WithMultipleAssistents
+        };
+
+    public static string TypTrFromTEnumToText(this IAppMapper mapper, TypTr value) =>
+        (value) switch
+        {
+            TypTr.WithoutAssistent => "třída bez asistenta pedagoga",
+            TypTr.WithOneAssistent => "třída s jedním asistentem pedagoga nebo s jedním vychovatelem",
+            TypTr.WithMultipleAssistents => "třída s více asistenty nebo s asistentem a vychovatelem"
+        };
+    public static string TypTrFromEnumToCode(this IAppMapper mapper, TypTr value) =>
+        (value) switch
+        {
+            TypTr.WithoutAssistent => "A0",
+            TypTr.WithOneAssistent => "A1",
+            TypTr.WithMultipleAssistents => "A2"
+        };
+
+    public static AdjusteOutputLevel AdjusteOutputLevelFromTextToEnum(this IAppMapper mapper, string value) =>
+        (value) switch
+        {
+            "bez úpravy výstupů" => AdjusteOutputLevel.Without,
+            "upravené výstupy vzdělávání" => AdjusteOutputLevel.With,
+        };
+
+    public static string AdjusteOutputLevelFromTextToEnum(this IAppMapper mapper, AdjusteOutputLevel value) =>
+        (value) switch
+        {
+            AdjusteOutputLevel.Without => "bez úpravy výstupů",
+            AdjusteOutputLevel.With => "upravené výstupy vzdělávání",
+        };
+
+    public static Fn FnFromTextToEnum(this IAppMapper mapper, string value) =>
+        (value) switch
+        {
+            "finanční prostředky nepožadovány" => Fn.FundsNotRequired,
+            "finanční prostředky požadovány" => Fn.FundsRequired
+        };
+    public static string FnFromEnumToText(this IAppMapper mapper, Fn value) =>
+        (value) switch
+        {
+            Fn.FundsNotRequired => "finanční prostředky nepožadovány",
+            Fn.FundsRequired => "finanční prostředky požadovány"
+        };
+
+    public static Radv RadvFromTextToEnum(this IAppMapper mapper, string value) =>
+        (value) switch
+        {
+            "Střední" => Radv.HighSchool,
+            "Střední s výučním listem" => Radv.HighSchoolWithCertificate,
+            "Zkrácené studium pro získání středního vzdělání s výučním listem" => Radv.ShortenedStudyForHighSchoolCertificate,
+            "Vyšší odborné v konzervatoři -6leté" => Radv.ConservatorySixYearPlan,
+            "Vyšší odborné v konzervatoři - 8leté" => Radv.ConservatoryEightYearPlan,
+            "Vyšší odborné ve VOŠ" => Radv.UniversityWithFieldOfStudy,
+            "Střední s maturitní zkouškou" => Radv.HishSchoolWithGraduation,
+            "Zkrácené studium pro získání středního vzdělání s maturitní zkouškou" => Radv.ShortenedStudyForHighSchoolGraduation,
+            "Nástavbové studium" => Radv.PostGraduateStudies,
+            "Střední s maturitní zkouškou i výučním listem" => Radv.HighSchoolWithCertificateAndGraduation,
+            "Rekvalifikační studium v oboru KKOV, hrazené úřadem práce" => Radv.RequalificationStudiesInKKOVPaidByLabourOffice,
+            "Rekvalifikační studium v oboru KKOV, hrazené z jiných zdrojů" => Radv.RequalificationStudiesInKKOVPaidByOtherResources,
+        };
+
+    public static string RadvFromTextToEnum(this IAppMapper mapper, Radv value) =>
+        (value) switch
+        {
+            Radv.HighSchool => "Střední",
+            Radv.HighSchoolWithCertificate => "Střední s výučním listem",
+            Radv.ShortenedStudyForHighSchoolCertificate => "Zkrácené studium pro získání středního vzdělání s výučním listem",
+            Radv.ConservatorySixYearPlan => "Vyšší odborné v konzervatoři -6leté",
+            Radv.ConservatoryEightYearPlan => "Vyšší odborné v konzervatoři - 8leté",
+            Radv.UniversityWithFieldOfStudy => "Vyšší odborné ve VOŠ",
+            Radv.HishSchoolWithGraduation => "Střední s maturitní zkouškou",
+            Radv.ShortenedStudyForHighSchoolGraduation => "Zkrácené studium pro získání středního vzdělání s maturitní zkouškou",
+            Radv.PostGraduateStudies => "Nástavbové studium",
+            Radv.HighSchoolWithCertificateAndGraduation => "Střední s maturitní zkouškou i výučním listem",
+            Radv.RequalificationStudiesInKKOVPaidByLabourOffice => "Rekvalifikační studium v oboru KKOV, hrazené úřadem práce",
+            Radv.RequalificationStudiesInKKOVPaidByOtherResources => "Rekvalifikační studium v oboru KKOV, hrazené z jiných zdrojů",
+        };
+
+    public static Gifted GiftedFromTextToEnum(this IAppMapper mapper, string value) =>
+        (value) switch
+        {
+            "bez nadání" => Gifted.NotGifted,
+            "nadaný žák" => Gifted.IsGifted,
+
+        };
+    public static string GiftedFromEnumToText(this IAppMapper mapper, Gifted value) =>
+        (value) switch
+        {
+            Gifted.NotGifted => "bez nadání",
+            Gifted.IsGifted => "nadaný žák",
+
+        };
+
+    public static Rapv RapvFromTextToEnum(this IAppMapper mapper, string value) =>
+        (value) switch
+        {
+            "Řádné vzdělávání" => Rapv.ProperEducation,
+            "Řádné vzdělávání po přerušení vzdělávání" => Rapv.ProperEducationAfterInteruption,
+            "Opakování ročníku" => Rapv.RepetitionOfGrade,
+            "Přeřazení do vyššího ročníku (z důvodu mimořádného nadání)" => Rapv.ReassignmentToHigherGrareBecauseExceptionalTalent,
+            "Zařazení do nižšího ročníku (bez opakování)" => Rapv.PlacementIntoLowerGradeWithoutRepeating,
+            "Přerušení vzdělávání" => Rapv.InteruptionOfEducation,
+            "Vzdělávání ukončeno" => Rapv.EducationEnded,
+        };
+    public static string RapvFromEnumToText(this IAppMapper mapper, Rapv value) =>
+        (value) switch
+        {
+            Rapv.ProperEducation => "Řádné vzdělávání",
+            Rapv.ProperEducationAfterInteruption => "Řádné vzdělávání po přerušení vzdělávání",
+            Rapv.RepetitionOfGrade => "Opakování ročníku",
+            Rapv.ReassignmentToHigherGrareBecauseExceptionalTalent => "Přeřazení do vyššího ročníku (z důvodu mimořádného nadání)",
+            Rapv.PlacementIntoLowerGradeWithoutRepeating => "Zařazení do nižšího ročníku (bez opakování)",
+            Rapv.InteruptionOfEducation => "Přerušení vzdělávání",
+            Rapv.EducationEnded => "Vzdělávání ukončeno",
+        };
+
+    public static Ratt RattFromTextToEnum(this IAppMapper mapper, string value) =>
+        (value) switch
+        {
+            "Běžná třída/studijní skupina" => Ratt.NormalClass,
+            "Třída pro lehce mentálně postižené" => Ratt.ClassForMentallyDisabled,
+            "Třída pro středně mentálně postižené" => Ratt.ClassForMediumDisabled,
+            "Třída pro těžce mentálně postižené" => Ratt.ClassForHeavilyDisabled,
+            "Třída/studijní skupina pro středně těžce sluchově postižené" => Ratt.ClassForModeratelyHearingImpaired,
+            "Třída/studijní skupina pro těžce sluchově postižené" => Ratt.ClassForHeavilyHearingImpaired,
+            "Třída/studijní skupina pro středně těžce zrakově postižené" => Ratt.ClassForModeratelyVisuallyImpaired,
+            "Třída/studijní skupina pro těžce zrakově postižené" => Ratt.ClassForHeavilyVisuallyImpaired,
+            "Třída pro žáky s vadami řeči" => Ratt.ClassForStudentsWithSpeechDisabilities,
+            "Třída pro žáky s těžkou vadou řeči" => Ratt.ClassForStudentsWithHeavySpeechDisabilities,
+            "Třída/studijní skupina pro tělesně postižené" => Ratt.ClassForHandicapped,
+            "Třída pro žáky s těžkým tělesným postižením" => Ratt.ClassForHeavyHandicapped,
+            "Třída pro žáky s vývojovými poruchami chování" => Ratt.ClassForStudentsWithDevelopmentalBehavioralDisorders,
+            "Třída pro žáky s těžkými poruchami chování" => Ratt.ClassForStudentsWithHeavyBehavioralDisorders,
+            "Třída pro žáky s vývojovými poruchami učení" => Ratt.ClassForStudentsWithDevelopmentalLearningDisorders,
+            "Třída/studijní skupina pro žáky/studenty se souběžným postižením více vadami" => Ratt.ClassFroStudentsWithMultipleDisabilities,
+            "Třída/ studijní skupina pro hluchoslepé" => Ratt.ClassForDeafBlind,
+            "Třída/studijní skupina pro autistické žáky/studenty" => Ratt.ClassForAutisticStudents,
+            "Třída pro mimořádně nadané" => Ratt.ClassForExceptionallyGifted,
+            "Třída pro žáky v DD se školou, VÚ, DgÚ" => Ratt.ClassForStudentsInDdAndVuAndDgU,
+            "Nezařazen do třídy" => Ratt.ClassNotAssigned,
+        };
+    public static string RattFromEnumToText(this IAppMapper mapper, Ratt value) =>
+        (value) switch
+        {
+            Ratt.NormalClass => "Běžná třída/studijní skupina",
+            Ratt.ClassForMentallyDisabled => "Třída pro lehce mentálně postižené",
+            Ratt.ClassForMediumDisabled => "Třída pro středně mentálně postižené",
+            Ratt.ClassForHeavilyDisabled => "Třída pro těžce mentálně postižené",
+            Ratt.ClassForModeratelyHearingImpaired => "Třída/studijní skupina pro středně těžce sluchově postižené",
+            Ratt.ClassForHeavilyHearingImpaired => "Třída/studijní skupina pro těžce sluchově postižené",
+            Ratt.ClassForModeratelyVisuallyImpaired => "Třída/studijní skupina pro středně těžce zrakově postižené",
+            Ratt.ClassForHeavilyVisuallyImpaired => "Třída/studijní skupina pro těžce zrakově postižené",
+            Ratt.ClassForStudentsWithSpeechDisabilities => "Třída pro žáky s vadami řeči",
+            Ratt.ClassForStudentsWithHeavySpeechDisabilities => "Třída pro žáky s těžkou vadou řeči",
+            Ratt.ClassForHandicapped => "Třída/studijní skupina pro tělesně postižené",
+            Ratt.ClassForHeavyHandicapped => "Třída pro žáky s těžkým tělesným postižením",
+            Ratt.ClassForStudentsWithDevelopmentalBehavioralDisorders => "Třída pro žáky s vývojovými poruchami chování",
+            Ratt.ClassForStudentsWithHeavyBehavioralDisorders => "Třída pro žáky s těžkými poruchami chování",
+            Ratt.ClassForStudentsWithDevelopmentalLearningDisorders => "Třída pro žáky s vývojovými poruchami učení",
+            Ratt.ClassFroStudentsWithMultipleDisabilities => "Třída/studijní skupina pro žáky/studenty se souběžným postižením více vadami",
+            Ratt.ClassForDeafBlind => "Třída/ studijní skupina pro hluchoslepé",
+            Ratt.ClassForAutisticStudents => "Třída/studijní skupina pro autistické žáky/studenty",
+            Ratt.ClassForExceptionallyGifted => "Třída pro mimořádně nadané",
+            Ratt.ClassForStudentsInDdAndVuAndDgU => "Třída pro žáky v DD se školou, VÚ, DgÚ",
+            Ratt.ClassNotAssigned => "Nezařazen do třídy",
+        };
+
+    public static string RattFromEnumToCode(this IAppMapper mapper, Ratt value) =>
+        (value) switch
+        {
+            Ratt.NormalClass => "100",
+            Ratt.ClassForMentallyDisabled => "11L",
+            Ratt.ClassForMediumDisabled => "11S",
+            Ratt.ClassForHeavilyDisabled => "11T",
+            Ratt.ClassForModeratelyHearingImpaired => "12S",
+            Ratt.ClassForHeavilyHearingImpaired => "12T",
+            Ratt.ClassForModeratelyVisuallyImpaired => "13S",
+            Ratt.ClassForHeavilyVisuallyImpaired => "13T",
+            Ratt.ClassForStudentsWithSpeechDisabilities => "14S",
+            Ratt.ClassForStudentsWithHeavySpeechDisabilities => "14T",
+            Ratt.ClassForHandicapped => "15S",
+            Ratt.ClassForHeavyHandicapped => "15T",
+            Ratt.ClassForStudentsWithDevelopmentalBehavioralDisorders => "16S",
+            Ratt.ClassForStudentsWithHeavyBehavioralDisorders => "16T",
+            Ratt.ClassForStudentsWithDevelopmentalLearningDisorders => "16U",
+            Ratt.ClassFroStudentsWithMultipleDisabilities => "17A",
+            Ratt.ClassForDeafBlind => "17B",
+            Ratt.ClassForAutisticStudents => "18A",
+            Ratt.ClassForExceptionallyGifted => "300",
+            Ratt.ClassForStudentsInDdAndVuAndDgU => "590",
+            Ratt.ClassNotAssigned => "900",
+        };
+
+    public static Ravz RavzFromTextToEnum(this IAppMapper mapper, string value) =>
+        (value) switch
+        {
+            "Zkouška v řádném termínu" => Ravz.ExamInRegularTerm,
+            "Náhradní zkouška" => Ravz.ExamInReplacementTerm,
+            "Opravná zkouška (po řádné nebo náhradní zkoušce)" => Ravz.ReplacementExamAfterRegularOrAlternaticeExam,
+            "Opakovaná zkouška" => Ravz.TestRepeat,
+            "Opravná zkouška (po opakované zkoušce)" => Ravz.CorrectiveExaminationAfterTestRepeat,
+        };
+
+    public static string RavzFromEnumToText(this IAppMapper mapper, Ravz value) =>
+        (value) switch
+        {
+            Ravz.ExamInRegularTerm => "Zkouška v řádném termínu",
+            Ravz.ExamInReplacementTerm => "Náhradní zkouška",
+            Ravz.ReplacementExamAfterRegularOrAlternaticeExam => "Opravná zkouška (po řádné nebo náhradní zkoušce)",
+            Ravz.TestRepeat => "Opakovaná zkouška",
+            Ravz.CorrectiveExaminationAfterTestRepeat => "Opravná zkouška (po opakované zkoušce)",
+        };
+
+    public static Rauv RauvFromTextToEnum(this IAppMapper mapper, string value) =>
+        (value) switch
+        {
+            "Úspěšné absolvování" => Rauv.SuccesfulCompletion,
+            "Ukončení vzdělávacího programu bez předepsané zkoušky" => Rauv.CompletionWithoutPrescripedExamination,
+            "Přestup na jinou školu" => Rauv.SchoolTransfer,
+            "Nepostoupení do vyššího ročníku, nesplnění podmínek pro konání zkoušky" => Rauv.FailureToAdvanceBecauseOfFailureToMeetConditionsToTakeTheExam,
+            "Zanechání vzdělávání" => Rauv.AbandoningEducation,
+            "Vyloučení" => Rauv.ExpelledFromEducation,
+            "Úmrtí" => Rauv.Death,
+            "Ukončení pro cizince (odstěhování)" => Rauv.TerminationOfEducationForForeigners,
+            "Převední do jiné školy (sloučení škol, splynutí, změna IZO)" => Rauv.SchoolTransferBecauseOfMergeOrIZOChangeOr,
+        };
+
+    public static Raun RaunFromTextToEnum(this IAppMapper mapper, string value) =>
+        (value) switch
+        {
+            "Prospěl" => Raun.Passed,
+            "Prospěl s vyznamenáním" => Raun.PassedWithHonors,
+            "Neprospěl z jednoho předmětu" => Raun.FailedOneSubject,
+            "Neprospěl z více předmětů" => Raun.FailedMultipleSubjects,
+            "Neprospěl - neomluvená neúčast" => Raun.FailedUnexcusedAbsence,
+        };
+
+    public static string RaunFromTextToEnum(this IAppMapper mapper, Raun value) =>
+        (value) switch
+        {
+            Raun.Passed => "Prospěl",
+            Raun.PassedWithHonors => "Prospěl s vyznamenáním",
+            Raun.FailedOneSubject => "Neprospěl z jednoho předmětu",
+            Raun.FailedMultipleSubjects => "Neprospěl z více předmětů",
+            Raun.FailedUnexcusedAbsence => "Neprospěl - neomluvená neúčast",
+        };
+
+    public static Indi IndiFromTextToEnum(this IAppMapper mapper, string value) =>
+        (value) switch
+        {
+            "bez IVP" => Indi.WithoutIVP,
+            "Ivp z důvodu SVP" => Indi.IvpBecauseSVP,
+            "Ivp - mimořádné nadání" => Indi.IvpBecauseExceptionalyGifted,
+            "Ivp - ostatní" => Indi.IvpOtherReasons,
+        };
+
+    public static string IndiFromEnumToText(this IAppMapper mapper, Indi value) =>
+        (value) switch
+        {
+            Indi.WithoutIVP => "bez IVP",
+            Indi.IvpBecauseSVP => "Ivp z důvodu SVP",
+            Indi.IvpBecauseExceptionalyGifted => "Ivp - mimořádné nadání",
+            Indi.IvpOtherReasons => "Ivp - ostatní",
+        };
+
     public static Rako GetRako(this IAppMapper mapper, string value)
         => (value) switch
         {
@@ -23,7 +321,7 @@ public static class Tr
             "Občanství neznámé, neudané" or _ => Rako.Uknown
         };
 
- 
+
 
     public static Rakk RakkFromTextToEnum(this IAppMapper mapper, string value)
         => (value) switch

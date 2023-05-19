@@ -32,15 +32,16 @@ public class Recommendation : ITrackable, IVersionable
 
     //ID_ZNEV 7/13 place code 
     //this will have a translator
-    public string? DisabilityCode { get; set; }
+    public Guid DisabilityCodeId { get; set; }
+    public IdOfDisadvantage? DisabilityCode { get; set; }
 
     //PSPO
     //1-5 level, just asumed
-    public string? ProvidedLevelOfAid { get;set; }
+    public AdjustedAidLevel? ProvidedLevelOfAid { get;set; }
     //PRODL_DV
     public string? AdjustedLevelOfStudyLength { get; set; }
     //UPR_VYST 0 bez, 1 s
-    public string? AdjustedLevelOfExpectedOutput { get; set; }
+    public AdjusteOutputLevel? AdjustedLevelOfExpectedOutput { get; set; }
     public Instant ValidSince { get; set; }
     public Instant? ValidUntil { get; set; }
 

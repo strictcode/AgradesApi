@@ -1,10 +1,57 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace Agrades.Data.Entities.Categories;
 
-namespace Agrades.Data.Entities.Categories;
+public enum Radv
+{
+    HighSchool = 10,
+    HighSchoolWithCertificate = 21,
+    ShortenedStudyForHighSchoolCertificate = 22,
+    ConservatorySixYearPlan = 31,
+    ConservatoryEightYearPlan = 32,
+    UniversityWithFieldOfStudy = 34,
+    HishSchoolWithGraduation = 41,
+    ShortenedStudyForHighSchoolGraduation = 42,
+    PostGraduateStudies = 43,
+    HighSchoolWithCertificateAndGraduation = 61,
+    RequalificationStudiesInKKOVPaidByLabourOffice = 91,
+    RequalificationStudiesInKKOVPaidByOtherResources = 92,
+}
+
+public enum Rapv
+{
+    ProperEducation = 1,
+    ProperEducationAfterInteruption,
+    RepetitionOfGrade,
+    ReassignmentToHigherGrareBecauseExceptionalTalent,
+    PlacementIntoLowerGradeWithoutRepeating,
+    InteruptionOfEducation,
+    EducationEnded,
+}
+
+public enum Indi
+{
+    WithoutIVP = 0,
+    IvpBecauseSVP = 1,
+    IvpBecauseExceptionalyGifted = 5,
+    IvpOtherReasons = 9
+}
+
+public enum Tt
+{
+    NormalClass,
+    ClassBy16Section9
+}
+
+public enum Fn
+{
+    FundsNotRequired,
+    FundsRequired
+}
+
+public enum Gifted
+{
+    NotGifted = 0,
+    IsGifted = 1,
+}
 
 public enum Rasd
 {
@@ -138,9 +185,104 @@ public enum Rakk
     EndedLastSemesterWithoutGraduation
 }
 
+public enum Raun
+{
+    Passed = 1,
+    PassedWithHonors,
+    FailedOneSubject,
+    FailedMultipleSubjects,
+    FailedUnexcusedAbsence
+}
 
+public enum TypTr
+{
+    WithoutAssistent,
+    WithOneAssistent,
+    WithMultipleAssistents,
+}
 
+public enum AdjusteOutputLevel
+{
+    Without,
+    With,
+}
 
+public enum DisaA
+{
+    Without,
+    With
+}
+
+public enum DisaE
+{
+    NotGifted,
+    Gifted,
+    EtroardinaryGifted,
+}
+
+public enum Sz
+{
+    NoSvp,
+    SvpBecauseOfCulturalBackground,
+    SvpBecauseOfOtherCurcumstances,
+    SvpBecauseOfBoth,
+}
+
+public enum AdjustedAidLevel
+{
+    Minor = 1,
+    Small = 2,
+    Moderate = 3,
+    Substantial = 4,
+    Significant = 5,
+}
+
+public enum Ratt
+{
+    NormalClass,
+    ClassForMentallyDisabled,
+    ClassForMediumDisabled,
+    ClassForHeavilyDisabled,
+    ClassForModeratelyHearingImpaired,
+    ClassForHeavilyHearingImpaired,
+    ClassForModeratelyVisuallyImpaired,
+    ClassForHeavilyVisuallyImpaired,
+    ClassForStudentsWithSpeechDisabilities,
+    ClassForStudentsWithHeavySpeechDisabilities,
+    ClassForHandicapped,
+    ClassForHeavyHandicapped,
+    ClassForStudentsWithDevelopmentalBehavioralDisorders,
+    ClassForStudentsWithHeavyBehavioralDisorders,
+    ClassForStudentsWithDevelopmentalLearningDisorders,
+    ClassFroStudentsWithMultipleDisabilities,
+    ClassForDeafBlind,
+    ClassForAutisticStudents,
+    ClassForExceptionallyGifted,
+    ClassForStudentsInDdAndVuAndDgU,
+    ClassNotAssigned
+}
+
+public enum Ravz
+{
+    ExamInRegularTerm = 1,
+    ExamInReplacementTerm,
+    ReplacementExamAfterRegularOrAlternaticeExam,
+    TestRepeat,
+    CorrectiveExaminationAfterTestRepeat,
+}
+
+public enum Rauv
+{
+    SuccesfulCompletion = 1,
+    CompletionWithoutPrescripedExamination,
+    SchoolTransfer,
+    FailureToAdvanceBecauseOfFailureToMeetConditionsToTakeTheExam,
+    AbandoningEducation,
+    ExpelledFromEducation,
+    Death,
+    TerminationOfEducationForForeigners,
+    SchoolTransferBecauseOfMergeOrIZOChangeOr
+}
 
 public enum Raro
 {

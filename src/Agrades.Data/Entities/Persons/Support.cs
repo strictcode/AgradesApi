@@ -27,7 +27,8 @@ public class Support : ITrackable, IVersionable
     public string? CouncelingCenterIZO { get; set; }
 
     //ID_ZNEV
-    public string? DisadvantageIdentificationCode { get; set; }
+    public Guid DisabilityCodeId { get; set; }
+    public IdOfDisadvantage? DisabilityCode { get; set; }
 
     //PSPO
     public string? LevelOfMeasuresProvided { get; set; }

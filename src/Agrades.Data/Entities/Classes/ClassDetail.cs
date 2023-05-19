@@ -1,4 +1,4 @@
-namespace Agrades.Data.Entities;
+namespace Agrades.Data.Entities.Classes;
 
 [Table(nameof(ClassDetail))]
 public class ClassDetail : ITrackable, IOperationFilter

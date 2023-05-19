@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Agrades.Data.Entities.Classes;
 
 namespace Agrades.Data.Entities.Persons;
 [Table(nameof(Student))]
