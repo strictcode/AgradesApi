@@ -271,6 +271,7 @@ public class RecordController : ControllerBase
             var now = _clock.GetCurrentInstant();
             var lines = model.Data.ToList();
             var classes = _dbContext.Classes.ToList();
+            var states = _dbContext.Rast.ToList();
 
             var classDetails = _dbContext.ClassDetails.ToList();
 
@@ -295,7 +296,7 @@ public class RecordController : ControllerBase
                     Sex = values[9] == "Muž" ? Sex.Male : Sex.Female,
                     BornOn = LocalDate.FromDateTime(birthDate),
                     CitizenshipCode = _mapper.GetRako(values[11]),
-                    Citizenship = _mapper.GetRast(values[12]),
+                    //Citizenship = _mapper.GetRast(values[12]),
                     ValidSince = startsAt,
                 }.SetCreateBySystem(now);
 
@@ -303,6 +304,7 @@ public class RecordController : ControllerBase
                 {
                     OperationId = currentOp.Id,
                     City = values[6],
+                    StateId = states.FirstOrDefault(x => x.Name == values[12]).Id,
                     ValidSince = startsAt,
                 }.SetCreateBySystem(now);
 
@@ -329,12 +331,12 @@ public class RecordController : ControllerBase
                     StateDistrict = values[14],
                     ZipCode = zipCity[0] + " " + zipCity[1],
                     City = values[13],
-                    State = values[12], // this is not state for current address
+                    StateId = states.FirstOrDefault(x=>x.Name == values[12]).Id, // this is not state for current address
                     ValidSince = startsAt,
                 }.SetCreateBySystem(now);
 
                 _dbContext.Add(permAddress);
-
+                
                 personDetail.PermanentAddress = permAddress;
 
                 // We need Local property, because we need entities which are could be created but are not in database yet,

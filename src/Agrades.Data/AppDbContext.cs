@@ -34,6 +34,12 @@ public class AppDbContext : IdentityUserContext<User, Guid>
 
     public DbSet<VirtualOperation> VirtualOperations { get; set; } = null!;
 
+    public DbSet<Raor> Raor{ get; set; } = null!;
+    public DbSet<Rast> Rast { get; set; } = null!;
+    public DbSet<Rauj> Rauj { get; set; } = null!;
+
+    public DbSet<Raso> Raso { get; set; } = null!;
+
     public AppDbContext(
         DbContextOptions options,
         IHostEnvironment hostEnvironment
@@ -61,7 +67,6 @@ public class AppDbContext : IdentityUserContext<User, Guid>
             .ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly)
             .ApplyNoncascadingForeignKey()
         ;
-
         modelBuilder.Entity<Operation>()
           .HasIndex(x => x.UrlName)
           .IsUnique();

@@ -73,11 +73,11 @@ namespace Agrades.Data.Migrations
                     b.Property<string>("Region")
                         .HasColumnType("text");
 
-                    b.Property<string>("State")
-                        .HasColumnType("text");
-
                     b.Property<string>("StateDistrict")
                         .HasColumnType("text");
+
+                    b.Property<Guid>("StateId")
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Street")
                         .HasColumnType("text");
@@ -95,7 +95,85 @@ namespace Agrades.Data.Migrations
 
                     b.HasIndex("OperationId");
 
+                    b.HasIndex("StateId");
+
                     b.ToTable("Address");
+                });
+
+            modelBuilder.Entity("Agrades.Data.Entities.Categories.Raor", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Raor");
+                });
+
+            modelBuilder.Entity("Agrades.Data.Entities.Categories.Raso", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Raso");
+                });
+
+            modelBuilder.Entity("Agrades.Data.Entities.Categories.Rast", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Rast");
+                });
+
+            modelBuilder.Entity("Agrades.Data.Entities.Categories.Rauj", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Rauj");
                 });
 
             modelBuilder.Entity("Agrades.Data.Entities.Category", b =>
@@ -234,6 +312,12 @@ namespace Agrades.Data.Migrations
 
                     b.Property<Guid>("ClassId")
                         .HasColumnType("uuid");
+
+                    b.Property<string>("ClassType")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ClassTypeDesignation")
+                        .HasColumnType("text");
 
                     b.Property<Instant>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -503,11 +587,11 @@ namespace Agrades.Data.Migrations
                     b.Property<LocalDate?>("BornOn")
                         .HasColumnType("date");
 
-                    b.Property<int?>("Citizenship")
-                        .HasColumnType("integer");
-
                     b.Property<int?>("CitizenshipCode")
                         .HasColumnType("integer");
+
+                    b.Property<Guid?>("CitizenshipId")
+                        .HasColumnType("uuid");
 
                     b.Property<Guid?>("ContactAddressId")
                         .HasColumnType("uuid");
@@ -601,6 +685,8 @@ namespace Agrades.Data.Migrations
 
                     b.HasIndex("BirthAddressId");
 
+                    b.HasIndex("CitizenshipId");
+
                     b.HasIndex("ContactAddressId");
 
                     b.HasIndex("OperationId");
@@ -679,6 +765,9 @@ namespace Agrades.Data.Migrations
 
                     b.Property<bool?>("IsOnInternat")
                         .HasColumnType("boolean");
+
+                    b.Property<string>("MinistryUniqueCode")
+                        .HasColumnType("text");
 
                     b.Property<Instant>("ModifiedAt")
                         .HasColumnType("timestamp with time zone");
@@ -965,7 +1054,15 @@ namespace Agrades.Data.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("Agrades.Data.Entities.Categories.Rast", "State")
+                        .WithMany("Addresses")
+                        .HasForeignKey("StateId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.Navigation("Operation");
+
+                    b.Navigation("State");
                 });
 
             modelBuilder.Entity("Agrades.Data.Entities.Category", b =>
@@ -1054,6 +1151,11 @@ namespace Agrades.Data.Migrations
                         .HasForeignKey("BirthAddressId")
                         .OnDelete(DeleteBehavior.Restrict);
 
+                    b.HasOne("Agrades.Data.Entities.Categories.Rast", "Citizenship")
+                        .WithMany()
+                        .HasForeignKey("CitizenshipId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("Agrades.Data.Entities.Address", "ContactAddress")
                         .WithMany()
                         .HasForeignKey("ContactAddressId")
@@ -1082,6 +1184,8 @@ namespace Agrades.Data.Migrations
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("BirthAddress");
+
+                    b.Navigation("Citizenship");
 
                     b.Navigation("ContactAddress");
 
@@ -1219,6 +1323,11 @@ namespace Agrades.Data.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Agrades.Data.Entities.Categories.Rast", b =>
+                {
+                    b.Navigation("Addresses");
                 });
 
             modelBuilder.Entity("Agrades.Data.Entities.Class", b =>

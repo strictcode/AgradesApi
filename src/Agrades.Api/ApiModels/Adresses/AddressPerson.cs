@@ -51,7 +51,7 @@ public static class PersonDetailModelExtenstions
             OriNumber = source.OriNumber,
             PhoneNumber = source.PhoneNumber,
             Region = source.Region,
-            State = source.State,
+            State = source.State.Name,
             StateDistrict = source.StateDistrict,
             Street = source.Street,
             ZipCode = source.ZipCode,

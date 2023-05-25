@@ -35,7 +35,8 @@ public class Address : ITrackable, IVersionable, IOperationFilter
     /// </summary>
     public string? Region { get; set; }
 
-    public string? State { get; set; }
+    public Guid StateId { get; set; }
+    public Rast? State { get; set; }//db
 
     public string? ZipCode { get; set; }
 

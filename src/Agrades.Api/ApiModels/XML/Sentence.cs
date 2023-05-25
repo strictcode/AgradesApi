@@ -222,7 +222,7 @@ public static class SentenceExtensions
             ChangesAt = string.Empty,
             //get from student, nowhere to get it from right now
             ChangesCode = ((int)Rakz.WithoutChange).ToString(),
-            Citizenship = personDetail.Citizenship != null ? ((int)personDetail.Citizenship).ToString() : string.Empty,
+            //Citizenship = personDetail.Citizenship != null ? ((int)personDetail.Citizenship).ToString() : string.Empty,
             CitizenshtipQualifier = personDetail.CitizenshipCode != null ? ((int)personDetail.CitizenshipCode).ToString() : string.Empty,
             Class = classDetail.Name,
             DecisiveCollectionDate = untilDate == null ? string.Empty : DateTime.Parse(untilDate.ToString()!).ToString(),
