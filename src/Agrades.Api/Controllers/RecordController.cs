@@ -18,7 +18,6 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 using Microsoft.Extensions.Configuration;
 using NodaTime;
 using NodaTime.Text;
-using Serilog;
 using System.IO;
 using System.Net;
 using System.Net.Http.Headers;
@@ -149,7 +148,6 @@ public class RecordController : ControllerBase
         }
         var bytes = System.IO.File.ReadAllBytes(path);
         System.IO.File.Delete(path);
-        Log.Logger.Information("file returned without errors");
         return File(bytes, contentType, path);
 
     }
