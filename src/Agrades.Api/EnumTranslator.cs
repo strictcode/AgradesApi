@@ -15,15 +15,25 @@ public static class Tr
     public static int Parse(string value) => int.TryParse(value, out var x) ? x : 0;
     public static IdOfDisadvantage GetIdOfDisadvantageFromString(this IAppMapper mapper, string value)
     {
+        var splited = value.ToArray();
         var output = new IdOfDisadvantage();
-        output.A = (DisaA)Parse(value.Split("")[0]);
+        output.A = (DisaA)Parse(splited[0].ToString());
         output.Bb = mapper.RaznFromCodeToEnum(value.Substring(1, 2));
         output.Cc = mapper.RaznFromCodeToEnum(value.Substring(3, 2));
-        output.D = mapper.SzFromCodeToEnum(value.Split("")[5]);
-        output.Ee = (DisaE)Parse(value.Split("")[6]);
-        output.Ff = mapper.RaznFromCodeToEnum(value.Substring(7, 2));
-        output.Hh = mapper.RaznFromCodeToEnum(value.Substring(9, 2));
-        output.Gg = mapper.RaznFromCodeToEnum(value.Substring(11, 2));
+        output.D = mapper.SzFromCodeToEnum(splited[5].ToString());
+        output.Ee = (DisaE)Parse(splited[6].ToString());
+        if(splited.Length > 7)
+        {
+            output.Ff = mapper.RaznFromCodeToEnum(value.Substring(7, 2));
+        }
+        if(splited.Length > 9)
+        {
+            output.Hh = mapper.RaznFromCodeToEnum(value.Substring(9, 2));
+        }
+        if(splited.Length > 11)
+        {
+            output.Gg = mapper.RaznFromCodeToEnum(value.Substring(11, 2));
+        }
         return output;
     }
     public static Sz SzFromTextToEnum(this IAppMapper mapper, string value) =>

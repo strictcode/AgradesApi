@@ -6,11 +6,9 @@ public class Support : ITrackable, IVersionable
     public Guid Id { get; set; }
 
     public Guid OperationId { get; set; }
-    // don't create it to database just yet
-    //public Operation Operation { get; set; }
+    public Operation Operation { get; set; }
     public Guid StudentId { get; set; }
-    // don't create it to database just yet
-    //public Student Student { get; set; }
+    public Student Student { get; set; }
 
     //ZMENDAT
     public LocalDate StartAt { get; set; }

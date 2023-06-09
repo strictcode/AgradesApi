@@ -405,13 +405,15 @@ public class RecordController : ControllerBase
                             Individual = _mapper.IndiFromTextToEnum(values[55]),
                             Gifted = _mapper.GiftedFromTextToEnum(values[56]),
                             Sz = _mapper.SzFromTextToEnum(values[57]),
-                            Zz = values[57],
+                            Zz = values[58],
                             ProvidedLevelOfAid = int.TryParse(values[59], out var x) ? (AdjustedAidLevel)x : 0,
                             AdjustedLevelOfStudyLength = values[60],
                             AdjustedLevelOfExpectedOutput = int.TryParse(values[61], out var y) ? (AdjusteOutputLevel)y : 0,
                             ValidSince = now,
                         }.SetCreateBySystem(now);
-
+                        var idOfDis = _mapper.GetIdOfDisadvantageFromString(values[59]);
+                        idOfDis.Id = Guid.NewGuid();
+                        recommendation.DisabilityCodeId = idOfDis.Id;
                         _dbContext.Add(recommendation);
                     }
                     catch (Exception ex)
@@ -424,7 +426,6 @@ public class RecordController : ControllerBase
                     try
                     {
                         var pattern = LocalDatePattern.CreateWithInvariantCulture("dd.MM.yyyy");
-                        var cum = pattern.Parse(values[68]).Value;
                         var support = new Support
                         {
                             OperationId = currentOp.Id,
@@ -440,7 +441,6 @@ public class RecordController : ControllerBase
                             StartDate = pattern.Parse(values[73]).Value,
                             EndDate = pattern.Parse(values[74]).Value
                         }.SetCreateBySystem(now);
-                        await Console.Out.WriteLineAsync();
                         
                         _dbContext.Add(support);
                     }
