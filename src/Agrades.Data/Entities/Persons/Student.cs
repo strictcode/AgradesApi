@@ -15,6 +15,8 @@ public class Student : IOperationFilter
 
     public ICollection<StudentDetail> StudentDetails { get; } = new HashSet<StudentDetail>();
 
+    public ICollection<IdOfDisadvantage> StudentDisadvantages { get; } = new HashSet<IdOfDisadvantage>();
+
     public ICollection<StudentGroup> Groups { get; set; } = new HashSet<StudentGroup>();
 
     public Guid PersonId { get; set; }

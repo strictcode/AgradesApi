@@ -1,3 +1,5 @@
+using Agrades.Data.Entities.Persons;
+
 namespace Agrades.Data.Entities.Classes;
 [Table(nameof(StudentGroup))]
 public class StudentGroup : ITrackable, IVersionable

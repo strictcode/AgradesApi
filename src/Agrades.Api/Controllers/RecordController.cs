@@ -7,6 +7,7 @@ using Agrades.Data;
 using Agrades.Data.Entities;
 using Agrades.Data.Entities.Categories;
 using Agrades.Data.Entities.Persons;
+using Agrades.Data.Entities.Persons;
 using Agrades.Data.Interfaces;
 using Agrades.Services;
 using Microsoft.AspNetCore.JsonPatch.Operations;
@@ -51,7 +52,7 @@ public class RecordController : ControllerBase
         _mapper = mapper;
         _clock = clock;
     }
-    [HttpPost("api/v1/{opUrlName}/report")]
+    [HttpGet("api/v1/{opUrlName}/report")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -86,7 +87,6 @@ public class RecordController : ControllerBase
         {
             var thisStudentStudentDetails = studentDetails.Where(x => x.StudentId == student.Id
             && (x.ValidUntil <= untilDate
-                || x.ValidUntil == untilDate
                 || x.ValidUntil == null
                 || x.ValidSince == (untilDate + Duration.FromDays(1)))
             && (x.ValidSince >= sinceDate)).ToList();
@@ -274,10 +274,13 @@ public class RecordController : ControllerBase
             var classDetails = _dbContext.ClassDetails.ToList();
 
             // skip table header
-            for (int i = 1; i < lines.Count; i++)
+            for (int i = 0; i < lines.Count; i++)
             {
                 var values = lines[i].Split(';');
-
+                //RED_IZO	TT	IZO_SPZ	DAT_VYD	DAT_KPD	KOD_NFN	FN	DAT_ZAH	DAT_UKON	PLAT_ZAC	PLAT_KON
+                //64-74 support
+                //KOD_ZAKA	TYP_TR	INDI	NADANI	SZ	ZZ	ID_ZNEV	PSPO	PRODL_DV	UPR_VYST
+                //53-62 recomendation
                 var birthDate = new DateTime(int.Parse(values[10].Split('.')[2]), int.Parse(values[10].Split('.')[1]), int.Parse(values[10].Split('.')[0]), 0, 0, 0, DateTimeKind.Utc);
 
                 var startsAt = Instant.FromDateTimeUtc(new DateTime(int.Parse(values[50].Split('.')[2]), int.Parse(values[50].Split('.')[1]), int.Parse(values[50].Split('.')[0]), 0, 0, 0, DateTimeKind.Utc));
@@ -329,12 +332,12 @@ public class RecordController : ControllerBase
                     StateDistrict = values[14],
                     ZipCode = zipCity[0] + " " + zipCity[1],
                     City = values[13],
-                    StateId = states.FirstOrDefault(x=>x.Name == values[12]).Id, // this is not state for current address
+                    StateId = states.FirstOrDefault(x => x.Name == values[12]).Id, // this is not state for current address
                     ValidSince = startsAt,
                 }.SetCreateBySystem(now);
 
                 _dbContext.Add(permAddress);
-                
+
                 personDetail.PermanentAddress = permAddress;
 
                 // We need Local property, because we need entities which are could be created but are not in database yet,
@@ -386,6 +389,53 @@ public class RecordController : ControllerBase
                 };
 
                 _dbContext.Add(student);
+                //RED_IZO	TT	IZO_SPZ	DAT_VYD	DAT_KPD	KOD_NFN	FN	DAT_ZAH	DAT_UKON	PLAT_ZAC	PLAT_KON
+                //64-74 support
+                //KOD_ZAKA	TYP_TR	INDI	NADANI	SZ	ZZ	ID_ZNEV	PSPO	PRODL_DV	UPR_VYST
+                //53-62 recomendation
+                if (values[52] == "ANO")
+                {
+                    try
+                    {
+                        var recommendation = new Recommendation
+                        {
+                            OperationId = currentOp.Id,
+                            StudentCode = values[53],
+                            StudentId = student.Id,
+                            Individual = _mapper.IndiFromTextToEnum(values[55]),
+                            Gifted = _mapper.GiftedFromTextToEnum(values[56]),
+                            Sz = _mapper.SzFromTextToEnum(values[57]),
+                            Zz = values[57],
+                            ProvidedLevelOfAid = int.TryParse(values[59], out var x) ? (AdjustedAidLevel)x : 0,
+                            AdjustedLevelOfStudyLength = values[60],
+                            AdjustedLevelOfExpectedOutput = int.TryParse(values[61], out var y) ? (AdjusteOutputLevel)y : 0,
+                            ValidSince = now,
+                        }.SetCreateBySystem(now);
+
+                        _dbContext.Add(recommendation);
+                    }
+                    catch (Exception ex)
+                    {
+                        await Console.Out.WriteLineAsync();
+                    }
+                }
+                if (values[63] == "ANO")
+                {
+                    var pattern = LocalDatePattern.CreateWithInvariantCulture("dd.MM.yyyy");
+                    var support = new Support
+                    {
+                        OperationId = currentOp.Id,
+                        StudentId = student.Id,
+                        CouncellingRedIzo = values[64],
+                        //65
+                        CouncelingCenterIZO = values[66],
+                        DecisionValidSince = pattern.Parse(values[67]).Value,
+                        DecisionValidTo = pattern.Parse(values[68]).Value,
+                        Financing = _mapper.FnFromTextToEnum(values[69]),
+
+                    };
+                }
+
 
                 person.Student = student;
 

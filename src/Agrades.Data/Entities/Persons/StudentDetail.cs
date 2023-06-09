@@ -25,8 +25,14 @@ public class StudentDetail : ITrackable, IVersionable, IOperationFilter
 
     public int? Financing { get; set; }
 
-    public LocalDate? EndsAt { get; set; }
+    //KOD_ZMEN
+    public int? ChangeCode { get; set; }
 
+    //PRIZN_ST
+    public int? EducationTag { get; set; }
+
+    public LocalDate? EndsAt { get; set; }
+    //KOD_ZMEN
     public string? EndReasonCode { get; set; }
 
     public Guid StudyFieldId { get; set; }

@@ -1,5 +1,6 @@
 using Agrades.Data.Entities.Classes;
 using Agrades.Data.Entities.Identity;
+using Agrades.Data.Entities.Persons;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.Extensions.Hosting;

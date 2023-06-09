@@ -11,4 +11,5 @@ public class GroupClassType
     public Guid Id { get; set; }
     public TypTr? ClassAssistents { get; set; }
     public Tt? ClassTypeDesignation { get; set; }
+
 }

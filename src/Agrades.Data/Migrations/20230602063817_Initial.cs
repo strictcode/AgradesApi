@@ -8,7 +8,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Agrades.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class Init : Migration
+    public partial class Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -48,6 +48,19 @@ namespace Agrades.Data.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Class", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "GroupClassType",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    ClassAssistents = table.Column<int>(type: "integer", nullable: true),
+                    ClassTypeDesignation = table.Column<int>(type: "integer", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_GroupClassType", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -529,8 +542,7 @@ namespace Agrades.Data.Migrations
                     EducationFieldId = table.Column<Guid>(type: "uuid", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: false),
                     BackofficeName = table.Column<string>(type: "text", nullable: true),
-                    ClassTypeDesignation = table.Column<string>(type: "text", nullable: true),
-                    ClassType = table.Column<string>(type: "text", nullable: true),
+                    GroupClassTypeId = table.Column<Guid>(type: "uuid", nullable: true),
                     ValidSince = table.Column<Instant>(type: "timestamp with time zone", nullable: false),
                     ValidUntil = table.Column<Instant>(type: "timestamp with time zone", nullable: true),
                     CreatedAt = table.Column<Instant>(type: "timestamp with time zone", nullable: false),
@@ -547,6 +559,12 @@ namespace Agrades.Data.Migrations
                         name: "FK_Group_Class_ClassId",
                         column: x => x.ClassId,
                         principalTable: "Class",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Group_GroupClassType_GroupClassTypeId",
+                        column: x => x.GroupClassTypeId,
+                        principalTable: "GroupClassType",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
@@ -576,6 +594,8 @@ namespace Agrades.Data.Migrations
                     StartReasonCode = table.Column<int>(type: "integer", nullable: false),
                     ObligatoryAttendenceYears = table.Column<int>(type: "integer", nullable: true),
                     Financing = table.Column<int>(type: "integer", nullable: true),
+                    ChangeCode = table.Column<int>(type: "integer", nullable: true),
+                    EducationTag = table.Column<int>(type: "integer", nullable: true),
                     EndsAt = table.Column<LocalDate>(type: "date", nullable: true),
                     EndReasonCode = table.Column<string>(type: "text", nullable: true),
                     StudyFieldId = table.Column<Guid>(type: "uuid", nullable: false),
@@ -716,6 +736,11 @@ namespace Agrades.Data.Migrations
                 name: "IX_Group_EducationFieldId",
                 table: "Group",
                 column: "EducationFieldId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Group_GroupClassTypeId",
+                table: "Group",
+                column: "GroupClassTypeId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Group_OperationId",
@@ -886,6 +911,9 @@ namespace Agrades.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "Class");
+
+            migrationBuilder.DropTable(
+                name: "GroupClassType");
 
             migrationBuilder.DropTable(
                 name: "StudyField");

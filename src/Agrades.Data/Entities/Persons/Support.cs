@@ -16,12 +16,12 @@ public class Support : ITrackable, IVersionable
 
     //KOD_ZMEN
     public Rakz? ChangeReasonCode { get; set; }
-    
+
     //ZMENDAT
     public LocalDate StartAt { get; set; }
 
     //RED_IZO
-    public string? CounsellingRedIzo { get; set; }
+    public string? CouncellingRedIzo { get; set; }
 
     //IZO_SPZ
     public string? CouncelingCenterIZO { get; set; }
@@ -34,7 +34,7 @@ public class Support : ITrackable, IVersionable
     public string? LevelOfMeasuresProvided { get; set; }
 
     //FN  0/1
-    public int? Financing { get; set; }
+    public Fn? Financing { get; set; }
 
     //KOD_NFN
     //translator will be needed
@@ -50,7 +50,7 @@ public class Support : ITrackable, IVersionable
     public LocalDate StartDate { get; set; }
     //PLAT_KON
     public LocalDate? EndDate { get; set; }
-    
+
     //DAT_ZAH
     public LocalDate? RealStartDate { get; set; }
     //DAT_UKON

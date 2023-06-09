@@ -1,6 +1,7 @@
 ﻿using Agrades.Api.Mapper;
 using Agrades.Data.Entities.Categories;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
+using System.Runtime.CompilerServices;
 
 namespace Agrades.Api;
 
@@ -11,31 +12,142 @@ public class EnumTranslator
 
 public static class Tr
 {
-    public static DisaD DisaDFromCodeToEnum(this IAppMapper mapper, string value) =>
+    public static int Parse(string value) => int.TryParse(value, out var x) ? x : 0;
+    public static IdOfDisadvantage GetIdOfDisadvantageFromString(this IAppMapper mapper, string value)
+    {
+        var output = new IdOfDisadvantage();
+        output.A = (DisaA)Parse(value.Split("")[0]);
+        output.Bb = mapper.RaznFromCodeToEnum(value.Substring(1, 2));
+        output.Cc = mapper.RaznFromCodeToEnum(value.Substring(3, 2));
+        output.D = mapper.SzFromCodeToEnum(value.Split("")[5]);
+        output.Ee = (DisaE)Parse(value.Split("")[6]);
+        output.Ff = mapper.RaznFromCodeToEnum(value.Substring(7, 2));
+        output.Hh = mapper.RaznFromCodeToEnum(value.Substring(9, 2));
+        output.Gg = mapper.RaznFromCodeToEnum(value.Substring(11, 2));
+        return output;
+    }
+    public static Sz SzFromTextToEnum(this IAppMapper mapper, string value) =>
         (value) switch
         {
-            "0" => DisaD.NoSvp,
-            "K" => DisaD.SvpBecauseOfCulturalBackground,
-            "Z" => DisaD.SvpBecauseOfOtherCurcumstances,
-            "V" => DisaD.SvpBecauseOfBoth,
+            "nemá SVP vyplývající z odlišného kulturního prostředí nebo jiných životních podmínek" => Sz.NoSvp,
+            "SVP vyplývají převážně z odlišného kulturního prostředí žáka" => Sz.SvpBecauseOfCulturalBackground,
+            "SVP vyplývají převážně z dopadu jiných životních podmínek žáka do vzdělávání" => Sz.SvpBecauseOfOtherCurcumstances,
+            "SVP vyplývají z více faktorů uvedených pod body K a Z" => Sz.SvpBecauseOfBoth,
         };
 
-    public static string DisaDFromCodeToEnum(this IAppMapper mapper, DisaD value) =>
+    public static Sz SzFromCodeToEnum(this IAppMapper mapper, string value) =>
         (value) switch
         {
-            DisaD.NoSvp => "0",
-            DisaD.SvpBecauseOfCulturalBackground => "K",
-            DisaD.SvpBecauseOfOtherCurcumstances => "Z",
-            DisaD.SvpBecauseOfBoth => "V",
+            "0" => Sz.NoSvp,
+            "K" => Sz.SvpBecauseOfCulturalBackground,
+            "Z" => Sz.SvpBecauseOfOtherCurcumstances,
+            "V" => Sz.SvpBecauseOfBoth,
         };
 
-    public static string DisaDFromEnumToText(this IAppMapper mapper, DisaD value) =>
+    public static Razn RaznFromCodeToEnum(this IAppMapper mapper, string value) =>
         (value) switch
         {
-            DisaD.NoSvp => "nemá SVP vyplývající z odlišného kulturního prostředí nebo jiných životních podmínek",
-            DisaD.SvpBecauseOfCulturalBackground => "SVP vyplývají převážně z odlišného kulturního prostředí žáka",
-            DisaD.SvpBecauseOfOtherCurcumstances => " SVP vyplývají převážně z dopadu jiných životních podmínek žáka do vzdělávání",
-            DisaD.SvpBecauseOfBoth => "SVP vyplývají z kombinace obou faktorů uvedených pod body K a Z",
+            "00" => Razn.NoDisadvantages,
+            "0M" => Razn.ShortTermDisadvantages,
+            "0T" => Razn.LongTermDisadvantages,
+            "1M" => Razn.LightMentalIllness,
+            "1S" => Razn.IntermediateMentalIllness,
+            "1T" => Razn.HeavyMentalIllness,
+            "1Y" => Razn.DeepMentalIllness,
+            "2M" => Razn.LightlyDeafIfPOIsNeeded,
+            "2S" => Razn.IntermidiateDeaf,
+            "2T" => Razn.HeavilyDeaf,
+            "2Y" => Razn.Deaf,
+            "3M" => Razn.LightlyBlindIfPOIsNeeded,
+            "3S" => Razn.IntermediatlyBlind,
+            "3T" => Razn.HeavilyBlind,
+            "3Y" => Razn.Blind,
+            "4M" => Razn.LightSpeechDefectIfPOIsNeeded,
+            "4S" => Razn.IntermediateSpeechDefect,
+            "4T" => Razn.HeavySpeechDefect,
+            "5M" => Razn.LightPhysicalDisabilityIfPOIsNeeded,
+            "5S" => Razn.IntermediatePhysicalDisability,
+            "5T" => Razn.HeavyPhysicalDisability,
+            "6M" => Razn.LightBehaviourDisorderIfPOIsNeeded,
+            "6S" => Razn.IntemediateBehaviourDisorder,
+            "6T" => Razn.HeavyBehaviourDisorder,
+            "7M" => Razn.LightLearningDisorderIfPOIsNeeded,
+            "7S" => Razn.IntermediateLearningDisorder,
+            "7T" => Razn.HeavyLearningDisorder,
+            "8J" => Razn.OffADS,
+            "8M" => Razn.LightADS,
+            "8T" => Razn.KidAutism,
+        };
+
+    public static string RaznFromEnumToCode(this IAppMapper mapper, Razn value) =>
+        (value) switch
+        {
+            Razn.NoDisadvantages => "00",
+            Razn.ShortTermDisadvantages => "0M",
+            Razn.LongTermDisadvantages => "0T",
+            Razn.LightMentalIllness => "1M",
+            Razn.IntermediateMentalIllness => "1S",
+            Razn.HeavyMentalIllness => "1T",
+            Razn.DeepMentalIllness => "1Y",
+            Razn.LightlyDeafIfPOIsNeeded => "2M",
+            Razn.IntermidiateDeaf => "2S",
+            Razn.HeavilyDeaf => "2T",
+            Razn.Deaf => "2Y",
+            Razn.LightlyBlindIfPOIsNeeded => "3M",
+            Razn.IntermediatlyBlind => "3S",
+            Razn.HeavilyBlind => "3T",
+            Razn.Blind => "3Y",
+            Razn.LightSpeechDefectIfPOIsNeeded => "4M",
+            Razn.IntermediateSpeechDefect => "4S",
+            Razn.HeavySpeechDefect => "4T",
+            Razn.LightPhysicalDisabilityIfPOIsNeeded => "5M",
+            Razn.IntermediatePhysicalDisability => "5S",
+            Razn.HeavyPhysicalDisability => "5T",
+            Razn.LightBehaviourDisorderIfPOIsNeeded => "6M",
+            Razn.IntemediateBehaviourDisorder => "6S",
+            Razn.HeavyBehaviourDisorder => "6T",
+            Razn.LightLearningDisorderIfPOIsNeeded => "7M",
+            Razn.IntermediateLearningDisorder => "7S",
+            Razn.HeavyLearningDisorder => "7T",
+            Razn.OffADS => "8J",
+            Razn.LightADS => "8M",
+            Razn.KidAutism => "8T",
+        };
+
+
+    public static string RaznFromEnumToText(this IAppMapper mapper, Razn value) =>
+        (value) switch
+        {
+            Razn.NoDisadvantages => "Bez (dalšího) znevýhodnění",
+            Razn.ShortTermDisadvantages => "Krátkodobé SVP vyplýv. ze zdrav. stavu či jiných okolností, mimo 1M až 8T",
+            Razn.LongTermDisadvantages => "Dlouhodobé SVP vyplýv. ze zdrav. stavu či jiných okolností, mimo 1M až 8T",
+            Razn.LightMentalIllness => "Lehké mentální postižení",
+            Razn.IntermediateMentalIllness => "Středně těžké mentální postižení",
+            Razn.HeavyMentalIllness => "Těžké mentální postižení",
+            Razn.DeepMentalIllness => "Hluboké mentální postižení",
+            Razn.LightlyDeafIfPOIsNeeded => "Mírné sluchové postižení, pokud vyžaduje PO",
+            Razn.IntermidiateDeaf => "Středně těžké sluchové postižení",
+            Razn.HeavilyDeaf => "Těžké sluchové postižení",
+            Razn.Deaf => "Neslyšící",
+            Razn.LightlyBlindIfPOIsNeeded => "Mírné zrakové postižení, pokud vyžaduje PO",
+            Razn.IntermediatlyBlind => "Středně těžké zrakové postižení",
+            Razn.HeavilyBlind => "Těžké zrakové postižení",
+            Razn.Blind => "Nevidomí",
+            Razn.LightSpeechDefectIfPOIsNeeded => "Mírné vady řeči, pokud vyžadují PO",
+            Razn.IntermediateSpeechDefect => "Středně závažné vady řeči",
+            Razn.HeavySpeechDefect => "Závažné vady řeči",
+            Razn.LightPhysicalDisabilityIfPOIsNeeded => "Mírné tělesné postižení, pokud vyžaduje PO",
+            Razn.IntermediatePhysicalDisability => "Středně těžké tělesné postižení",
+            Razn.HeavyPhysicalDisability => "Těžké tělesné postižení",
+            Razn.LightBehaviourDisorderIfPOIsNeeded => "Mírné poruchy chování, pokud vyžadují PO",
+            Razn.IntemediateBehaviourDisorder => "Středně závažné poruchy chování",
+            Razn.HeavyBehaviourDisorder => "Závažné poruchy chování",
+            Razn.LightLearningDisorderIfPOIsNeeded => "Mírné poruchy učení, pokud vyžadují PO",
+            Razn.IntermediateLearningDisorder => "Středně závažné poruchy učení",
+            Razn.HeavyLearningDisorder => "Závažné poruchy učení",
+            Razn.OffADS => "Poruchy autist. spektra mimo dětského autismu se závažným odrazem do vzdělávání",
+            Razn.LightADS => "Poruchy autistického spektra s mírným odrazem do vzdělávání žáka",
+            Razn.KidAutism => "Dětský autismus (se závažným odrazem do vzdělávání žáka)",
         };
 
     public static TypTr TypTrFromTextToEnum(this IAppMapper mapper, string value) =>

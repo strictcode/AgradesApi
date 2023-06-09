@@ -1,4 +1,4 @@
-﻿namespace Agrades.Data.Entities.Categories;
+﻿ namespace Agrades.Data.Entities.Categories;
 
 public enum Radv
 {
@@ -305,28 +305,38 @@ public enum Razn
     NoDisadvantages = 1,
     ShortTermDisadvantages,
     LongTermDisadvantages,
+
     LightMentalIllness,
     IntermediateMentalIllness,
     HeavyMentalIllness,
     DeepMentalIllness,
-    LightlyDeaf,
+
+    LightlyDeafIfPOIsNeeded,
+    IntermidiateDeaf,
     HeavilyDeaf,
     Deaf,
-    LightlyBlind,
+
+    LightlyBlindIfPOIsNeeded,
     IntermediatlyBlind,
     HeavilyBlind,
     Blind,
-    LightSpeechDefect,
+
+    LightSpeechDefectIfPOIsNeeded,
     IntermediateSpeechDefect,
     HeavySpeechDefect,
-    LightPhysicalDisability,
+
+    LightPhysicalDisabilityIfPOIsNeeded,
     IntermediatePhysicalDisability,
     HeavyPhysicalDisability,
-    LightBehaviourDisorder,
+
+    LightBehaviourDisorderIfPOIsNeeded,
     IntemediateBehaviourDisorder,
     HeavyBehaviourDisorder,
-    LightLearningDisorder,
+
+    LightLearningDisorderIfPOIsNeeded,
     IntermediateLearningDisorder,
+    HeavyLearningDisorder,
+
     OffADS,
     LightADS,
     KidAutism

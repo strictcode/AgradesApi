@@ -16,12 +16,8 @@ public class Group : ITrackable, IVersionable, IOperationFilter
 
     public string? BackofficeName { get; set; }
 
-    //TT    B-běžná , Z - podle vyhlášky
-    public Tt? ClassTypeDesignation { get; set; }
-
-    //TYP_TR
-    public Guid GroupClassTypeId { get; set; }
-    public GroupClassType? GroupClassType { get; set; }
+    public Guid? GroupClassTypeId { get; set; }
+    public GroupClassType? ClassTypeDesignation { get; set; }
 
     public ICollection<StudentGroup> Students { get; set; } = new HashSet<StudentGroup>();
 
