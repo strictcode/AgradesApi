@@ -421,19 +421,34 @@ public class RecordController : ControllerBase
                 }
                 if (values[63] == "ANO")
                 {
-                    var pattern = LocalDatePattern.CreateWithInvariantCulture("dd.MM.yyyy");
-                    var support = new Support
+                    try
                     {
-                        OperationId = currentOp.Id,
-                        StudentId = student.Id,
-                        CouncellingRedIzo = values[64],
-                        //65
-                        CouncelingCenterIZO = values[66],
-                        DecisionValidSince = pattern.Parse(values[67]).Value,
-                        DecisionValidTo = pattern.Parse(values[68]).Value,
-                        Financing = _mapper.FnFromTextToEnum(values[69]),
-
-                    };
+                        var pattern = LocalDatePattern.CreateWithInvariantCulture("dd.MM.yyyy");
+                        var cum = pattern.Parse(values[68]).Value;
+                        var support = new Support
+                        {
+                            OperationId = currentOp.Id,
+                            StudentId = student.Id,
+                            CouncellingRedIzo = values[64],
+                            //65
+                            CouncelingCenterIZO = values[66],
+                            DecisionValidSince = pattern.Parse(values[67]).Value,
+                            DecisionValidTo = pattern.Parse(values[68]).Value,
+                            Financing = _mapper.FnFromTextToEnum(values[70]),
+                            RealStartDate = pattern.Parse(values[71]).Value,
+                            RealEndDate = pattern.Parse(values[72]).Value,
+                            StartDate = pattern.Parse(values[73]).Value,
+                            EndDate = pattern.Parse(values[74]).Value
+                        }.SetCreateBySystem(now);
+                        await Console.Out.WriteLineAsync();
+                        
+                        _dbContext.Add(support);
+                    }
+                    catch (Exception ex)
+                    {
+                        await Console.Out.WriteLineAsync();
+                    }
+                    
                 }
 
 

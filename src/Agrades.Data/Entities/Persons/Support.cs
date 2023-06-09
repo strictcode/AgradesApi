@@ -12,11 +12,6 @@ public class Support : ITrackable, IVersionable
     // don't create it to database just yet
     //public Student Student { get; set; }
 
-    public string ClassCode { get; set; } = null!;
-
-    //KOD_ZMEN
-    public Rakz? ChangeReasonCode { get; set; }
-
     //ZMENDAT
     public LocalDate StartAt { get; set; }
 
@@ -25,13 +20,6 @@ public class Support : ITrackable, IVersionable
 
     //IZO_SPZ
     public string? CouncelingCenterIZO { get; set; }
-
-    //ID_ZNEV
-    public Guid DisabilityCodeId { get; set; }
-    public IdOfDisadvantage? DisabilityCode { get; set; }
-
-    //PSPO
-    public string? LevelOfMeasuresProvided { get; set; }
 
     //FN  0/1
     public Fn? Financing { get; set; }
