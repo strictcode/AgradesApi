@@ -100,6 +100,78 @@ namespace Agrades.Data.Migrations
                     b.ToTable("Address");
                 });
 
+            modelBuilder.Entity("Agrades.Data.Entities.Categories.IdOfDisadvantage", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<int?>("A")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("Bb")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("Cc")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("D")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("Ee")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("Ff")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("Gg")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("Hh")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("StudentId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("StudentId");
+
+                    b.ToTable("IdOfDisadvantages");
+                });
+
+            modelBuilder.Entity("Agrades.Data.Entities.Categories.IdOfFinancialDemands", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("A")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("B")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Cccc")
+                        .HasColumnType("text");
+
+                    b.Property<int>("D")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Ee")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("StudentId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("StudentId");
+
+                    b.ToTable("IdOfFinancialDemands");
+                });
+
             modelBuilder.Entity("Agrades.Data.Entities.Categories.Raor", b =>
                 {
                     b.Property<Guid>("Id")
@@ -763,6 +835,82 @@ namespace Agrades.Data.Migrations
                     b.ToTable("PersonDetail");
                 });
 
+            modelBuilder.Entity("Agrades.Data.Entities.Persons.Recommendation", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<int?>("AdjustedLevelOfExpectedOutput")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("AdjustedLevelOfStudyLength")
+                        .HasColumnType("text");
+
+                    b.Property<Instant>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Instant?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("DeletedBy")
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("DisabilityCodeId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int?>("Gifted")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("Individual")
+                        .HasColumnType("integer");
+
+                    b.Property<Instant>("ModifiedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("ModifiedBy")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("OperationId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int?>("ProvidedLevelOfAid")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("StudentCode")
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("StudentId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int?>("Sz")
+                        .HasColumnType("integer");
+
+                    b.Property<Instant>("ValidSince")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Instant?>("ValidUntil")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Zz")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DisabilityCodeId");
+
+                    b.HasIndex("OperationId");
+
+                    b.HasIndex("StudentId");
+
+                    b.ToTable("Recommendations");
+                });
+
             modelBuilder.Entity("Agrades.Data.Entities.Persons.Student", b =>
                 {
                     b.Property<Guid>("Id")
@@ -888,6 +1036,83 @@ namespace Agrades.Data.Migrations
                     b.HasIndex("StudyFieldId");
 
                     b.ToTable("StudentDetail");
+                });
+
+            modelBuilder.Entity("Agrades.Data.Entities.Persons.Support", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("CouncelingCenterIZO")
+                        .HasColumnType("text");
+
+                    b.Property<string>("CouncellingRedIzo")
+                        .HasColumnType("text");
+
+                    b.Property<Instant>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<LocalDate>("DecisionValidSince")
+                        .HasColumnType("date");
+
+                    b.Property<LocalDate?>("DecisionValidTo")
+                        .HasColumnType("date");
+
+                    b.Property<Instant?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("DeletedBy")
+                        .HasColumnType("text");
+
+                    b.Property<LocalDate?>("EndDate")
+                        .HasColumnType("date");
+
+                    b.Property<int?>("Financing")
+                        .HasColumnType("integer");
+
+                    b.Property<Instant>("ModifiedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("ModifiedBy")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("OperationId")
+                        .HasColumnType("uuid");
+
+                    b.Property<LocalDate?>("RealEndDate")
+                        .HasColumnType("date");
+
+                    b.Property<LocalDate?>("RealStartDate")
+                        .HasColumnType("date");
+
+                    b.Property<LocalDate>("StartAt")
+                        .HasColumnType("date");
+
+                    b.Property<LocalDate>("StartDate")
+                        .HasColumnType("date");
+
+                    b.Property<Guid>("StudentId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Instant>("ValidSince")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Instant?>("ValidUntil")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OperationId");
+
+                    b.HasIndex("StudentId");
+
+                    b.ToTable("Supports");
                 });
 
             modelBuilder.Entity("Agrades.Data.Entities.StudyField", b =>
@@ -1087,6 +1312,28 @@ namespace Agrades.Data.Migrations
                     b.Navigation("State");
                 });
 
+            modelBuilder.Entity("Agrades.Data.Entities.Categories.IdOfDisadvantage", b =>
+                {
+                    b.HasOne("Agrades.Data.Entities.Persons.Student", "Student")
+                        .WithMany("StudentDisadvantages")
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Student");
+                });
+
+            modelBuilder.Entity("Agrades.Data.Entities.Categories.IdOfFinancialDemands", b =>
+                {
+                    b.HasOne("Agrades.Data.Entities.Persons.Student", "Student")
+                        .WithMany()
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Student");
+                });
+
             modelBuilder.Entity("Agrades.Data.Entities.Category", b =>
                 {
                     b.HasOne("Agrades.Data.Entities.Operation", "Operation")
@@ -1246,6 +1493,33 @@ namespace Agrades.Data.Migrations
                     b.Navigation("TemporaryAddress");
                 });
 
+            modelBuilder.Entity("Agrades.Data.Entities.Persons.Recommendation", b =>
+                {
+                    b.HasOne("Agrades.Data.Entities.Categories.IdOfDisadvantage", "DisabilityCode")
+                        .WithMany()
+                        .HasForeignKey("DisabilityCodeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Agrades.Data.Entities.Operation", "Operation")
+                        .WithMany()
+                        .HasForeignKey("OperationId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Agrades.Data.Entities.Persons.Student", "Student")
+                        .WithMany()
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("DisabilityCode");
+
+                    b.Navigation("Operation");
+
+                    b.Navigation("Student");
+                });
+
             modelBuilder.Entity("Agrades.Data.Entities.Persons.Student", b =>
                 {
                     b.HasOne("Agrades.Data.Entities.Operation", "Operation")
@@ -1304,6 +1578,25 @@ namespace Agrades.Data.Migrations
                     b.Navigation("Student");
 
                     b.Navigation("StudyField");
+                });
+
+            modelBuilder.Entity("Agrades.Data.Entities.Persons.Support", b =>
+                {
+                    b.HasOne("Agrades.Data.Entities.Operation", "Operation")
+                        .WithMany()
+                        .HasForeignKey("OperationId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Agrades.Data.Entities.Persons.Student", "Student")
+                        .WithMany()
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Operation");
+
+                    b.Navigation("Student");
                 });
 
             modelBuilder.Entity("Agrades.Data.Entities.StudyField", b =>
@@ -1383,6 +1676,8 @@ namespace Agrades.Data.Migrations
                     b.Navigation("Groups");
 
                     b.Navigation("StudentDetails");
+
+                    b.Navigation("StudentDisadvantages");
                 });
 #pragma warning restore 612, 618
         }

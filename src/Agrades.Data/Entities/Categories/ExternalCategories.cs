@@ -16,6 +16,28 @@ public enum Radv
     RequalificationStudiesInKKOVPaidByOtherResources = 92,
 }
 
+public enum FinD
+{
+    SupportMeasureForSchool,
+    SupportMeasureForSchoolFacilities,
+}
+
+public enum FinA
+{
+    PersonalSupport,
+    ImpairedCommunicationAbility,
+    MentalDisability,
+    HearingDisability,
+    PhysicalDisability,
+    DisorderOfAS,
+    SpecificBehaviorDis,
+    SpecificLearningDis,
+    DifferentCulturalAndLivingConditions,
+    SeeingDisability,
+    SimultaneousImpairmentOfMultipleDefects,
+    Gifted,
+} 
+
 public enum Rapv
 {
     ProperEducation = 1,

@@ -22,10 +22,6 @@ public class Support : ITrackable, IVersionable
     //FN  0/1
     public Fn? Financing { get; set; }
 
-    //KOD_NFN
-    //translator will be needed
-    public string? FinancingCode { get; set; }
-
     //DAT_VYD
     public LocalDate DecisionValidSince { get; set; }
 

@@ -12,6 +12,65 @@ public class EnumTranslator
 
 public static class Tr
 {
+    public static IdOfFinancialDemands GetIdOfFinancialDemands(this IAppMapper mapper, string value)
+    {
+        var splited = value.ToArray();
+        var output = new IdOfFinancialDemands();
+        output.A = mapper.FinAFromCodeToEnum(splited[0].ToString());
+        output.B = splited[1].ToString();
+        output.Cccc = value.Substring(1, 4);
+        output.D = mapper.FinDEnumFromCode(splited[6].ToString());
+        output.Ee = value.Substring(7, 2);
+        return output;
+    }
+
+    public static FinD FinDEnumFromCode(this IAppMapper mapper, string value) =>
+        value switch
+        {
+            "A" => FinD.SupportMeasureForSchool,
+            "B" => FinD.SupportMeasureForSchoolFacilities,
+        };
+
+    public static string FinDCodeFromEnum(this IAppMapper mapper, FinD value) =>
+        value switch
+        {
+            FinD.SupportMeasureForSchool => "A",
+            FinD.SupportMeasureForSchoolFacilities => "B",
+        };
+
+    public static string FinAFromEnumToCode(this IAppMapper mapper, FinA value) =>
+        (value) switch
+        {
+            FinA.PersonalSupport => "0",
+            FinA.ImpairedCommunicationAbility => "A",
+            FinA.MentalDisability => "B",
+            FinA.HearingDisability => "C",
+            FinA.PhysicalDisability => "D",
+            FinA.DisorderOfAS => "E",
+            FinA.SpecificBehaviorDis => "F",
+            FinA.SpecificLearningDis => "G",
+            FinA.DifferentCulturalAndLivingConditions => "H",
+            FinA.SeeingDisability => "I",
+            FinA.SimultaneousImpairmentOfMultipleDefects => "J",
+            FinA.Gifted => "K",
+        };
+    public static FinA FinAFromCodeToEnum(this IAppMapper mapper, string value) =>
+        (value) switch
+        {
+            "0" => FinA.PersonalSupport,
+            "A" => FinA.ImpairedCommunicationAbility,
+            "B" => FinA.MentalDisability,
+            "C" => FinA.HearingDisability,
+            "D" => FinA.PhysicalDisability,
+            "E" => FinA.DisorderOfAS,
+            "F" => FinA.SpecificBehaviorDis,
+            "G" => FinA.SpecificLearningDis,
+            "H" => FinA.DifferentCulturalAndLivingConditions,
+            "I" => FinA.SeeingDisability,
+            "J" => FinA.SimultaneousImpairmentOfMultipleDefects,
+            "K" => FinA.Gifted,
+        };
+
     public static int Parse(string value) => int.TryParse(value, out var x) ? x : 0;
     public static IdOfDisadvantage GetIdOfDisadvantageFromString(this IAppMapper mapper, string value)
     {
@@ -22,15 +81,15 @@ public static class Tr
         output.Cc = mapper.RaznFromCodeToEnum(value.Substring(3, 2));
         output.D = mapper.SzFromCodeToEnum(splited[5].ToString());
         output.Ee = (DisaE)Parse(splited[6].ToString());
-        if(splited.Length > 7)
+        if (splited.Length > 7)
         {
             output.Ff = mapper.RaznFromCodeToEnum(value.Substring(7, 2));
         }
-        if(splited.Length > 9)
+        if (splited.Length > 9)
         {
             output.Hh = mapper.RaznFromCodeToEnum(value.Substring(9, 2));
         }
-        if(splited.Length > 11)
+        if (splited.Length > 11)
         {
             output.Gg = mapper.RaznFromCodeToEnum(value.Substring(11, 2));
         }
@@ -500,7 +559,8 @@ public static class Tr
             "Přijetí do 1.ročníku" => Razv.AdmissionToFirstGrade,
             "Přijetí do 3.ročníku 6letého gymnázia" => Razv.AdmissionToThirdGradeOf6YearGymnasium,
             "Přijetí do 5.ročníku 8letého gymnázia" => Razv.AdmissionToFifthGradeOf8YearGymnasium,
-            "Přijetí do vyššího ročníku (podle § 63 resp.§ 95 ŠZ)" => Razv.AdmissionToHigherGrade,
+            "Přijetí do vyššího ročníku (podle § 63 resp. § 95 ŠZ)" => Razv.AdmissionToHigherGrade,
+            //"Přijetí do vyššího ročníku (podle § 63 resp. § 95 ŠZ)"
             "Přestup z jiné školy (podle § 66 odst.4 resp.§ 97 odst.5 ŠZ)" => Razv.TransferFromOtherSchool,
             "Přestup z nižššího stupně víceletého gymnázia do 4letého oboru gymnázia" => Razv.TransferFromLowerGradeOfMultiYearGymnasiumTo4YearScopeGymnasium,
             "Převedení z jiné školy (zánik, sloučení škol)" => Razv.TransferFromOtherSchoolAfterTheirMergeOrDemise,

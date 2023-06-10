@@ -8,7 +8,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Agrades.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class Initial : Migration
+    public partial class Init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -582,6 +582,55 @@ namespace Agrades.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "IdOfDisadvantages",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    StudentId = table.Column<Guid>(type: "uuid", nullable: false),
+                    A = table.Column<int>(type: "integer", nullable: true),
+                    Bb = table.Column<int>(type: "integer", nullable: true),
+                    Cc = table.Column<int>(type: "integer", nullable: true),
+                    D = table.Column<int>(type: "integer", nullable: true),
+                    Ee = table.Column<int>(type: "integer", nullable: true),
+                    Ff = table.Column<int>(type: "integer", nullable: true),
+                    Gg = table.Column<int>(type: "integer", nullable: true),
+                    Hh = table.Column<int>(type: "integer", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_IdOfDisadvantages", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_IdOfDisadvantages_Student_StudentId",
+                        column: x => x.StudentId,
+                        principalTable: "Student",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "IdOfFinancialDemands",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    StudentId = table.Column<Guid>(type: "uuid", nullable: false),
+                    A = table.Column<int>(type: "integer", nullable: false),
+                    B = table.Column<string>(type: "text", nullable: true),
+                    Cccc = table.Column<string>(type: "text", nullable: true),
+                    D = table.Column<int>(type: "integer", nullable: false),
+                    Ee = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_IdOfFinancialDemands", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_IdOfFinancialDemands_Student_StudentId",
+                        column: x => x.StudentId,
+                        principalTable: "Student",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "StudentDetail",
                 columns: table => new
                 {
@@ -649,6 +698,49 @@ namespace Agrades.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Supports",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    OperationId = table.Column<Guid>(type: "uuid", nullable: false),
+                    StudentId = table.Column<Guid>(type: "uuid", nullable: false),
+                    StartAt = table.Column<LocalDate>(type: "date", nullable: false),
+                    CouncellingRedIzo = table.Column<string>(type: "text", nullable: true),
+                    CouncelingCenterIZO = table.Column<string>(type: "text", nullable: true),
+                    Financing = table.Column<int>(type: "integer", nullable: true),
+                    DecisionValidSince = table.Column<LocalDate>(type: "date", nullable: false),
+                    DecisionValidTo = table.Column<LocalDate>(type: "date", nullable: true),
+                    StartDate = table.Column<LocalDate>(type: "date", nullable: false),
+                    EndDate = table.Column<LocalDate>(type: "date", nullable: true),
+                    RealStartDate = table.Column<LocalDate>(type: "date", nullable: true),
+                    RealEndDate = table.Column<LocalDate>(type: "date", nullable: true),
+                    ValidSince = table.Column<Instant>(type: "timestamp with time zone", nullable: false),
+                    ValidUntil = table.Column<Instant>(type: "timestamp with time zone", nullable: true),
+                    CreatedAt = table.Column<Instant>(type: "timestamp with time zone", nullable: false),
+                    CreatedBy = table.Column<string>(type: "text", nullable: false),
+                    ModifiedAt = table.Column<Instant>(type: "timestamp with time zone", nullable: false),
+                    ModifiedBy = table.Column<string>(type: "text", nullable: false),
+                    DeletedAt = table.Column<Instant>(type: "timestamp with time zone", nullable: true),
+                    DeletedBy = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Supports", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Supports_Operation_OperationId",
+                        column: x => x.OperationId,
+                        principalTable: "Operation",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Supports_Student_StudentId",
+                        column: x => x.StudentId,
+                        principalTable: "Student",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "StudentGroup",
                 columns: table => new
                 {
@@ -675,6 +767,54 @@ namespace Agrades.Data.Migrations
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_StudentGroup_Student_StudentId",
+                        column: x => x.StudentId,
+                        principalTable: "Student",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Recommendations",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    OperationId = table.Column<Guid>(type: "uuid", nullable: false),
+                    StudentCode = table.Column<string>(type: "text", nullable: true),
+                    StudentId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Individual = table.Column<int>(type: "integer", nullable: true),
+                    Gifted = table.Column<int>(type: "integer", nullable: true),
+                    Sz = table.Column<int>(type: "integer", nullable: true),
+                    Zz = table.Column<string>(type: "text", nullable: true),
+                    DisabilityCodeId = table.Column<Guid>(type: "uuid", nullable: false),
+                    ProvidedLevelOfAid = table.Column<int>(type: "integer", nullable: true),
+                    AdjustedLevelOfStudyLength = table.Column<string>(type: "text", nullable: true),
+                    AdjustedLevelOfExpectedOutput = table.Column<int>(type: "integer", nullable: true),
+                    ValidSince = table.Column<Instant>(type: "timestamp with time zone", nullable: false),
+                    ValidUntil = table.Column<Instant>(type: "timestamp with time zone", nullable: true),
+                    CreatedAt = table.Column<Instant>(type: "timestamp with time zone", nullable: false),
+                    CreatedBy = table.Column<string>(type: "text", nullable: false),
+                    ModifiedAt = table.Column<Instant>(type: "timestamp with time zone", nullable: false),
+                    ModifiedBy = table.Column<string>(type: "text", nullable: false),
+                    DeletedAt = table.Column<Instant>(type: "timestamp with time zone", nullable: true),
+                    DeletedBy = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Recommendations", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Recommendations_IdOfDisadvantages_DisabilityCodeId",
+                        column: x => x.DisabilityCodeId,
+                        principalTable: "IdOfDisadvantages",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Recommendations_Operation_OperationId",
+                        column: x => x.OperationId,
+                        principalTable: "Operation",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Recommendations_Student_StudentId",
                         column: x => x.StudentId,
                         principalTable: "Student",
                         principalColumn: "Id",
@@ -748,6 +888,16 @@ namespace Agrades.Data.Migrations
                 column: "OperationId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_IdOfDisadvantages_StudentId",
+                table: "IdOfDisadvantages",
+                column: "StudentId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_IdOfFinancialDemands_StudentId",
+                table: "IdOfFinancialDemands",
+                column: "StudentId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Operation_OrganizationId",
                 table: "Operation",
                 column: "OrganizationId");
@@ -797,6 +947,21 @@ namespace Agrades.Data.Migrations
                 name: "IX_PersonDetail_TemporaryAddressId",
                 table: "PersonDetail",
                 column: "TemporaryAddressId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Recommendations_DisabilityCodeId",
+                table: "Recommendations",
+                column: "DisabilityCodeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Recommendations_OperationId",
+                table: "Recommendations",
+                column: "OperationId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Recommendations_StudentId",
+                table: "Recommendations",
+                column: "StudentId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Student_OperationId",
@@ -850,6 +1015,16 @@ namespace Agrades.Data.Migrations
                 column: "OperationId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Supports_OperationId",
+                table: "Supports",
+                column: "OperationId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Supports_StudentId",
+                table: "Supports",
+                column: "StudentId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_VirtualOperation_OperationId",
                 table: "VirtualOperation",
                 column: "OperationId");
@@ -874,6 +1049,9 @@ namespace Agrades.Data.Migrations
                 name: "ClassDetail");
 
             migrationBuilder.DropTable(
+                name: "IdOfFinancialDemands");
+
+            migrationBuilder.DropTable(
                 name: "PersonDetail");
 
             migrationBuilder.DropTable(
@@ -886,10 +1064,16 @@ namespace Agrades.Data.Migrations
                 name: "Rauj");
 
             migrationBuilder.DropTable(
+                name: "Recommendations");
+
+            migrationBuilder.DropTable(
                 name: "StudentDetail");
 
             migrationBuilder.DropTable(
                 name: "StudentGroup");
+
+            migrationBuilder.DropTable(
+                name: "Supports");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
@@ -898,16 +1082,19 @@ namespace Agrades.Data.Migrations
                 name: "Address");
 
             migrationBuilder.DropTable(
+                name: "IdOfDisadvantages");
+
+            migrationBuilder.DropTable(
                 name: "VirtualOperation");
 
             migrationBuilder.DropTable(
                 name: "Group");
 
             migrationBuilder.DropTable(
-                name: "Student");
+                name: "Rast");
 
             migrationBuilder.DropTable(
-                name: "Rast");
+                name: "Student");
 
             migrationBuilder.DropTable(
                 name: "Class");
