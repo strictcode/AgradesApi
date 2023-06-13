@@ -3,7 +3,9 @@ using Agrades.Data.Entities;
 using Agrades.Data.Entities.Categories;
 using Agrades.Data.Entities.Classes;
 using Agrades.Data.Entities.Persons;
+using Microsoft.VisualBasic;
 using NodaTime;
+using System.Diagnostics;
 using System.Globalization;
 using System.Xml.Serialization;
 
@@ -78,41 +80,39 @@ public class Sentence
     [XmlElement(ElementName = "KOD_UKON")]
     public string EducationEndCode { get; set; } = null!;
 
+    [XmlElement(ElementName = "LET_PSD")]
+    public string MandatoryYears { get; set; } = null!;
+
     [XmlElement(ElementName = "ROCNIK")]
     public string Grade { get; set; } = null!;
-
-    [XmlElement(ElementName = "TRIDA")]
-    public string Class { get; set; } = null!;
-
-    [XmlElement(ElementName = "ST_SKOLY")]
-    public string SchoolGradeType { get; set; } = null!;
-
-    [XmlElement(ElementName = "ZPUSOB")]
-    public string Form { get; set; } = null!;
 
     [XmlElement(ElementName = "PRIZN_ST")]
     public string EducationQualifier { get; set; } = null!;
 
+    [XmlElement(ElementName = "ZPUSOB")]
+    public string Form { get; set; } = null!;
+
     [XmlElement(ElementName = "PRERUS")]
     public string Interuption { get; set; } = null!; // idk
 
-    [XmlElement(ElementName = "FIN")]
-    public string Financing { get; set; } = null!;
+    [XmlElement(ElementName = "TRIDA")]
+    public string Class { get; set; } = null!;
 
     [XmlElement(ElementName = "OBOR")]
     public string StudyField { get; set; } = null!;
-    /*
-    [XmlElement(ElementName = "OBOR2")]
-    public string StudyField2 { get; set; } = null!;
-    */
+
+    [XmlElement(ElementName = "DRST")]
+    public string EducationType { get; set; } = null!;
+
     [XmlElement(ElementName = "DELST")]
     public string EducationLength { get; set; } = null!;
 
     [XmlElement(ElementName = "FST")]
-    public string EducationType { get; set; } = null!;
-
-    [XmlElement(ElementName = "LET_PSD")]
-    public string MandatoryYears { get; set; } = null!;
+    public string EducationForm { get; set; } = null!;
+    /*
+    [XmlElement(ElementName = "OBOR2")]
+    public string StudyField2 { get; set; } = null!;
+    */
 
     [XmlElement(ElementName = "JAZYK_O")]
 
@@ -142,6 +142,12 @@ public class Sentence
     [XmlElement(ElementName = "P_JAZ4")]
     public string Language4Qualifier { get; set; } = null!;// jen zakl
     */
+
+    /*
+     * 
+     * JEN ZŠ
+     * 
+     * 
     [XmlElement(ElementName = "JAZYK_PR1")]
     public string InLanguage1Code { get; set; } = null!;// jen zakl
 
@@ -160,11 +166,46 @@ public class Sentence
     [XmlElement(ElementName = "POCET_H2")]
     public string InLanguage2Hours { get; set; } = null!;// jen zakl
 
-    [XmlElement(ElementName = "ZMENDAT")]
-    public string ChangesAt { get; set; } = null!;
+    
+    
+    
+    */
+
+    [XmlElement(ElementName = "FIN")]
+    public string Financing { get; set; } = null!;
+
+    [XmlElement(ElementName = "KOD_ZK")]
+    public string ExameCode { get; set; } = null!;
+
+    [XmlElement(ElementName = "KOD_OPAK")]
+    public string ExamOccurrenceIndicator { get; set; } = null!;
+
+    [XmlElement(ElementName = "JAZM")]
+    public string ExamLanguage { get; set; } = null!;
+
+    [XmlElement(ElementName = "VYSLCELK")]
+    public string ExamSuccessCode { get; set; } = null!;
+
+    [XmlElement(ElementName = "ZKDAT")]
+    public string ExamDate { get; set; } = null!;
+
+    [XmlElement(ElementName = "SERIE_V")]
+    public string ExamTranscriptSeries { get; set; } = null!;
+
+    [XmlElement(ElementName = "CTISK_V")]
+    public string ExamTranscriptNumber { get; set; } = null!;
+
+    [XmlElement(ElementName = "SERIE_L")]
+    public string VocationalCertificateTranscriptSeries { get; set; } = null!;
+
+    [XmlElement(ElementName = "CTISK_L")]
+    public string VocationalCertificateTranscriptNumber { get; set; } = null!;
 
     [XmlElement(ElementName = "KOD_ZMEN")]
     public string ChangesCode { get; set; } = null!; //nemám odkud
+
+    [XmlElement(ElementName = "ZMENDAT")]
+    public string ChangesAt { get; set; } = null!;
 
     [XmlElement(ElementName = "KOD_VETY")]
     public string SentenceCode { get; set; } = null!; //student kód 1/4, student/absolvent
@@ -208,9 +249,79 @@ public static class SentenceExtensions
         PersonDetail personDetail, StudentDetail studentDetail,
         StudyField studyField, Operation operation, Address address,
         VirtualOperation virtualOperation, ClassDetail classDetail
-        , int grade, Instant? untilDate)
+        , int grade, Instant? untilDate, int lengthOfInteruption)
     {
         _ = mapper.Now;
+
+        var new_dest = new Sentence
+        {
+            DecisiveCollectionDate = untilDate != null ? DateTime.Parse(untilDate.ToString()!).ToString() : string.Empty,
+            Izo = operation.IdentificationCode != null ? operation.IdentificationCode!.Replace(" ", "") : string.Empty,
+            OperationPart = operation.PartNumberForRegister != null ? operation.PartNumberForRegister! : string.Empty,
+            BirthNumber = personDetail.IdentificationCode != null ? personDetail.IdentificationCode! : string.Empty,
+            Sex = personDetail.Sex != null ? ((int)personDetail.Sex).ToString() : string.Empty,
+            BirthDate = personDetail.BornOn != null
+                ? personDetail.BornOn.Value.Month > LocalDate.FromYearMonthWeekAndDay(2022, 9, 5, IsoDayOfWeek.Friday).Month
+                ? $"{personDetail.BornOn.Value.Year}bb"
+                : $"{personDetail.BornOn.Value.Year}aa"
+                : string.Empty,
+            CitizenshtipQualifier = personDetail.CitizenshipCode != null ? ((int)personDetail.CitizenshipCode).ToString() : string.Empty,
+            Citizenship = personDetail.Citizenship != null ? (personDetail.Citizenship).ToString()! : string.Empty,
+            Municipality = address.City != null ? address.City : string.Empty,
+            District = address.StateDistrict != null ? address.StateDistrict : string.Empty,
+            PreviousEducation = mapper.RapzFromEnumToCode(virtualOperation.SchoolType),
+            PreviousEducationIzo = virtualOperation.IdentificationCode != null ? virtualOperation.IdentificationCode : string.Empty,
+            HighestAchievedEducation = mapper.RakkFromEnumToCode(studentDetail.HighestAchievedEducation),
+            EducationStart = studentDetail.StartsAt.ToString("d", new DateTimeFormatInfo()),
+            EducationStartCode = mapper.RazvFromEnumToCode(studentDetail.StartReasonCode),
+            EducationEnd = studentDetail.EndsAt != null ? studentDetail.EndsAt.ToString()! : string.Empty,
+            EducationEndCode = studentDetail.EndReasonCode!.ToString(),
+            MandatoryYears = studentDetail.ObligatoryAttendenceYears != null ? studentDetail.ObligatoryAttendenceYears.ToString()! : string.Empty,
+            Grade = grade.ToString(),
+            EducationQualifier = studentDetail.EducationTag != null ? studentDetail.EducationTag.ToString()! : string.Empty,
+            Form = ((int)studyField.Form).ToString(),
+            Interuption = lengthOfInteruption.ToString(),
+            Class = classDetail.Name,
+            StudyField = ((int)studyField.Type).ToString(),
+            EducationType = mapper.RadvFromEnumToText(studentDetail.EducationType),
+            EducationForm = mapper.RafsFromEnumToCode(studyField.Type),
+            EducationLength = mapper.RadsFromEnumToCode(studentDetail.EducationLength),
+
+            
+            //je potreba nekdy nahradit za ClassDetail
+            LanguageStudy = "10",
+            Language1Code = "02",
+            Language2Code = "25",
+            Language3Code = string.Empty,
+            Language4Code = string.Empty,
+
+
+
+            Financing = studentDetail.Financing != null ? studentDetail.Financing.ToString()! : string.Empty,
+
+            //
+            //je potreba dodelat
+            //
+            //ExameCode,
+            //ExamOccurrenceIndicator,
+            //ExamLanguage,
+            //ExamSuccessCode,
+            //ExameDate,
+            //ExamTranscriptSeries,
+            //ExamTranscriptNumber,
+            //VocationalCertificateTranscriptSeries,
+            //VocationalCertificateTranscriptNumber,
+            //
+
+
+            ChangesCode = studentDetail.ChangeCode.ToString()!,
+            ChangesAt = studentDetail.EndsAt.ToString()!,
+            SentenceCode = studentDetail.SentenceCode.ToString()!,
+            ValidityFrom = studentDetail.ValidSince.ToString(), 
+            ValidityTo = studentDetail.ValidUntil != null ? studentDetail.ValidUntil.ToString()! : string.Empty, 
+        };
+
+
         var dest = new Sentence
         {
             BirthDate = personDetail.BornOn != null
@@ -219,28 +330,28 @@ public static class SentenceExtensions
           : $"{personDetail.BornOn.Value.Year}aa"
           : string.Empty,
 
-            BirthNumber = personDetail.IdentificationCode != null ? personDetail.IdentificationCode! : string.Empty,
+            //BirthNumber = personDetail.IdentificationCode != null ? personDetail.IdentificationCode! : string.Empty,
             ChangesAt = string.Empty,
             //get from student, nowhere to get it from right now
-            ChangesCode = ((int)Rakz.WithoutChange).ToString(),
+            //ChangesCode = ((int)Rakz.WithoutChange).ToString(),
             //Citizenship = personDetail.Citizenship != null ? ((int)personDetail.Citizenship).ToString() : string.Empty,
             CitizenshtipQualifier = personDetail.CitizenshipCode != null ? ((int)personDetail.CitizenshipCode).ToString() : string.Empty,
-            Class = classDetail.Name,
-            DecisiveCollectionDate = untilDate == null ? string.Empty : DateTime.Parse(untilDate.ToString()!).ToString(),
+            //Class = classDetail.Name,
+            //DecisiveCollectionDate = untilDate == null ? string.Empty : DateTime.Parse(untilDate.ToString()!).ToString(),
             /*We will get this from state district in adress*/
-            District = "500054",
-            EducationEnd = studentDetail.EndsAt != null ? studentDetail.EndsAt.ToString()! : string.Empty,
-            EducationEndCode = studentDetail.EndReasonCode != null ? studentDetail.EndReasonCode!.ToString() : string.Empty,//source.Student.EndReasonTypeId.ToString() ?? string.Empty,
-            EducationLength = mapper.RadsFromEnumToCode(Rads.FourYear), //studyField.LengthInYears.ToString(),
-            EducationStart = studentDetail.StartsAt.ToString("d", new DateTimeFormatInfo()),
-            EducationStartCode = mapper.RazvFromEnumToCode(studentDetail.StartReasonCode),
-            EducationType = mapper.RafsFromEnumToCode(studyField.Type),
+            //District = "500054",
+            //EducationEnd = studentDetail.EndsAt != null ? studentDetail.EndsAt.ToString()! : string.Empty,
+            //EducationEndCode = studentDetail.EndReasonCode != null ? studentDetail.EndReasonCode!.ToString() : string.Empty,//source.Student.EndReasonTypeId.ToString() ?? string.Empty,
+            //EducationLength = mapper.RadsFromEnumToCode(Rads.FourYear), //studyField.LengthInYears.ToString(),
+            //EducationStart = studentDetail.StartsAt.ToString("d", new DateTimeFormatInfo()),
+            //EducationStartCode = mapper.RazvFromEnumToCode(studentDetail.StartReasonCode),
+            //EducationForm = mapper.RafsFromEnumToCode(studyField.Type),
             //opravit PRIZN_ST
             EducationQualifier = string.Empty,
-            Financing = studentDetail.Financing != null ? studentDetail.Financing.ToString()! : string.Empty,
+            //Financing = studentDetail.Financing != null ? studentDetail.Financing.ToString()! : string.Empty,
             //opravit ZPUSOB
-            Form = ((int)studyField.Form).ToString(),
-            Grade = grade.ToString(),
+            //Form = ((int)studyField.Form).ToString(),
+            //Grade = grade.ToString(),
             HighestAchievedEducation = mapper.RakkFromEnumToCode(studentDetail.HighestAchievedEducation),
 
             //InLanguage1Code = string.Empty,
@@ -249,29 +360,28 @@ public static class SentenceExtensions
             //InLanguage2Code = string.Empty,
             //InLanguage2Count = string.Empty,
             //InLanguage2Hours = string.Empty,
-            Interuption = string.Empty,
-            Izo = operation.IdentificationCode != null ? operation.IdentificationCode!.Replace(" ", "") : string.Empty,
-            LanguageStudy = "10",
-            Language1Code = "02",
-            Language2Code = "25",
-            Language3Code = string.Empty,
-            Language4Code = string.Empty,
-            MandatoryYears = studentDetail.ObligatoryAttendenceYears != null ? studentDetail.ObligatoryAttendenceYears.ToString()! : string.Empty,
+            //Interuption = string.Empty,
+            //Izo = operation.IdentificationCode != null ? operation.IdentificationCode!.Replace(" ", "") : string.Empty,
+            //LanguageStudy = "10",
+            //Language1Code = "02",
+            //Language2Code = "25",
+            //Language3Code = string.Empty,
+            //Language4Code = string.Empty,
+            //MandatoryYears = studentDetail.ObligatoryAttendenceYears != null ? studentDetail.ObligatoryAttendenceYears.ToString()! : string.Empty,
             /*fix, just temporary solution to test other things */
-            Municipality = "CZ0100",//address.City != null ? address.City : string.Empty,
-            OperationPart = operation.PartNumberForRegister != null ? operation.PartNumberForRegister! : string.Empty,
+            //Municipality = "CZ0100",//address.City != null ? address.City : string.Empty,
+            //OperationPart = operation.PartNumberForRegister != null ? operation.PartNumberForRegister! : string.Empty,
             PreviousEducation = mapper.RapzFromEnumToCode(virtualOperation.SchoolType),
             PreviousEducationIzo = virtualOperation.IdentificationCode,
-            SchoolGradeType =string.Empty,// ((int)operation.SchoolType).ToString(),
             //opravit KOD_VETY
             SentenceCode = string.Empty, // ?????????????
-            Sex = personDetail.Sex != null ? ((int)personDetail.Sex).ToString() : string.Empty,
+            //Sex = personDetail.Sex != null ? ((int)personDetail.Sex).ToString() : string.Empty,
             //chyba, OBOR
-            StudyField = ((int)studyField.Type).ToString(),
+            //StudyField = ((int)studyField.Type).ToString(),
             ValidityFrom = studentDetail.ValidSince.ToString(), // ?????????????
             ValidityTo = studentDetail.ValidUntil != null ? studentDetail.ValidUntil.ToString()! : string.Empty, // ?????????????
         };
 
-        return dest;
+        return new_dest;
     }
 }

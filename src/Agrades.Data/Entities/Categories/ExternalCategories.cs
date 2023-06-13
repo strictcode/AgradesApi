@@ -1,5 +1,13 @@
 ﻿ namespace Agrades.Data.Entities.Categories;
 
+public enum CODE_UKON
+{
+    Succesfull = 1,
+    WithoutExam,
+    NonPromotionToHigherGrade=4,
+    EducationAbandonment
+}
+
 public enum Radv
 {
     HighSchool = 10,

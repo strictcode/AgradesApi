@@ -91,6 +91,13 @@ public class RecordController : ControllerBase
                 || x.ValidUntil == null
                 || x.ValidSince == (untilDate + Duration.FromDays(1)))
             && (x.ValidSince >= sinceDate)).ToList();
+            var interuptedSentences = thisStudentStudentDetails.Where(x => (int)x.EndReasonCode == 5);
+            int lengthOfInteruption = 0;
+
+            foreach (var interupted in interuptedSentences)
+            {
+                lengthOfInteruption += (interupted.EndsAt != null ? interupted.EndsAt.Value.Month : DateTime.Now.Month) - interupted.StartsAt.Month;
+            }
             foreach (var studentDetail in thisStudentStudentDetails)
             {
                 var person = persons.First(x => x.Id == student.PersonId);
@@ -104,7 +111,7 @@ public class RecordController : ControllerBase
                     ? currentYear - studentDetail.Class!.ClassDetails.Single(x => x.ValidUntil == null).StartAt.Year + 1
                     : currentYear - studentDetail.Class!.ClassDetails.Single(x => x.ValidUntil == null).StartAt.Year;
 
-                sentences.Add(SentenceExtensions.ToSentence(_mapper, personDetail, studentDetail, studyField, operation, address, virtualOperation, classDetail, grade, untilDate));
+                sentences.Add(SentenceExtensions.ToSentence(_mapper, personDetail, studentDetail, studyField, operation, address, virtualOperation, classDetail, grade, untilDate, lengthOfInteruption));
             }
         }
         var path = "s181105527_01.xml";
@@ -489,7 +496,7 @@ public class RecordController : ControllerBase
                     Print(values);
 
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     await Console.Out.WriteLineAsync(); ;
                 }

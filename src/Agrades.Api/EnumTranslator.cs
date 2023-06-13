@@ -286,7 +286,7 @@ public static class Tr
             "Rekvalifikační studium v oboru KKOV, hrazené z jiných zdrojů" => Radv.RequalificationStudiesInKKOVPaidByOtherResources,
         };
 
-    public static string RadvFromTextToEnum(this IAppMapper mapper, Radv value) =>
+    public static string RadvFromEnumToText(this IAppMapper mapper, Radv value) =>
         (value) switch
         {
             Radv.HighSchool => "Střední",
