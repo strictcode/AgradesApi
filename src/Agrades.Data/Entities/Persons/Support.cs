@@ -3,13 +3,16 @@ using System.Runtime;
 namespace Agrades.Data.Entities.Persons;
 public class Support : ITrackable, IVersionable
 {
+    //B
     public Guid Id { get; set; }
 
     public Guid OperationId { get; set; }
     public Operation Operation { get; set; }
     public Guid StudentId { get; set; }
     public Student Student { get; set; }
-
+    // z p?edchozího systém? m?že být kód, který škola nepoužívá
+    // viz naše matrika, kód je ze škola-online, ale my máme jiné
+    public string? StudentCode { get; set; }
     //ZMENDAT
     public LocalDate StartAt { get; set; }
 
@@ -19,9 +22,18 @@ public class Support : ITrackable, IVersionable
     //IZO_SPZ
     public string? CouncelingCenterIZO { get; set; }
 
+    //ID_ZNEV 7/13 place code 
+    //this will have a translator
+    public Guid DisabilityCodeId { get; set; }
+    public IdOfDisadvantage? DisabilityCode { get; set; }
+
     //FN  0/1
     public Fn? Financing { get; set; }
 
+    //KOD_NFN
+    public Guid FinancialDemandsId { get; set; }
+    public IdOfFinancialDemands? FinancialDemands { get; set; }
+    
     //DAT_VYD
     public LocalDate DecisionValidSince { get; set; }
 

@@ -423,13 +423,9 @@ public class RecordController : ControllerBase
                                 ValidSince = now,
                             }.SetCreateBySystem(now);
 
-                            var idOfDis = _mapper.GetIdOfDisadvantageFromString(values[59]);
-                            idOfDis.Id = Guid.NewGuid();
-                            idOfDis.StudentId = student.Id;
-                            recommendation.DisabilityCodeId = idOfDis.Id;
+                            
 
                             _dbContext.Add(recommendation);
-                            _dbContext.Add(idOfDis);
                         }
                         catch (Exception ex)
                         {
@@ -445,6 +441,7 @@ public class RecordController : ControllerBase
                             {
                                 OperationId = currentOp.Id,
                                 StudentId = student.Id,
+                                StudentCode = values[53],
                                 CouncellingRedIzo = values[64],
                                 //65
                                 CouncelingCenterIZO = values[66],
@@ -461,6 +458,12 @@ public class RecordController : ControllerBase
                             var idOfFin = _mapper.GetIdOfFinancialDemands(values[69]);
                             idOfFin.Id = Guid.NewGuid();
                             idOfFin.StudentId = student.Id;
+                            support.FinancialDemandsId = idOfFin.Id;
+
+                            var idOfDis = _mapper.GetIdOfDisadvantageFromString(values[59]);
+                            idOfDis.Id = Guid.NewGuid();
+                            idOfDis.StudentId = student.Id;
+                            support.DisabilityCodeId = idOfDis.Id;
 
                             _dbContext.Add(support);
                             _dbContext.Add(idOfFin);
@@ -482,7 +485,7 @@ public class RecordController : ControllerBase
                     var c = values[27].Split('.')[1];
 
                     // consider create and use NormalizedName
-                    var currentClassId = classDetails.Single(x => x.Name.ToLower() == c.ToLower()).ClassId;
+                    var currentClassId = classDetails.Single(x => x.Name.ToLower() == c.ToLower()).ClassId; 
                     var currentClass = classes.Single(x => x.Id == currentClassId);
 
                     studentDetail.ClassId = currentClass.Id;
