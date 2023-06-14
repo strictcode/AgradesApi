@@ -22,6 +22,16 @@ public static class Tr
         var g = ids.Ff != null ? mapper.RaznFromEnumToCode((Razn)ids.Ff) : string.Empty;
         return $"{ids.A}{b}{c}{d}{ids.Ee}{f}{g}{h}";
     }
+
+    public static string GetIdOfFinString(this IAppMapper mapper, IdOfFinancialDemands id)
+    {
+        var a = mapper.FinAFromEnumToCode(id.A);
+        var d = mapper.FinDCodeFromEnum(id.D);
+        return $"{a}{id.B}{id.Cccc}{id.D}{id.Ee}";
+
+
+    }
+
     public static IdOfFinancialDemands GetIdOfFinancialDemands(this IAppMapper mapper, string value)
     {
         var splited = value.ToArray();

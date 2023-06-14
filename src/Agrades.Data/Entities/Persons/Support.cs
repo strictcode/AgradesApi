@@ -22,6 +22,10 @@ public class Support : ITrackable, IVersionable
     //IZO_SPZ
     public string? CouncelingCenterIZO { get; set; }
 
+    //PSPO
+    //1-5 level, just asumed
+    public AdjustedAidLevel? ProvidedLevelOfAid { get; set; }
+
     //ID_ZNEV 7/13 place code 
     //this will have a translator
     public Guid DisabilityCodeId { get; set; }

@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Agrades.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20230614064417_Init")]
+    [Migration("20230614083016_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -1097,6 +1097,9 @@ namespace Agrades.Data.Migrations
 
                     b.Property<Guid>("OperationId")
                         .HasColumnType("uuid");
+
+                    b.Property<int?>("ProvidedLevelOfAid")
+                        .HasColumnType("integer");
 
                     b.Property<LocalDate?>("RealEndDate")
                         .HasColumnType("date");

@@ -1095,6 +1095,9 @@ namespace Agrades.Data.Migrations
                     b.Property<Guid>("OperationId")
                         .HasColumnType("uuid");
 
+                    b.Property<int?>("ProvidedLevelOfAid")
+                        .HasColumnType("integer");
+
                     b.Property<LocalDate?>("RealEndDate")
                         .HasColumnType("date");
 

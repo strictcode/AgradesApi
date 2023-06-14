@@ -785,6 +785,7 @@ namespace Agrades.Data.Migrations
                     StartAt = table.Column<LocalDate>(type: "date", nullable: false),
                     CouncellingRedIzo = table.Column<string>(type: "text", nullable: true),
                     CouncelingCenterIZO = table.Column<string>(type: "text", nullable: true),
+                    ProvidedLevelOfAid = table.Column<int>(type: "integer", nullable: true),
                     DisabilityCodeId = table.Column<Guid>(type: "uuid", nullable: false),
                     Financing = table.Column<int>(type: "integer", nullable: true),
                     FinancialDemandsId = table.Column<Guid>(type: "uuid", nullable: false),

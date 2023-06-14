@@ -1,8 +1,10 @@
 ﻿using Agrades.Api.Mapper;
 using Agrades.Data.Entities;
 using Agrades.Data.Entities.Categories;
+using Agrades.Data.Entities.Classes;
 using Agrades.Data.Entities.Persons;
 using NodaTime;
+using System.Globalization;
 using System.Xml.Serialization;
 
 namespace Agrades.Api.ApiModels.XML
@@ -68,7 +70,7 @@ namespace Agrades.Api.ApiModels.XML
 
         //KOD_NFN
         [XmlElement(ElementName = "KOD_NFN")]
-        public string FinancialDmeandsCode { get; set; } = null!;
+        public string FinancialDemandsCode { get; set; } = null!;
         
         //FN  0/1
         [XmlElement(ElementName = "FN")]
@@ -86,37 +88,33 @@ namespace Agrades.Api.ApiModels.XML
         public static AnonymizedDocB ToAnonymizedDocB(this IAppMapper mapper,
             Instant? untilDate,
             Support support,
-            Operation operation
+            Operation operation,
+            GroupClassType type
             )
         {
-            var output = new AnonymizedDocB
+            return new AnonymizedDocB
             {
-                DecisiveCollectionDate = string.Empty,
+                DecisiveCollectionDate = untilDate != null ? DateTime.Parse(untilDate.ToString()!).ToString() : string.Empty,
                 Izo = operation.IdentificationCode == null ? string.Empty : operation.IdentificationCode,
-                OperationPart = string.Empty,
-                FieldOfStudy = string.Empty,
+                OperationPart = operation.PartNumberForRegister != null ? operation.PartNumberForRegister! : string.Empty,
+                FieldOfStudy = type.ClassTypeDesignation == null ? string.Empty : ((int)type.ClassTypeDesignation).ToString(),
                 ChangesCode = string.Empty,
                 ChangesAt = string.Empty,
-                StartDate = string.Empty,
-                EndDate = string.Empty,
+                StartDate = support.StartDate == null ? string.Empty : ((LocalDate)support.StartDate).ToString("d", new DateTimeFormatInfo()),
+                EndDate = support.EndDate == null ? string.Empty : ((LocalDate)support.EndDate).ToString("d", new DateTimeFormatInfo()),
                 StudentCode = support.StudentCode,
                 DisabilityCode = mapper.GetIdOfDisString(support.DisabilityCode),
-                DegreeOfProvidedPeasures = string.Empty,
+                DegreeOfProvidedPeasures = ((int)support.ProvidedLevelOfAid).ToString(),
                 CouncellingRedIzo = support.CouncellingRedIzo == null? string.Empty : support.CouncellingRedIzo,
-                ClassType = string.Empty,
-                CouncelingCenterIZO = string.Empty,
-                DecisionValidSince = string.Empty,
-                DecisionValidTo = string.Empty,
-                FinancialDmeandsCode =string.Empty,
+                ClassType =((int)type.ClassTypeDesignation).ToString(),
+                CouncelingCenterIZO = support.CouncelingCenterIZO == null ? string.Empty : support.CouncelingCenterIZO,
+                DecisionValidSince = support.DecisionValidSince.ToString("d", new DateTimeFormatInfo()),
+                DecisionValidTo = support.DecisionValidTo == null ? string.Empty : ((LocalDate)support.DecisionValidTo).ToString("d", new DateTimeFormatInfo()),
+                FinancialDemandsCode = mapper.GetIdOfFinString(support.FinancialDemands),
                 Financing = support.Financing == null ? string.Empty : ((int)support.Financing).ToString(),
-                RealStartDate = string.Empty,
-                RealEndDate = string.Empty,
+                RealStartDate = support.RealStartDate == null ? string.Empty : ((LocalDate)support.RealStartDate).ToString("d", new DateTimeFormatInfo()),
+                RealEndDate = support.RealEndDate == null ? string.Empty : ((LocalDate)support.RealEndDate).ToString("d", new DateTimeFormatInfo()),
             };
-
-            
-
-
-            return output;
         }
-    }
+    } 
 }
