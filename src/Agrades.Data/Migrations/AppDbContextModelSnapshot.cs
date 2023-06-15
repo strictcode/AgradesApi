@@ -451,7 +451,7 @@ namespace Agrades.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("GroupClassType");
+                    b.ToTable("GroupClassTypes");
                 });
 
             modelBuilder.Entity("Agrades.Data.Entities.Classes.StudentGroup", b =>

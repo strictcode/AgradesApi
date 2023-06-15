@@ -17,7 +17,7 @@ public class AppDbContext : IdentityUserContext<User, Guid>
     public DbSet<Class> Classes { get; set; } = null!;
 
     public DbSet<ClassDetail> ClassDetails { get; set; } = null!;
-
+    public DbSet<GroupClassType> GroupClassTypes { get; set; } = null!;
     public DbSet<Group> Groups { get; set; } = null!;
 
     public DbSet<Student> Students { get; set; } = null!;

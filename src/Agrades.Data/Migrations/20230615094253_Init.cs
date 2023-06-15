@@ -51,7 +51,7 @@ namespace Agrades.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "GroupClassType",
+                name: "GroupClassTypes",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
@@ -60,7 +60,7 @@ namespace Agrades.Data.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_GroupClassType", x => x.Id);
+                    table.PrimaryKey("PK_GroupClassTypes", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -562,9 +562,9 @@ namespace Agrades.Data.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_Group_GroupClassType_GroupClassTypeId",
+                        name: "FK_Group_GroupClassTypes_GroupClassTypeId",
                         column: x => x.GroupClassTypeId,
-                        principalTable: "GroupClassType",
+                        principalTable: "GroupClassTypes",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
@@ -1114,7 +1114,7 @@ namespace Agrades.Data.Migrations
                 name: "Class");
 
             migrationBuilder.DropTable(
-                name: "GroupClassType");
+                name: "GroupClassTypes");
 
             migrationBuilder.DropTable(
                 name: "StudyField");
