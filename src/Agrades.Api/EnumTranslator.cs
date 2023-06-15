@@ -12,6 +12,26 @@ public class EnumTranslator
 
 public static class Tr
 {
+    public static string GetIdOfDisString(this IAppMapper mapper, IdOfDisadvantage ids)
+    {
+        var b = ids.Ff != null ? mapper.RaznFromEnumToCode((Razn)ids.Ff) : string.Empty;
+        var c = ids.Ff != null ? mapper.RaznFromEnumToCode((Razn)ids.Ff) : string.Empty;
+        var d = ids.D != null ? mapper.SzFromEnumToCode((Sz)ids.D) : string.Empty;
+        var h = ids.Ff != null ? mapper.RaznFromEnumToCode((Razn)ids.Ff) : string.Empty;
+        var f = ids.Ff != null ? mapper.RaznFromEnumToCode((Razn)ids.Ff) : string.Empty;
+        var g = ids.Ff != null ? mapper.RaznFromEnumToCode((Razn)ids.Ff) : string.Empty;
+        return $"{ids.A}{b}{c}{d}{ids.Ee}{f}{g}{h}";
+    }
+
+    public static string GetIdOfFinString(this IAppMapper mapper, IdOfFinancialDemands id)
+    {
+        var a = mapper.FinAFromEnumToCode(id.A);
+        var d = mapper.FinDCodeFromEnum(id.D);
+        return $"{a}{id.B}{id.Cccc}{id.D}{id.Ee}";
+
+
+    }
+
     public static IdOfFinancialDemands GetIdOfFinancialDemands(this IAppMapper mapper, string value)
     {
         var splited = value.ToArray();
@@ -111,6 +131,14 @@ public static class Tr
             "K" => Sz.SvpBecauseOfCulturalBackground,
             "Z" => Sz.SvpBecauseOfOtherCurcumstances,
             "V" => Sz.SvpBecauseOfBoth,
+        };
+    public static string SzFromEnumToCode(this IAppMapper mapper, Sz value) =>
+        (value) switch
+        {
+            Sz.NoSvp => "0",
+            Sz.SvpBecauseOfCulturalBackground => "K",
+            Sz.SvpBecauseOfOtherCurcumstances => "Z",
+            Sz.SvpBecauseOfBoth => "V",
         };
 
     public static Razn RaznFromCodeToEnum(this IAppMapper mapper, string value) =>

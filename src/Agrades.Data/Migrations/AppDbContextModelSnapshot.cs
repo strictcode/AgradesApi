@@ -860,9 +860,6 @@ namespace Agrades.Data.Migrations
                     b.Property<string>("DeletedBy")
                         .HasColumnType("text");
 
-                    b.Property<Guid>("DisabilityCodeId")
-                        .HasColumnType("uuid");
-
                     b.Property<int?>("Gifted")
                         .HasColumnType("integer");
 
@@ -901,8 +898,6 @@ namespace Agrades.Data.Migrations
                         .HasColumnType("text");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("DisabilityCodeId");
 
                     b.HasIndex("OperationId");
 
@@ -962,11 +957,17 @@ namespace Agrades.Data.Migrations
                     b.Property<string>("DeletedBy")
                         .HasColumnType("text");
 
+                    b.Property<int>("EducationLength")
+                        .HasColumnType("integer");
+
                     b.Property<int?>("EducationTag")
                         .HasColumnType("integer");
 
-                    b.Property<string>("EndReasonCode")
-                        .HasColumnType("text");
+                    b.Property<int>("EducationType")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("EndReasonCode")
+                        .HasColumnType("integer");
 
                     b.Property<LocalDate?>("EndsAt")
                         .HasColumnType("date");
@@ -1004,6 +1005,9 @@ namespace Agrades.Data.Migrations
 
                     b.Property<Guid?>("PreviousEducationOperationId")
                         .HasColumnType("uuid");
+
+                    b.Property<int>("SentenceCode")
+                        .HasColumnType("integer");
 
                     b.Property<int>("StartReasonCode")
                         .HasColumnType("integer");
@@ -1069,8 +1073,14 @@ namespace Agrades.Data.Migrations
                     b.Property<string>("DeletedBy")
                         .HasColumnType("text");
 
+                    b.Property<Guid>("DisabilityCodeId")
+                        .HasColumnType("uuid");
+
                     b.Property<LocalDate?>("EndDate")
                         .HasColumnType("date");
+
+                    b.Property<Guid>("FinancialDemandsId")
+                        .HasColumnType("uuid");
 
                     b.Property<int?>("Financing")
                         .HasColumnType("integer");
@@ -1085,6 +1095,9 @@ namespace Agrades.Data.Migrations
                     b.Property<Guid>("OperationId")
                         .HasColumnType("uuid");
 
+                    b.Property<int?>("ProvidedLevelOfAid")
+                        .HasColumnType("integer");
+
                     b.Property<LocalDate?>("RealEndDate")
                         .HasColumnType("date");
 
@@ -1097,6 +1110,9 @@ namespace Agrades.Data.Migrations
                     b.Property<LocalDate>("StartDate")
                         .HasColumnType("date");
 
+                    b.Property<string>("StudentCode")
+                        .HasColumnType("text");
+
                     b.Property<Guid>("StudentId")
                         .HasColumnType("uuid");
 
@@ -1107,6 +1123,10 @@ namespace Agrades.Data.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("DisabilityCodeId");
+
+                    b.HasIndex("FinancialDemandsId");
 
                     b.HasIndex("OperationId");
 
@@ -1495,12 +1515,6 @@ namespace Agrades.Data.Migrations
 
             modelBuilder.Entity("Agrades.Data.Entities.Persons.Recommendation", b =>
                 {
-                    b.HasOne("Agrades.Data.Entities.Categories.IdOfDisadvantage", "DisabilityCode")
-                        .WithMany()
-                        .HasForeignKey("DisabilityCodeId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("Agrades.Data.Entities.Operation", "Operation")
                         .WithMany()
                         .HasForeignKey("OperationId")
@@ -1512,8 +1526,6 @@ namespace Agrades.Data.Migrations
                         .HasForeignKey("StudentId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-
-                    b.Navigation("DisabilityCode");
 
                     b.Navigation("Operation");
 
@@ -1582,6 +1594,18 @@ namespace Agrades.Data.Migrations
 
             modelBuilder.Entity("Agrades.Data.Entities.Persons.Support", b =>
                 {
+                    b.HasOne("Agrades.Data.Entities.Categories.IdOfDisadvantage", "DisabilityCode")
+                        .WithMany()
+                        .HasForeignKey("DisabilityCodeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Agrades.Data.Entities.Categories.IdOfFinancialDemands", "FinancialDemands")
+                        .WithMany()
+                        .HasForeignKey("FinancialDemandsId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("Agrades.Data.Entities.Operation", "Operation")
                         .WithMany()
                         .HasForeignKey("OperationId")
@@ -1593,6 +1617,10 @@ namespace Agrades.Data.Migrations
                         .HasForeignKey("StudentId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.Navigation("DisabilityCode");
+
+                    b.Navigation("FinancialDemands");
 
                     b.Navigation("Operation");
 

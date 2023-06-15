@@ -3,6 +3,7 @@ using Agrades.Data.Entities.Categories;
 namespace Agrades.Data.Entities.Persons;
 public class Recommendation : ITrackable, IVersionable
 {
+    //A
     public Guid Id { get; set; }
     public Guid OperationId { get; set; }
     // don't create it to database just yet
@@ -11,7 +12,6 @@ public class Recommendation : ITrackable, IVersionable
     // z předchozího systémů může být kód, který škola nepoužívá
     // viz naše matrika, kód je ze škola-online, ale my máme jiné
     public string? StudentCode { get; set; }
-
 
     public Guid StudentId { get; set; }
     // don't create it to database just yet
@@ -31,11 +31,6 @@ public class Recommendation : ITrackable, IVersionable
 
     //ZZ 0/1
     public string? Zz { get; set; }
-
-    //ID_ZNEV 7/13 place code 
-    //this will have a translator
-    public Guid DisabilityCodeId { get; set; }
-    public IdOfDisadvantage? DisabilityCode { get; set; }
 
     //PSPO
     //1-5 level, just asumed

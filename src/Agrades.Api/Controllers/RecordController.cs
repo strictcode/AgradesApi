@@ -19,7 +19,6 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 using Microsoft.Extensions.Configuration;
 using NodaTime;
 using NodaTime.Text;
-using Serilog;
 using System.IO;
 using System.Linq.Expressions;
 using System.Net;
@@ -71,18 +70,19 @@ public class RecordController : ControllerBase
         }
         var sinceDate = since != null ? Instant.FromDateTimeUtc(DateTime.Parse(since).ToUniversalTime()) : Instant.FromUtc(DateTime.Now.Year - 1, 9, 1, 0, 0);
         Instant? untilDate = until != null ? Instant.FromDateTimeUtc(DateTime.Parse(until).ToUniversalTime()) : null;
-        var persons = _dbContext.Persons.FilterByOperation(operation.Id).ToList();
-        var personDetails = _dbContext.PersonDetails.FilterByOperation(operation.Id).ToList();
-        var students = _dbContext.Students.FilterByOperation(operation.Id).ToList();
-        var studentDetails = _dbContext.StudentDetails.FilterByOperation(operation.Id).FilterByInterval(sinceDate, untilDate).ToList();
-        var studyFields = _dbContext.StudyFields.FilterByOperation(operation.Id).ToList();
-        var addresses = _dbContext.Addresses.FilterByOperation(operation.Id).ToList();
-        var virtualOperations = _dbContext.VirtualOperations.ToList();
-        var classes = _dbContext.Classes.ToList();
-        var classDetails = _dbContext.ClassDetails.ToList();
+        var persons = await _dbContext.Persons.FilterByOperation(operation.Id).ToListAsync();
+        var personDetails = await _dbContext.PersonDetails.FilterByOperation(operation.Id).ToListAsync();
+        var students = await _dbContext.Students.FilterByOperation(operation.Id).ToListAsync();
+        var studentDetails = await _dbContext.StudentDetails.FilterByOperation(operation.Id).FilterByInterval(sinceDate, untilDate).ToListAsync();
+        var studyFields = await _dbContext.StudyFields.FilterByOperation(operation.Id).ToListAsync();
+        var addresses = await _dbContext.Addresses.FilterByOperation(operation.Id).ToListAsync();
+        var virtualOperations = await _dbContext.VirtualOperations.ToListAsync();
+        var classes = await _dbContext.Classes.ToListAsync();
+        var classDetails = await _dbContext.ClassDetails.ToListAsync();
 
 
         var sentences = new List<Sentence>();
+        var anonymizedDocsB = new List<AnonymizedDocB>();
 
         foreach (var student in students)
         {
@@ -153,7 +153,6 @@ public class RecordController : ControllerBase
         }
         var bytes = System.IO.File.ReadAllBytes(path);
         System.IO.File.Delete(path);
-        Log.Logger.Information("file returned without errors");
         return File(bytes, contentType, path);
 
     }
@@ -423,13 +422,9 @@ public class RecordController : ControllerBase
                                 ValidSince = now,
                             }.SetCreateBySystem(now);
 
-                            var idOfDis = _mapper.GetIdOfDisadvantageFromString(values[59]);
-                            idOfDis.Id = Guid.NewGuid();
-                            idOfDis.StudentId = student.Id;
-                            recommendation.DisabilityCodeId = idOfDis.Id;
+                            
 
                             _dbContext.Add(recommendation);
-                            _dbContext.Add(idOfDis);
                         }
                         catch (Exception ex)
                         {
@@ -445,6 +440,7 @@ public class RecordController : ControllerBase
                             {
                                 OperationId = currentOp.Id,
                                 StudentId = student.Id,
+                                StudentCode = values[53],
                                 CouncellingRedIzo = values[64],
                                 //65
                                 CouncelingCenterIZO = values[66],
@@ -461,6 +457,12 @@ public class RecordController : ControllerBase
                             var idOfFin = _mapper.GetIdOfFinancialDemands(values[69]);
                             idOfFin.Id = Guid.NewGuid();
                             idOfFin.StudentId = student.Id;
+                            support.FinancialDemandsId = idOfFin.Id;
+
+                            var idOfDis = _mapper.GetIdOfDisadvantageFromString(values[59]);
+                            idOfDis.Id = Guid.NewGuid();
+                            idOfDis.StudentId = student.Id;
+                            support.DisabilityCodeId = idOfDis.Id;
 
                             _dbContext.Add(support);
                             _dbContext.Add(idOfFin);
@@ -482,7 +484,7 @@ public class RecordController : ControllerBase
                     var c = values[27].Split('.')[1];
 
                     // consider create and use NormalizedName
-                    var currentClassId = classDetails.Single(x => x.Name.ToLower() == c.ToLower()).ClassId;
+                    var currentClassId = classDetails.Single(x => x.Name.ToLower() == c.ToLower()).ClassId; 
                     var currentClass = classes.Single(x => x.Id == currentClassId);
 
                     studentDetail.ClassId = currentClass.Id;
