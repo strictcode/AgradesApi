@@ -8,6 +8,11 @@ using NodaTime;
 using System.Diagnostics;
 using System;
 using Microsoft.EntityFrameworkCore.Storage.Internal;
+using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.Extensions.Options;
+using System.Diagnostics.Tracing;
+using Microsoft.AspNetCore.Hosting.Server;
+using System.Web.Http.ExceptionHandling;
 
 namespace Agrades.Api;
 public class Program
@@ -25,28 +30,28 @@ public class Program
         Log.Logger = new LoggerConfiguration().
             ReadFrom.Configuration(configuration).
             CreateLogger().ForContext<Program>();
-
+        
+        /*
         AppDomain.CurrentDomain.FirstChanceException += (sender, eventArgs) =>
         {
             Log.Logger.Error(eventArgs.Exception.ToString());
+            
         };
+        */
 
         try
-        {
-            builder.UseSerilog(new LoggerConfiguration().ReadFrom.ConfigurationSection(configuration.GetSection("HostSerilog")).CreateLogger());
+        { 
+            builder.UseSerilog(Log.Logger);
+
             var host = builder.Build();
 
             await MigrateDb(host);
             await host.RunAsync();
-
-            Log.Logger.Information("started without problems");
         }
         catch (Exception exception)
         {
             // serilog: catch setup errors
-            Log.Logger.Error(exception, "Stopped program because of exception");
             throw;
-
         }
         finally
         {
