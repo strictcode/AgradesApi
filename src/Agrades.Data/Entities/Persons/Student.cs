@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Agrades.Data.Entities.Classes;
 
 namespace Agrades.Data.Entities.Persons;
 [Table(nameof(Student))]
@@ -13,6 +14,8 @@ public class Student : IOperationFilter
     public int RowCount { get; set; }
 
     public ICollection<StudentDetail> StudentDetails { get; } = new HashSet<StudentDetail>();
+
+    public ICollection<IdOfDisadvantage> StudentDisadvantages { get; } = new HashSet<IdOfDisadvantage>();
 
     public ICollection<StudentGroup> Groups { get; set; } = new HashSet<StudentGroup>();
 

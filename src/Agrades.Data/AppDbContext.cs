@@ -1,4 +1,6 @@
+using Agrades.Data.Entities.Classes;
 using Agrades.Data.Entities.Identity;
+using Agrades.Data.Entities.Persons;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.Extensions.Hosting;
@@ -33,11 +35,14 @@ public class AppDbContext : IdentityUserContext<User, Guid>
     public DbSet<StudyField> StudyFields { get; set; } = null!;
 
     public DbSet<VirtualOperation> VirtualOperations { get; set; } = null!;
+    public DbSet<Recommendation> Recommendations { get; set; } = null!;
+    public DbSet<Support> Supports { get; set; } = null!;
+    public DbSet<IdOfDisadvantage> IdOfDisadvantages { get; set; } = null!;
+    public DbSet<IdOfFinancialDemands> IdOfFinancialDemands { get; set; } = null!;
 
     public DbSet<Raor> Raor{ get; set; } = null!;
     public DbSet<Rast> Rast { get; set; } = null!;
     public DbSet<Rauj> Rauj { get; set; } = null!;
-
     public DbSet<Raso> Raso { get; set; } = null!;
 
     public AppDbContext(

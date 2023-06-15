@@ -3,42 +3,41 @@ using System.Runtime;
 namespace Agrades.Data.Entities.Persons;
 public class Support : ITrackable, IVersionable
 {
+    //B
     public Guid Id { get; set; }
 
     public Guid OperationId { get; set; }
-    // don't create it to database just yet
-    //public Operation Operation { get; set; }
+    public Operation Operation { get; set; }
     public Guid StudentId { get; set; }
-    // don't create it to database just yet
-    //public Student Student { get; set; }
-
-    public string ClassCode { get; set; } = null!;
-
-    //KOD_ZMEN
-    public Rakz? ChangeReasonCode { get; set; }
-    
+    public Student Student { get; set; }
+    // z p?edchozího systém? m?že být kód, který škola nepoužívá
+    // viz naše matrika, kód je ze škola-online, ale my máme jiné
+    public string? StudentCode { get; set; }
     //ZMENDAT
     public LocalDate StartAt { get; set; }
 
     //RED_IZO
-    public string? CounsellingRedIzo { get; set; }
+    public string? CouncellingRedIzo { get; set; }
 
     //IZO_SPZ
     public string? CouncelingCenterIZO { get; set; }
 
-    //ID_ZNEV
-    public string? DisadvantageIdentificationCode { get; set; }
-
     //PSPO
-    public string? LevelOfMeasuresProvided { get; set; }
+    //1-5 level, just asumed
+    public AdjustedAidLevel? ProvidedLevelOfAid { get; set; }
+
+    //ID_ZNEV 7/13 place code 
+    //this will have a translator
+    public Guid DisabilityCodeId { get; set; }
+    public IdOfDisadvantage? DisabilityCode { get; set; }
 
     //FN  0/1
-    public int? Financing { get; set; }
+    public Fn? Financing { get; set; }
 
     //KOD_NFN
-    //translator will be needed
-    public string? FinancingCode { get; set; }
-
+    public Guid FinancialDemandsId { get; set; }
+    public IdOfFinancialDemands? FinancialDemands { get; set; }
+    
     //DAT_VYD
     public LocalDate DecisionValidSince { get; set; }
 
@@ -49,7 +48,7 @@ public class Support : ITrackable, IVersionable
     public LocalDate StartDate { get; set; }
     //PLAT_KON
     public LocalDate? EndDate { get; set; }
-    
+
     //DAT_ZAH
     public LocalDate? RealStartDate { get; set; }
     //DAT_UKON

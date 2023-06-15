@@ -1,3 +1,5 @@
+using Agrades.Data.Entities.Classes;
+
 namespace Agrades.Data.Entities.Persons;
 [Table(nameof(StudentDetail))]
 public class StudentDetail : ITrackable, IVersionable, IOperationFilter
@@ -15,17 +17,31 @@ public class StudentDetail : ITrackable, IVersionable, IOperationFilter
 
     public string? MinistryUniqueCode { get; set; }
 
+    public Rakv SentenceCode { get; set; }
+
     public LocalDate StartsAt { get; set; }
 
     public Razv StartReasonCode { get; set; }
+
+    public Radv EducationType { get; set; }
+
+    public Rads EducationLength { get; set; }
 
     public int? ObligatoryAttendenceYears { get; set; }
 
     public int? Financing { get; set; }
 
-    public LocalDate? EndsAt { get; set; }
+    //KOD_ZMEN
+    public int? ChangeCode { get; set; }
 
-    public string? EndReasonCode { get; set; }
+    /// <summary>
+    /// PRIZN_ST
+    /// </summary>
+    public int? EducationTag { get; set; }
+
+    public LocalDate? EndsAt { get; set; }
+    
+    public CODE_UKON EndReasonCode { get; set; }
 
     public Guid StudyFieldId { get; set; }
     public StudyField StudyField { get; set; } = null!;

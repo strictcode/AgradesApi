@@ -1,3 +1,5 @@
+using Agrades.Data.Entities.Classes;
+
 namespace Agrades.Data.Seeds;
 
 public static class ITGSeed

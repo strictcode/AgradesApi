@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace Agrades.Data.Entities;
+namespace Agrades.Data.Entities.Classes;
 [Table(nameof(Class))]
 public class Class
 {

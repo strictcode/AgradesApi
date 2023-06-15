@@ -7,6 +7,7 @@ using Agrades.Data;
 using Agrades.Data.Entities;
 using Agrades.Data.Entities.Categories;
 using Agrades.Data.Entities.Persons;
+using Agrades.Data.Entities.Persons;
 using Agrades.Data.Interfaces;
 using Agrades.Services;
 using Microsoft.AspNetCore.JsonPatch.Operations;
@@ -19,6 +20,7 @@ using Microsoft.Extensions.Configuration;
 using NodaTime;
 using NodaTime.Text;
 using System.IO;
+using System.Linq.Expressions;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Reflection.Metadata.Ecma335;
@@ -50,16 +52,12 @@ public class RecordController : ControllerBase
         _mapper = mapper;
         _clock = clock;
     }
-    [HttpPost("api/v1/{opUrlName}/report")]
+    [HttpGet("api/v1/{opUrlName}/report")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult> XMLReport([FromRoute] string opUrlName, [FromQuery] string? since = null, [FromQuery] string? until = null)
     {
-
-
-
-
         var now = _clock.GetCurrentInstant();
 
         var currentYear = now.ToDateTimeUtc().Year;
@@ -72,27 +70,34 @@ public class RecordController : ControllerBase
         }
         var sinceDate = since != null ? Instant.FromDateTimeUtc(DateTime.Parse(since).ToUniversalTime()) : Instant.FromUtc(DateTime.Now.Year - 1, 9, 1, 0, 0);
         Instant? untilDate = until != null ? Instant.FromDateTimeUtc(DateTime.Parse(until).ToUniversalTime()) : null;
-        var persons = _dbContext.Persons.FilterByOperation(operation.Id).ToList();
-        var personDetails = _dbContext.PersonDetails.FilterByOperation(operation.Id).ToList();
-        var students = _dbContext.Students.FilterByOperation(operation.Id).ToList();
-        var studentDetails = _dbContext.StudentDetails.FilterByOperation(operation.Id).FilterByInterval(sinceDate, untilDate).ToList();
-        var studyFields = _dbContext.StudyFields.FilterByOperation(operation.Id).ToList();
-        var addresses = _dbContext.Addresses.FilterByOperation(operation.Id).ToList();
-        var virtualOperations = _dbContext.VirtualOperations.ToList();
-        var classes = _dbContext.Classes.ToList();
-        var classDetails = _dbContext.ClassDetails.ToList();
+        var persons = await _dbContext.Persons.FilterByOperation(operation.Id).ToListAsync();
+        var personDetails = await _dbContext.PersonDetails.FilterByOperation(operation.Id).ToListAsync();
+        var students = await _dbContext.Students.FilterByOperation(operation.Id).ToListAsync();
+        var studentDetails = await _dbContext.StudentDetails.FilterByOperation(operation.Id).FilterByInterval(sinceDate, untilDate).ToListAsync();
+        var studyFields = await _dbContext.StudyFields.FilterByOperation(operation.Id).ToListAsync();
+        var addresses = await _dbContext.Addresses.FilterByOperation(operation.Id).ToListAsync();
+        var virtualOperations = await _dbContext.VirtualOperations.ToListAsync();
+        var classes = await _dbContext.Classes.ToListAsync();
+        var classDetails = await _dbContext.ClassDetails.ToListAsync();
 
 
         var sentences = new List<Sentence>();
+        var anonymizedDocsB = new List<AnonymizedDocB>();
 
         foreach (var student in students)
         {
             var thisStudentStudentDetails = studentDetails.Where(x => x.StudentId == student.Id
             && (x.ValidUntil <= untilDate
-                || x.ValidUntil == untilDate
                 || x.ValidUntil == null
                 || x.ValidSince == (untilDate + Duration.FromDays(1)))
             && (x.ValidSince >= sinceDate)).ToList();
+            var interuptedSentences = thisStudentStudentDetails.Where(x => (int)x.EndReasonCode == 5);
+            int lengthOfInteruption = 0;
+
+            foreach (var interupted in interuptedSentences)
+            {
+                lengthOfInteruption += (interupted.EndsAt != null ? interupted.EndsAt.Value.Month : DateTime.Now.Month) - interupted.StartsAt.Month;
+            }
             foreach (var studentDetail in thisStudentStudentDetails)
             {
                 var person = persons.First(x => x.Id == student.PersonId);
@@ -106,7 +111,7 @@ public class RecordController : ControllerBase
                     ? currentYear - studentDetail.Class!.ClassDetails.Single(x => x.ValidUntil == null).StartAt.Year + 1
                     : currentYear - studentDetail.Class!.ClassDetails.Single(x => x.ValidUntil == null).StartAt.Year;
 
-                sentences.Add(SentenceExtensions.ToSentence(_mapper, personDetail, studentDetail, studyField, operation, address, virtualOperation, classDetail, grade, untilDate));
+                sentences.Add(SentenceExtensions.ToSentence(_mapper, personDetail, studentDetail, studyField, operation, address, virtualOperation, classDetail, grade, untilDate, lengthOfInteruption));
             }
         }
         var path = "s181105527_01.xml";
@@ -276,141 +281,227 @@ public class RecordController : ControllerBase
             var classDetails = _dbContext.ClassDetails.ToList();
 
             // skip table header
-            for (int i = 1; i < lines.Count; i++)
+            for (int i = 0; i < lines.Count; i++)
             {
-                var values = lines[i].Split(';');
-
-                var birthDate = new DateTime(int.Parse(values[10].Split('.')[2]), int.Parse(values[10].Split('.')[1]), int.Parse(values[10].Split('.')[0]), 0, 0, 0, DateTimeKind.Utc);
-
-                var startsAt = Instant.FromDateTimeUtc(new DateTime(int.Parse(values[50].Split('.')[2]), int.Parse(values[50].Split('.')[1]), int.Parse(values[50].Split('.')[0]), 0, 0, 0, DateTimeKind.Utc));
-
-                var personDetail = new PersonDetail
+                try
                 {
-                    OperationId = currentOp!.Id,
-                    OrganizationUniqueCode = values[0],
-                    LastName = values[1],
-                    FirstName = values[2],
-                    InsuranceCompanyCode = values[7],
-                    IdentificationCode = values[8],
-                    IdentificationCodeTypeId = UniqueCodeType.BirthNumber,
-                    Sex = values[9] == "Muž" ? Sex.Male : Sex.Female,
-                    BornOn = LocalDate.FromDateTime(birthDate),
-                    CitizenshipCode = _mapper.GetRako(values[11]),
-                    //Citizenship = _mapper.GetRast(values[12]),
-                    ValidSince = startsAt,
-                }.SetCreateBySystem(now);
+                    var values = lines[i].Split(';');
+                    //RED_IZO	TT	IZO_SPZ	DAT_VYD	DAT_KPD	KOD_NFN	FN	DAT_ZAH	DAT_UKON	PLAT_ZAC	PLAT_KON
+                    //64-74 support
+                    //KOD_ZAKA	TYP_TR	INDI	NADANI	SZ	ZZ	ID_ZNEV	PSPO	PRODL_DV	UPR_VYST
+                    //53-62 recomendation
+                    var birthDate = new DateTime(int.Parse(values[10].Split('.')[2]), int.Parse(values[10].Split('.')[1]), int.Parse(values[10].Split('.')[0]), 0, 0, 0, DateTimeKind.Utc);
 
-                var birthAddress = new Address
-                {
-                    OperationId = currentOp.Id,
-                    City = values[6],
-                    StateId = states.FirstOrDefault(x => x.Name == values[12]).Id,
-                    ValidSince = startsAt,
-                }.SetCreateBySystem(now);
+                    var startsAt = Instant.FromDateTimeUtc(new DateTime(int.Parse(values[50].Split('.')[2]), int.Parse(values[50].Split('.')[1]), int.Parse(values[50].Split('.')[0]), 0, 0, 0, DateTimeKind.Utc));
 
-                _dbContext.Add(birthAddress);
-
-                personDetail.BirthAddress = birthAddress;
-
-                var addr = values[5].Split(',');
-                var addrParts = addr[0].Split(' ');
-                var street = string.Join(' ', addrParts.Take(addrParts.Length - 1));
-                var zipCity = addr[1].Trim().Split(' ');
-                if (zipCity.Length <= 1)
-                {
-                    await Console.Out.WriteLineAsync();
-                }
-                var permAddress = new Address
-                {
-                    OperationId = currentOp.Id,
-                    Street = street,
-                    DescNumber = addrParts[^1],
-                    Email = values[3],
-                    PhoneNumber = values[4],
-                    CityDistrict = string.Join(' ', zipCity.Take(new Range(2, zipCity.Length))),
-                    StateDistrict = values[14],
-                    ZipCode = zipCity[0] + " " + zipCity[1],
-                    City = values[13],
-                    StateId = states.FirstOrDefault(x=>x.Name == values[12]).Id, // this is not state for current address
-                    ValidSince = startsAt,
-                }.SetCreateBySystem(now);
-
-                _dbContext.Add(permAddress);
-                
-                personDetail.PermanentAddress = permAddress;
-
-                // We need Local property, because we need entities which are could be created but are not in database yet,
-                // they are in memory until SaveChanges
-                var prevOp = _dbContext.VirtualOperations.Local.SingleOrDefault(x => x.IdentificationCode == values[16]);
-
-                if (prevOp == null)
-                {
-                    prevOp = new VirtualOperation
+                    var personDetail = new PersonDetail
                     {
-                        OperationId = currentOp.Id,
-                        IdentificationCode = values[16],
-                        IdentificationCodeTypeId = UniqueCodeType.Izo,
+                        OperationId = currentOp!.Id,
+                        OrganizationUniqueCode = values[0],
+                        LastName = values[1],
+                        FirstName = values[2],
+                        InsuranceCompanyCode = values[7],
+                        IdentificationCode = values[8],
+                        IdentificationCodeTypeId = UniqueCodeType.BirthNumber,
+                        Sex = values[9] == "Muž" ? Sex.Male : Sex.Female,
+                        BornOn = LocalDate.FromDateTime(birthDate),
+                        CitizenshipCode = _mapper.GetRako(values[11]),
+                        //Citizenship = _mapper.GetRast(values[12]),
                         ValidSince = startsAt,
-                        //do not hardcode it
-                        SchoolType = Rapz.ElementarySchoolNinethGrade
                     }.SetCreateBySystem(now);
 
-                    _dbContext.Add(prevOp);
-                }
+                    var birthAddress = new Address
+                    {
+                        OperationId = currentOp.Id,
+                        City = values[6],
+                        StateId = states.FirstOrDefault(x => x.Name == values[12]).Id,
+                        ValidSince = startsAt,
+                    }.SetCreateBySystem(now);
 
-                var studentDetail = new StudentDetail
-                {
-                    OperationId = currentOp.Id,
-                    StartsAt = LocalDate.FromDateTime(startsAt.ToDateTimeUtc()),
-                    ObligatoryAttendenceYears = 9,
-                    Financing = 1,
-                    PreviousEducationCode = values[15],
-                    PreviousEducationOperationId = prevOp.Id,
-                    StartReasonCode = _mapper.RazvFromTextToEnum(values[19]),
-                    HighestAchievedEducation = _mapper.RakkFromTextToEnum(values[17]),
-                    StudyFieldId = DatabaseConstants.ITG.FieldOfStudyId,
-                    ValidSince = startsAt,
-                }.SetCreateBySystem(now);
+                    _dbContext.Add(birthAddress);
 
-                var person = new Person
-                {
-                    PersonTypeId = PersonType.Student,
-                    RowCount = 1,
-                    OperationId = currentOp.Id,
-                };
+                    personDetail.BirthAddress = birthAddress;
 
-                _dbContext.Add(person);
+                    var addr = values[5].Split(',');
+                    var addrParts = addr[0].Split(' ');
+                    var street = string.Join(' ', addrParts.Take(addrParts.Length - 1));
+                    var k = addr.Length;
+                    var zipCity = addr[1].Trim().Split(' ');
+                    if (zipCity.Length <= 1)
+                    {
+                        await Console.Out.WriteLineAsync();
+                    }
+                    var permAddress = new Address
+                    {
+                        OperationId = currentOp.Id,
+                        Street = street,
+                        DescNumber = addrParts[^1],
+                        Email = values[3],
+                        PhoneNumber = values[4],
+                        CityDistrict = string.Join(' ', zipCity.Take(new Range(2, zipCity.Length))),
+                        StateDistrict = values[14],
+                        ZipCode = zipCity[0] + " " + zipCity[1],
+                        City = values[13],
+                        StateId = states.FirstOrDefault(x => x.Name == values[12]).Id, // this is not state for current address
+                        ValidSince = startsAt,
+                    }.SetCreateBySystem(now);
 
-                var student = new Student
-                {
-                    RowCount = 1,
-                    OperationId = currentOp.Id,
-                };
+                    _dbContext.Add(permAddress);
 
-                _dbContext.Add(student);
+                    personDetail.PermanentAddress = permAddress;
 
-                person.Student = student;
+                    // We need Local property, because we need entities which are could be created but are not in database yet,
+                    // they are in memory until SaveChanges
+                    var prevOp = _dbContext.VirtualOperations.Local.SingleOrDefault(x => x.IdentificationCode == values[16]);
 
-                person.PersonDetails.Add(personDetail);
-                _dbContext.Add(personDetail);
-                student.StudentDetails.Add(studentDetail);
-                _dbContext.Add(studentDetail);
+                    if (prevOp == null)
+                    {
+                        prevOp = new VirtualOperation
+                        {
+                            OperationId = currentOp.Id,
+                            IdentificationCode = values[16],
+                            IdentificationCodeTypeId = UniqueCodeType.Izo,
+                            ValidSince = startsAt,
+                            //do not hardcode it
+                            SchoolType = Rapz.ElementarySchoolNinethGrade
+                        }.SetCreateBySystem(now);
 
-                var c = values[27].Split('.')[1];
+                        _dbContext.Add(prevOp);
+                    }
 
-                // consider create and use NormalizedName
-                var currentClassId = classDetails.Single(x => x.Name.ToLower() == c.ToLower()).ClassId;
-                var currentClass = classes.Single(x => x.Id == currentClassId);
+                    var studentDetail = new StudentDetail
+                    {
+                        OperationId = currentOp.Id,
+                        StartsAt = LocalDate.FromDateTime(startsAt.ToDateTimeUtc()),
+                        ObligatoryAttendenceYears = 9,
+                        Financing = 1,
+                        PreviousEducationCode = values[15],
+                        PreviousEducationOperationId = prevOp.Id,
+                        StartReasonCode = _mapper.RazvFromTextToEnum(values[19]),
+                        HighestAchievedEducation = _mapper.RakkFromTextToEnum(values[17]),
+                        StudyFieldId = DatabaseConstants.ITG.FieldOfStudyId,
+                        ValidSince = startsAt,
+                    }.SetCreateBySystem(now);
 
-                studentDetail.ClassId = currentClass.Id;
+                    var person = new Person
+                    {
+                        PersonTypeId = PersonType.Student,
+                        RowCount = 1,
+                        OperationId = currentOp.Id,
+                    };
 
-                /*currentClass.Groups.First().Students.Add(new StudentGroup
-                {
-                    StudentId = student.Id,
-                    ValidSince = now,
-                }.SetCreateBySystem(now));*/
+                    _dbContext.Add(person);
+
+                    var student = new Student
+                    {
+                        RowCount = 1,
+                        OperationId = currentOp.Id,
+                    };
+
+                    _dbContext.Add(student);
+                    //RED_IZO	TT	IZO_SPZ	DAT_VYD	DAT_KPD	KOD_NFN	FN	DAT_ZAH	DAT_UKON	PLAT_ZAC	PLAT_KON
+                    //64-74 support
+                    //KOD_ZAKA	TYP_TR	INDI	NADANI	SZ	ZZ	ID_ZNEV	PSPO	PRODL_DV	UPR_VYST
+                    //53-62 recomendation
+                    if (values[52] == "ANO")
+                    {
+                        try
+                        {
+                            var recommendation = new Recommendation
+                            {
+                                OperationId = currentOp.Id,
+                                StudentCode = values[53],
+                                StudentId = student.Id,
+                                Individual = _mapper.IndiFromTextToEnum(values[55]),
+                                Gifted = _mapper.GiftedFromTextToEnum(values[56]),
+                                Sz = _mapper.SzFromTextToEnum(values[57]),
+                                Zz = values[58],
+                                ProvidedLevelOfAid = int.TryParse(values[59], out var x) ? (AdjustedAidLevel)x : 0,
+                                AdjustedLevelOfStudyLength = values[60],
+                                AdjustedLevelOfExpectedOutput = int.TryParse(values[61], out var y) ? (AdjusteOutputLevel)y : 0,
+                                ValidSince = now,
+                            }.SetCreateBySystem(now);
+
+                            
+
+                            _dbContext.Add(recommendation);
+                        }
+                        catch (Exception ex)
+                        {
+
+                        }
+                    }
+                    if (values[63] == "ANO")
+                    {
+                        try
+                        {
+                            var pattern = LocalDatePattern.CreateWithInvariantCulture("dd.MM.yyyy");
+                            var support = new Support
+                            {
+                                OperationId = currentOp.Id,
+                                StudentId = student.Id,
+                                StudentCode = values[53],
+                                CouncellingRedIzo = values[64],
+                                //65
+                                CouncelingCenterIZO = values[66],
+                                DecisionValidSince = pattern.Parse(values[67]).Value,
+                                DecisionValidTo = pattern.Parse(values[68]).Value,
+                                Financing = _mapper.FnFromTextToEnum(values[70]),
+                                RealStartDate = pattern.Parse(values[71]).Value,
+                                RealEndDate = pattern.Parse(values[72]).Value,
+                                StartDate = pattern.Parse(values[73]).Value,
+                                EndDate = pattern.Parse(values[74]).Value,
+                                ValidSince = now,
+                            }.SetCreateBySystem(now);
+
+                            var idOfFin = _mapper.GetIdOfFinancialDemands(values[69]);
+                            idOfFin.Id = Guid.NewGuid();
+                            idOfFin.StudentId = student.Id;
+                            support.FinancialDemandsId = idOfFin.Id;
+
+                            var idOfDis = _mapper.GetIdOfDisadvantageFromString(values[59]);
+                            idOfDis.Id = Guid.NewGuid();
+                            idOfDis.StudentId = student.Id;
+                            support.DisabilityCodeId = idOfDis.Id;
+
+                            _dbContext.Add(support);
+                            _dbContext.Add(idOfFin);
+                        }
+                        catch (Exception ex)
+                        {
+                        }
+
+                    }
+
+
+                    person.Student = student;
+
+                    person.PersonDetails.Add(personDetail);
+                    _dbContext.Add(personDetail);
+                    student.StudentDetails.Add(studentDetail);
+                    _dbContext.Add(studentDetail);
+
+                    var c = values[27].Split('.')[1];
+
+                    // consider create and use NormalizedName
+                    var currentClassId = classDetails.Single(x => x.Name.ToLower() == c.ToLower()).ClassId; 
+                    var currentClass = classes.Single(x => x.Id == currentClassId);
+
+                    studentDetail.ClassId = currentClass.Id;
+
+                    /*currentClass.Groups.First().Students.Add(new StudentGroup
+                    {
+                        StudentId = student.Id,
+                        ValidSince = now,
+                    }.SetCreateBySystem(now));*/
 #if DEBUG
-                Print(values);
+                    Print(values);
+
+                }
+                catch (Exception ex)
+                {
+                    await Console.Out.WriteLineAsync(); ;
+                }
 #endif
             }
 
