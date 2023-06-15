@@ -71,18 +71,19 @@ public class RecordController : ControllerBase
         }
         var sinceDate = since != null ? Instant.FromDateTimeUtc(DateTime.Parse(since).ToUniversalTime()) : Instant.FromUtc(DateTime.Now.Year - 1, 9, 1, 0, 0);
         Instant? untilDate = until != null ? Instant.FromDateTimeUtc(DateTime.Parse(until).ToUniversalTime()) : null;
-        var persons = _dbContext.Persons.FilterByOperation(operation.Id).ToList();
-        var personDetails = _dbContext.PersonDetails.FilterByOperation(operation.Id).ToList();
-        var students = _dbContext.Students.FilterByOperation(operation.Id).ToList();
-        var studentDetails = _dbContext.StudentDetails.FilterByOperation(operation.Id).FilterByInterval(sinceDate, untilDate).ToList();
-        var studyFields = _dbContext.StudyFields.FilterByOperation(operation.Id).ToList();
-        var addresses = _dbContext.Addresses.FilterByOperation(operation.Id).ToList();
-        var virtualOperations = _dbContext.VirtualOperations.ToList();
-        var classes = _dbContext.Classes.ToList();
-        var classDetails = _dbContext.ClassDetails.ToList();
+        var persons = await _dbContext.Persons.FilterByOperation(operation.Id).ToListAsync();
+        var personDetails = await _dbContext.PersonDetails.FilterByOperation(operation.Id).ToListAsync();
+        var students = await _dbContext.Students.FilterByOperation(operation.Id).ToListAsync();
+        var studentDetails = await _dbContext.StudentDetails.FilterByOperation(operation.Id).FilterByInterval(sinceDate, untilDate).ToListAsync();
+        var studyFields = await _dbContext.StudyFields.FilterByOperation(operation.Id).ToListAsync();
+        var addresses = await _dbContext.Addresses.FilterByOperation(operation.Id).ToListAsync();
+        var virtualOperations = await _dbContext.VirtualOperations.ToListAsync();
+        var classes = await _dbContext.Classes.ToListAsync();
+        var classDetails = await _dbContext.ClassDetails.ToListAsync();
 
 
         var sentences = new List<Sentence>();
+        var anonymizedDocsB = new List<AnonymizedDocB>();
 
         foreach (var student in students)
         {
